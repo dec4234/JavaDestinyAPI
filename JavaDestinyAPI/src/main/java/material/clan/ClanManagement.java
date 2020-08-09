@@ -36,7 +36,28 @@ public class ClanManagement {
 	 * Bans the user from the clan
 	 */
 	public void banUser(BungieUser bungieUser) {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getBungieMembershipID() + "/Ban/", "");
+	}
 
+	/**
+	 * Unbans this user from the clan, as long as they are banned, of course
+	 */
+	public void unbanUser(BungieUser bungieUser) {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getBungieMembershipID() + "/Unban/", "");
+	}
+
+	/**
+	 * Invites the specified user to join the clan
+	 */
+	public void inviteUser(BungieUser bungieUser) {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/IndividualInvite/" + bungieUser.getMembershipType() + "/" + bungieUser.getBungieMembershipID() + "/", "");
+	}
+
+	/**
+	 * Cancels the invite for this user to join the clan
+	 */
+	public void cancelInvite(BungieUser bungieUser) {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/IndividualInviteCancel/" + bungieUser.getMembershipType() + "/" + bungieUser.getBungieMembershipID() + "/", "");
 	}
 
 	/**
@@ -61,7 +82,7 @@ public class ClanManagement {
 	}
 
 	/**
-	 * Abdicates foundership to the next admin in the line of succession
+	 * Abdicates foundership to the admin specified (This user must already be an admin of the clan)
 	 * @param bungieUser The user who will be the new founder (leader) of the clan
 	 */
 	public void abdicateFoundership(BungieUser bungieUser) {

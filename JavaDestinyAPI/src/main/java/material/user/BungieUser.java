@@ -29,6 +29,7 @@ public class BungieUser {
 	private boolean isPublic;
 	private int membershipType;
 	private List<Character> characters;
+	private int playTime = -1;
 
 	private String iconPath;
 	private Clan clan;
@@ -106,14 +107,23 @@ public class BungieUser {
 	/**
 	 * Currently not working
 	 */
-	@Deprecated
 	public List<Character> getCharacters() {
 		if(clan != null) return characters;
 		characters = new ArrayList<>();
-		JsonObject jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieMembershipID + "/?components=200").getAsJsonObject("Response").getAsJsonObject("characters");
-
+		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieMembershipID + "/?components=100").getAsJsonObject("Response").getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
+		for(JsonElement je : ja) {
+			characters.add(new Character(this, je.getAsString()));
+		}
 
 		return characters;
+	}
+
+	public int getTimePlayed() {
+		if(playTime != -1) return playTime;
+		for(Character c : getCharacters()) {
+			playTime += Integer.parseInt(c.getMinutesPlayedTotal());
+		}
+		return playTime;
 	}
 
 	/**
