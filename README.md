@@ -7,6 +7,12 @@ The API is far from complete, and currently only handles the basics of what you 
 To begin, use this dependency inside of your Maven pom.xml
 ```
 <groupId>org.dec4234</groupId>
-    <artifactId>JavaDestinyAPI</artifactId>
-    <version>1.0</version>
+<artifactId>JavaDestinyAPI</artifactId>
+<version>1.0</version>
 ```
+
+Now you can start utilizing features of the api. The core class is called DestinyAPI, this is where you set your api key, and optionally: the client id, secret, and oauth code.
+```java
+DestinyAPI api = new DestinyAPI().setApiKey("YOUR_API_KEY_HERE").setClientID("CLIENT_ID").setClientSecret("CLIENT_SECRET").setOauthCode("OAUTH_CODE");
+```
+DestinyAPI __has__ to be initialized prior to any of the features inside the API that make requests to Bungie.net. The Client id, client secret and oauth code only need to be used whenever oauth is in play, so to start you don't need to bother with them.
