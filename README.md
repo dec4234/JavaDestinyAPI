@@ -10,3 +10,5 @@ To begin, use this dependency inside of your Maven pom.xml
 <artifactId>JavaDestinyAPI</artifactId>
 <version>1.0</version>
 ```
+
+Check out the [wiki](https://github.com/dec4234/JavaDestinyAPI/wiki/Getting-Started) for more specific examples and information.
