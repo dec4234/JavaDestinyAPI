@@ -33,6 +33,7 @@ public class Clan {
 	private BungieUser founder;
 	private List<BungieUser> admins;
 	private List<BungieUser> members = new ArrayList<>();
+	private ClanManagement clanManagement;
 
 	public Clan(long clanId) {
 		this.clanId = clanId;
@@ -113,5 +114,11 @@ public class Clan {
 		}
 
 		return members;
+	}
+
+	public ClanManagement getClanManagement() {
+		if(clanManagement != null) return clanManagement;
+		clanManagement = new ClanManagement(this);
+		return  clanManagement;
 	}
 }
