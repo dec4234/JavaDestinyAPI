@@ -37,7 +37,7 @@ public class BungieUser {
 	public BungieUser(String bungieMembershipID) {
 		this.bungieMembershipID = bungieMembershipID;
 
-		jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/3/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200");
+		jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200");
 		assignValues();
 	}
 
@@ -105,7 +105,7 @@ public class BungieUser {
 	public String getIconPath() { return iconPath; }
 
 	/**
-	 * Currently not working
+	 * Gets the characters that are attached to this bungieuser
 	 */
 	public List<Character> getCharacters() {
 		if(clan != null) return characters;
