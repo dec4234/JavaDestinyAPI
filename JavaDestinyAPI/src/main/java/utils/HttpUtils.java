@@ -41,6 +41,7 @@ public class HttpUtils {
 		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
 		JsonElement parse = null;
 		try {
+			System.out.println(response.get());
 			parse = new JsonParser().parse(response.get());
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
