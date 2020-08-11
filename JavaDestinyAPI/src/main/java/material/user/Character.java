@@ -1,11 +1,15 @@
 package material.user;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import material.manifest.ManifestEntityTypes;
+import material.stats.Activity;
 import utils.HttpUtils;
 import utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Character {
 
@@ -24,6 +28,8 @@ public class Character {
 	private String emblemPath;
 	private String emblemBackgroungPath;
 	private String emblemHash;
+
+	private List<Activity> allActivities;
 
 	HttpUtils hu = new HttpUtils();
 	private JsonObject jo;
@@ -67,6 +73,16 @@ public class Character {
 	public String getEmblemPath() { return emblemPath; }
 	public String getEmblemBackgroungPath() { return emblemBackgroungPath; }
 	public String getEmblemHash() { return emblemHash; }
+
+	public List<Activity> getAllActivities() {
+		if(allActivities != null) return allActivities;
+		allActivities = new ArrayList<>();
+		JsonObject jj = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Account/" + getMembershipID() + "/Character/" + getCharacterID() + "/Stats/AggregateActivityStats/");
+		for(JsonElement je : jj.getAsJsonObject("Response").getAsJsonArray("activities")) {
+			allActivities.add(new Activity(je.getAsJsonObject().getAsJsonObject("values").getAsJsonObject("fastestCompletionMsForActivity").get("activityId").getAsString()));
+		}
+		return allActivities;
+	}
 
 	private Gender evaluateGender(String genderHash) {
 		JsonObject jj = hu.manifestGET(ManifestEntityTypes.GENDER, genderHash).getAsJsonObject("Response");
