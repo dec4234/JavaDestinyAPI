@@ -4,7 +4,7 @@ This is a java wrapper for the API provided by bungie to control things on Bungi
 The API is far from complete, and currently only handles the basics of what you might need. You can get users and clans by their names or ids and get details about them. You can also control your clan such as kicking, banning and inviting players, as long as you have set up OAuth.
 
 # Getting Started
-To begin, use this dependency inside of your Maven pom.xml
+To begin, use this dependency inside of your Maven pom.xml (Currently Unavailable)
 ```
 <groupId>org.dec4234</groupId>
 <artifactId>JavaDestinyAPI</artifactId>
