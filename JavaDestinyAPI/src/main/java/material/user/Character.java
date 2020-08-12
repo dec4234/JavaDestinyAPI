@@ -74,6 +74,10 @@ public class Character {
 	public String getEmblemBackgroungPath() { return emblemBackgroungPath; }
 	public String getEmblemHash() { return emblemHash; }
 
+	/**
+	 * A very resource intensive task, use at your own risk
+	 * Needs work because not all activities return the same JSON info
+=	 */
 	public List<Activity> getAllActivities() {
 		if(allActivities != null) return allActivities;
 		allActivities = new ArrayList<>();
