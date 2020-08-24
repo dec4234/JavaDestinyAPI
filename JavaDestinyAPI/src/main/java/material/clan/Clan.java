@@ -34,22 +34,24 @@ public class Clan {
 	private List<BungieUser> admins;
 	private List<BungieUser> members = new ArrayList<>();
 	private ClanManagement clanManagement;
+	private JsonObject jso;
+	private JsonArray ja;
 
 	public Clan(long clanId) {
 		this.clanId = clanId;
-		cjo = hu.urlRequestGET("https://www.bungie.net/platform/GroupV2/" + clanId +"/?components=200").get("Response").getAsJsonObject().get("detail").getAsJsonObject();
+		cjo = hu.urlRequestGET("https://www.bungie.net/platform/GroupV2/" + clanId + "/?components=200").get("Response").getAsJsonObject().get("detail").getAsJsonObject();
 		assignValues();
 	}
 
 	public Clan(String clanName) {
 		this.clanName = clanName;
-		jo = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/Name/" + clanName.replace(" ", "%20") +"/1/?components=200").get("Response").getAsJsonObject();
+		jo = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/Name/" + clanName.replace(" ", "%20") + "/1/?components=200").get("Response").getAsJsonObject();
 		cjo = jo.get("detail").getAsJsonObject();
 		assignValues();
 	}
 
 	private void assignValues() {
-		if(clanName == null) { // If the clan object was created via ID then the clanName would be null by default
+		if (clanName == null) { // If the clan object was created via ID then the clanName would be null by default
 			clanName = cjo.get("name").getAsString();
 		} else { // Opposite of previous reason
 			clanId = cjo.get("groupId").getAsLong();
@@ -92,12 +94,12 @@ public class Clan {
 	 * Followed by the admins in the order they were promoted
 	 */
 	public List<BungieUser> getAdmins() {
-		if(admins != null) return admins;
+		if (admins != null) { return admins; }
 
 		List<BungieUser> temp = new ArrayList<>();
 		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/AdminsAndFounder/?componenets=200").get("Response").getAsJsonObject().get("results").getAsJsonArray();
 
-		for(JsonElement je : ja) {
+		for (JsonElement je : ja) {
 			temp.add(new BungieUser(je.getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString()));
 		}
 
@@ -105,11 +107,11 @@ public class Clan {
 	}
 
 	public List<BungieUser> getMembers() {
-		if(!members.isEmpty()) return members;
+		if (!members.isEmpty()) { return members; }
 
-		JsonObject jo = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
+		jso = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
 
-		for(JsonElement je : jo.get("results").getAsJsonArray()) {
+		for (JsonElement je : jso.get("results").getAsJsonArray()) {
 			members.add(new BungieUser(je.getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString()));
 		}
 
@@ -117,8 +119,8 @@ public class Clan {
 	}
 
 	public ClanManagement getClanManagement() {
-		if(clanManagement != null) return clanManagement;
+		if (clanManagement != null) { return clanManagement; }
 		clanManagement = new ClanManagement(this);
-		return  clanManagement;
+		return clanManagement;
 	}
 }

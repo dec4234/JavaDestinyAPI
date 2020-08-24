@@ -48,6 +48,24 @@ public class HttpUtils {
 		return parse.getAsJsonObject();
 	}
 
+	public String urlRequestGETstring(String url) {
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder()
+										 .uri(URI.create(url))
+										 .timeout(Duration.ofMinutes(1))
+										 .header("X-API-KEY", apiKey)
+										 .GET()
+										 .build();
+		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
+		JsonElement parse = null;
+		try {
+			return response.get();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public JsonObject urlRequestGETOauth(String url) {
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()

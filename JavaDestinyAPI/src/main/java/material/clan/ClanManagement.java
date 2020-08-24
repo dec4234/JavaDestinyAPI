@@ -106,11 +106,9 @@ public class ClanManagement {
 	}
 
 	/**
-	 * Returns a list of pending members to the clan
+	 * Returns a list of pending members to the clan, Never cached: always makes a new request
 	 */
 	public List<BungieUser> getPendingMembers() {
-		if(pendingMembers != null) return pendingMembers;
-
 		List<BungieUser> temp = new ArrayList<>();
 		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Pending/?components=200").get("Response").getAsJsonObject().get("results").getAsJsonArray();
 
