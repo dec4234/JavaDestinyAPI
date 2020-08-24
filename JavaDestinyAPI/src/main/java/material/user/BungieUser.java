@@ -7,6 +7,10 @@ import material.clan.Clan;
 import utils.HttpUtils;
 import utils.StringUtils;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,9 +38,10 @@ public class BungieUser {
 	private String iconPath;
 	private Clan clan;
 
+	private boolean assigned = false;
+
 	public BungieUser(String bungieMembershipID) {
 		this.bungieMembershipID = bungieMembershipID;
-
 		jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200");
 		assignValues();
 	}
@@ -89,7 +94,7 @@ public class BungieUser {
 	/**
 	 * Gets an integer representing the number of days since the user last played
 	 */
-	public int getDaysSinceLastPlayed() { return (int) (new Date().getTime() - getLastPlayed().getTime()) / 86400000; }
+	public int getDaysSinceLastPlayed() { return (int) ChronoUnit.DAYS.between(getLastPlayed().toInstant(), new Date().toInstant()); }
 
 	public boolean isOverriden() { return isOverriden; }
 	public boolean isCrossSavePrimary() { return isCrossSavePrimary; }
@@ -138,7 +143,6 @@ public class BungieUser {
 	}
 
 	public void allowClanInvites(boolean allowInvites) {
-
 	}
 
 	/**

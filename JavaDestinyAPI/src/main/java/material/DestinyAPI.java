@@ -3,6 +3,7 @@ package material;
 import com.google.gson.*;
 import material.clan.Clan;
 import material.user.BungieUser;
+import utils.HttpUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,10 +39,16 @@ public class DestinyAPI {
 		return this;
 	}
 
+
 	public BungieUser getUser(String id) { return new BungieUser(id); }
 
+	/**
+	 * Gets the users with this name (There can be multiple users with the same name)
+	 */
 	public List<BungieUser> getUsersWithName(String name) {
+		HttpUtils hu = new HttpUtils();
 		List<BungieUser> temp = new ArrayList<>();
+		List<String> ids = new ArrayList<>();
 		try {
 			String url = "https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name.replace(" ", "%20");
 			HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
@@ -51,29 +58,37 @@ public class DestinyAPI {
 			InputStreamReader reader = new InputStreamReader(connection.getInputStream());
 			JsonElement parse = new JsonParser().parse(reader);
 			JsonObject obj = parse.getAsJsonObject();
+			System.out.println(hu.urlRequestGETstring("https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name.replace(" ", "%20")));
 			if (obj.get("Response").isJsonArray()) {
 				for (JsonElement objj : obj.getAsJsonArray("Response")) {
 					JsonObject us = objj.getAsJsonObject();
-					temp.add(new BungieUser(us.get("membershipId").getAsString()));
+					BungieUser bu = new BungieUser(us.get("membershipId").getAsString());
+					if(!ids.contains(bu.getBungieMembershipID())) {
+						temp.add(bu);
+						ids.add(bu.getBungieMembershipID());
+					}
 				}
-			}
-			return temp;
-		} catch (IOException ioException) {
-			ioException.printStackTrace();
 		}
-		return null;
+	} catch (IOException ioException) {
+		ioException.printStackTrace();
 	}
+		return temp;
+}
 
 	public Clan getClan(long id) {
 		return new Clan(id);
 	}
+
 	public Clan getClan(String name) {
 		return new Clan(name);
 	}
 
 	public static String getApiKey() { return apiKey; }
+
 	public static String getClientId() { return clientId; }
+
 	public static String getClientSecret() { return clientSecret; }
+
 	public static String getOauthCode() { return oauthCode; }
 
 }

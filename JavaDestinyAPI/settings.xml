@@ -1,0 +1,9 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+    <servers>
+        <server>
+            <id>ossrh</id>
+            <username>dec4234</username>
+            <password></password>
+        </server>
+    </servers>
+</settings>
