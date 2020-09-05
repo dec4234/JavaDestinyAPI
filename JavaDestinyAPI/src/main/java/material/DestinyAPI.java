@@ -58,7 +58,6 @@ public class DestinyAPI {
 			InputStreamReader reader = new InputStreamReader(connection.getInputStream());
 			JsonElement parse = new JsonParser().parse(reader);
 			JsonObject obj = parse.getAsJsonObject();
-			System.out.println(hu.urlRequestGETstring("https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name.replace(" ", "%20")));
 			if (obj.get("Response").isJsonArray()) {
 				for (JsonElement objj : obj.getAsJsonArray("Response")) {
 					JsonObject us = objj.getAsJsonObject();

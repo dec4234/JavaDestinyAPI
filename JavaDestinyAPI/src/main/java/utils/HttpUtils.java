@@ -130,6 +130,11 @@ public class HttpUtils {
 		return urlRequestGET("https://www.bungie.net/Platform/Destiny2/Manifest/" + entityType.getBungieEntityValue() + "/" + hashIdentifier + "/");
 	}
 
+	public String generateLineGraph() {
+		String body = "{\"chart\": {\"type\": \"line\", \"data\": {\"labels\": [\"Hello\", \"World\"], \"datasets\": [{\"label\": \"Foo\", \"data\": [1, 2]}]}}}";
+		return urlRequestPOST("https://quickchart.io/chart/create", body);
+	}
+
 	/**
 	 * Gets an access token using the refresh token in storage and replaces the old refresh token with the new one
 	 * @return Returns the new access token

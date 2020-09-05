@@ -106,6 +106,18 @@ public class Clan {
 		return temp;
 	}
 
+	public double getAverageInactivityAmongMembers() {
+		ArrayList<Double> averages = new ArrayList<Double>();
+		int a = 0;
+		for(BungieUser bu : this.getMembers()) {
+			averages.add(bu.getDaysSinceLastPlayed());
+		}
+		for(Double d : averages) {
+			a += d;
+		}
+		return a / getMembers().size();
+	}
+
 	public List<BungieUser> getMembers() {
 		if (!members.isEmpty()) { return members; }
 

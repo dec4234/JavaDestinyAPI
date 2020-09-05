@@ -94,7 +94,9 @@ public class BungieUser {
 	/**
 	 * Gets an integer representing the number of days since the user last played
 	 */
-	public int getDaysSinceLastPlayed() { return (int) ChronoUnit.DAYS.between(getLastPlayed().toInstant(), new Date().toInstant()); }
+	public double getDaysSinceLastPlayed() {
+		return (double) ChronoUnit.DAYS.between(getLastPlayed().toInstant(), new Date().toInstant());
+	}
 
 	public boolean isOverriden() { return isOverriden; }
 	public boolean isCrossSavePrimary() { return isCrossSavePrimary; }
