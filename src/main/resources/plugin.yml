@@ -1,0 +1,9 @@
+name: DecsLoginSecurity2
+version: ${project.version}
+main: com.github.dec4234.decsloginsecurity2.DecsLoginSecurity2Main
+api-version: 1.15
+commands:
+  register:
+  login:
+  resetpassword:
+    aliases: [rmpass, rmpassword]
