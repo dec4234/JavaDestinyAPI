@@ -34,7 +34,7 @@ public class HttpUtils {
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
 										 .uri(URI.create(url))
-										 .timeout(Duration.ofMinutes(1))
+										 .timeout(Duration.ofMinutes(2))
 										 .header("X-API-KEY", apiKey)
 										 .GET()
 										 .build();

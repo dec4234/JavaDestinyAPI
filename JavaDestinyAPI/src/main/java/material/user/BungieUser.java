@@ -14,6 +14,8 @@ import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class BungieUser {
 
@@ -22,63 +24,27 @@ public class BungieUser {
 	private String bungieMembershipID;
 	private String displayName;
 	private Date lastPlayed;
-	private JsonObject jo; // The JsonObject containing all data related to the user
+	private JsonObject jo, je; // The JsonObject containing all data related to the user
 	private HttpUtils hu = new HttpUtils();
 
-	private boolean isOverriden;
-	private boolean isCrossSavePrimary;
-	private int crossSaveOverride;
 	private ArrayList<Integer> applicableMembershipTypes = new ArrayList<>();
 
-	private boolean isPublic;
-	private int membershipType;
 	private List<Character> characters;
 	private int playTime = -1;
 
-	private String iconPath;
 	private Clan clan;
-
-	private boolean assigned = false;
 
 	public BungieUser(String bungieMembershipID) {
 		this.bungieMembershipID = bungieMembershipID;
-		jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200");
-		assignValues();
-	}
-
-	private void assignValues() {
-		JsonObject je;
-		if(jo.get("Response").getAsJsonObject().get("profiles").getAsJsonArray().size() == 0) {
-			isValidUser = false;
-			return;
-		}
-
-		isValidUser = true;
-		je = jo.get("Response").getAsJsonObject().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
-
-		displayName = je.get("displayName").getAsString();
-		lastPlayed = StringUtils.valueOfZTime(je.get("dateLastPlayed").getAsString());
-
-		isOverriden = je.get("isOverridden").getAsBoolean();
-		isCrossSavePrimary = je.get("isCrossSavePrimary").getAsBoolean();
-		crossSaveOverride = je.get("crossSaveOverride").getAsInt();
-
-		applicableMembershipTypes.clear();
-		for(JsonElement jj : je.get("applicableMembershipTypes").getAsJsonArray()) {
-			applicableMembershipTypes.add(jj.getAsInt());
-		}
-
-		isPublic = je.get("isPublic").getAsBoolean();
-		membershipType = je.get("membershipType").getAsInt();
-		// iconPath = jo.get("Response").getAsJsonObject().get("bnetMembership").getAsJsonObject().get("iconPath").getAsString();
-
 	}
 
 	/**
 	 * Determines if the user has any profiles on their account
 	 * Useful to see if a user's account has any data on it
 	 */
-	public boolean isValidUser() { return isValidUser; }
+	public boolean isValidUser() {
+		return jo.get("Response").getAsJsonObject().get("profiles").getAsJsonArray().size() != 0;
+	}
 	/**
 	 * Gets the bungie membership ID of the user
 	 */
@@ -86,11 +52,24 @@ public class BungieUser {
 	/**
 	 * Gets the display name of the user
 	 */
-	public String getDisplayName() { return displayName; }
+	public String getDisplayName() {
+		if(displayName == null) {
+			checkJE();
+			displayName = je.get("displayName").getAsString();
+		}
+
+		return displayName;
+	}
 	/**
 	 * Gets the last day this user was seen online
 	 */
-	public Date getLastPlayed() { return lastPlayed; }
+	public Date getLastPlayed() {
+		if(lastPlayed == null) {
+			checkJE();
+			lastPlayed = StringUtils.valueOfZTime(je.get("dateLastPlayed").getAsString());
+		}
+		return lastPlayed;
+	}
 	/**
 	 * Gets an integer representing the number of days since the user last played
 	 */
@@ -98,18 +77,40 @@ public class BungieUser {
 		return (double) ChronoUnit.DAYS.between(getLastPlayed().toInstant(), new Date().toInstant());
 	}
 
-	public boolean isOverriden() { return isOverriden; }
-	public boolean isCrossSavePrimary() { return isCrossSavePrimary; }
-	public int getCrossSaveOverride() { return crossSaveOverride; }
-	public ArrayList<Integer> getApplicableMembershipTypes() { return applicableMembershipTypes; }
+	public boolean isOverriden() {
+		checkJE();
+		return je.get("isOverridden").getAsBoolean();
+	}
+	public boolean isCrossSavePrimary() {
+		checkJE();
+		return je.get("isCrossSavePrimary").getAsBoolean();
+	}
+	public int getCrossSaveOverride() {
+		checkJE();
+		return je.get("crossSaveOverride").getAsInt();
+	}
+	public ArrayList<Integer> getApplicableMembershipTypes() {
+		if(applicableMembershipTypes.isEmpty()) {
+			checkJE();
+			applicableMembershipTypes.clear();
+			for(JsonElement jj : je.get("applicableMembershipTypes").getAsJsonArray()) {
+				applicableMembershipTypes.add(jj.getAsInt());
+			}
+		}
+		return applicableMembershipTypes;
+	}
 
-	public boolean isPublic() { return isPublic; }
+	public boolean isPublic() {
+		checkJE();
+		return je.get("isPublic").getAsBoolean();
+	}
 	/**
 	 * Returns the membership type
 	 */
-	public int getMembershipType() { return membershipType; }
-
-	public String getIconPath() { return iconPath; }
+	public int getMembershipType() {
+		checkJE();
+		return je.get("membershipType").getAsInt();
+	}
 
 	/**
 	 * Gets the characters that are attached to this bungieuser
@@ -118,6 +119,10 @@ public class BungieUser {
 		if(clan != null) return characters;
 		characters = new ArrayList<>();
 		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieMembershipID + "/?components=100").getAsJsonObject("Response").getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
+		if(ja == null) {
+			return null;
+		}
+		
 		for(JsonElement je : ja) {
 			characters.add(new Character(this, je.getAsString()));
 		}
@@ -152,5 +157,24 @@ public class BungieUser {
 	 */
 	public void requestToJoinClan(Clan clan) {
 		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Apply/" + getMembershipType() + "/", "");
+	}
+
+	public void checkJO() {
+		if(jo == null) {
+			CompletableFuture<JsonObject> cf = new CompletableFuture<>();
+			cf.completeAsync(() -> hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200"));
+			try {
+				jo = cf.get();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void checkJE() {
+		checkJO();
+		if(je == null) {
+			je = jo.get("Response").getAsJsonObject().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
+		}
 	}
 }

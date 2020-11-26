@@ -4,6 +4,9 @@ import com.google.gson.JsonObject;
 import material.manifest.ManifestEntityTypes;
 import utils.HttpUtils;
 
+/**
+ * A Destiny Inventory Item such as any weapon or armor piece
+ */
 public class DestinyItem {
 
 	HttpUtils hu = new HttpUtils();

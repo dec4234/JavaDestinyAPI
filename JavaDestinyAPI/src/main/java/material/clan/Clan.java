@@ -6,10 +6,14 @@ import com.google.gson.JsonObject;
 import material.user.BungieUser;
 import material.DestinyAPI;
 import utils.HttpUtils;
+import utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 
 public class Clan {
 
@@ -32,7 +36,7 @@ public class Clan {
 
 	private BungieUser founder;
 	private List<BungieUser> admins;
-	private List<BungieUser> members = new ArrayList<>();
+	private List<BungieUser> members;
 	private ClanManagement clanManagement;
 	private JsonObject jso;
 	private JsonArray ja;
@@ -50,20 +54,23 @@ public class Clan {
 		assignValues();
 	}
 
+	JsonObject jj;
+
 	private void assignValues() {
 		if (clanName == null) { // If the clan object was created via ID then the clanName would be null by default
 			clanName = cjo.get("name").getAsString();
 		} else { // Opposite of previous reason
 			clanId = cjo.get("groupId").getAsLong();
 		}
-		// creationDate = StringUtils.valueOfZTime(cjo.get("creationDate").getAsString()); // The date the clan was created
 		clanDescription = cjo.get("about").getAsString();
+		creationDate = StringUtils.valueOfZTime(cjo.get("creationDate").getAsString());
 		memberCount = cjo.get("memberCount").getAsInt();
 		isPublic = cjo.get("isPublic").getAsBoolean();
 		motto = cjo.get("motto").getAsString();
 		allowChat = cjo.get("allowChat").getAsBoolean();
+		founder = new BungieUser(jo.getAsJsonObject("founder").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString());
+		// members = getMembers();
 
-		// founder = new BungieUser(jo.get("founder").getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString());
 	}
 
 	public String getClanID() {
@@ -106,6 +113,9 @@ public class Clan {
 		return temp;
 	}
 
+	/**
+	 * Returns the average number of days since all members last played
+	 */
 	public double getAverageInactivityAmongMembers() {
 		ArrayList<Double> averages = new ArrayList<Double>();
 		int a = 0;
@@ -118,16 +128,49 @@ public class Clan {
 		return a / getMembers().size();
 	}
 
+	/**
+	 * Returns a list of all members of the clan
+	 */
 	public List<BungieUser> getMembers() {
-		if (!members.isEmpty()) { return members; }
+		List<BungieUser> temp = new ArrayList<>();
 
-		jso = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
-
-		for (JsonElement je : jso.get("results").getAsJsonArray()) {
-			members.add(new BungieUser(je.getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString()));
+		if(members != null) {
+			return members;
 		}
 
-		return members;
+		if(jj == null) {
+			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
+		}
+
+		for(JsonElement je : jj.getAsJsonArray("results")) {
+			CompletableFuture<BungieUser> cf = new CompletableFuture<>();
+
+			cf.completeAsync(() -> new BungieUser(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()));
+			try {
+				temp.add(cf.get());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
+		members = temp;
+		return temp;
+	}
+
+	public Date getJoinDate(BungieUser member) {
+		if(jj == null) {
+			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
+		}
+
+		List<String> ids = new ArrayList<>();
+		for(JsonElement je : jj.getAsJsonArray("results")) {
+			if(member.getBungieMembershipID().equals(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString())) {
+				return StringUtils.valueOfZTime(je.getAsJsonObject().get("joinDate").getAsString());
+			}
+		}
+
+		return null; // Return null if there were no matching users found
 	}
 
 	public ClanManagement getClanManagement() {
