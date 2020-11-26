@@ -14,10 +14,15 @@ public class StringUtils {
 	 * @throws ParseException
 	 */
 	public static Date valueOfZTime(String zuluTimeInString) {
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+		String temp = zuluTimeInString;
+		if(temp.length() == 24) {
+			temp = temp.substring(0, temp.length() - 5);
+			temp = temp + "Z";
+		}
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:sss'Z'");
 		df.setTimeZone(TimeZone.getTimeZone("Zulu"));
 		try {
-			return df.parse(zuluTimeInString);
+			return df.parse(temp);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
