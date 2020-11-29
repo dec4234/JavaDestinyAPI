@@ -13,6 +13,7 @@ public enum ManifestEntityTypes {
 	COLLECTIBLE("DestinyCollectibleDefinition"),
 	EQUIPMENTSLOT("DestinyEquipmentSlotDefinition"),
 	INVENTORYBUCKET("DesintInventoryBucketDefinition"),
+	/** Any item that can go in a user's invenory such as armor, weapons, and planetary materials */
 	INVENTORYITEM("DestinyInventoryItemDefinition"),
 	ITEMCATEGORY("DestinyItemCategoryDefinition"),
 	ITEMSTAT("DestinyStatDefinition"),

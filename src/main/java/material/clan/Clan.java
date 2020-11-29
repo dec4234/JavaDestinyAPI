@@ -36,7 +36,7 @@ public class Clan {
 
 	private BungieUser founder;
 	private List<BungieUser> admins;
-	private List<BungieUser> members = new ArrayList<>();
+	private List<BungieUser> members;
 	private ClanManagement clanManagement;
 	private JsonObject jso;
 	private JsonArray ja;
@@ -69,8 +69,8 @@ public class Clan {
 		motto = cjo.get("motto").getAsString();
 		allowChat = cjo.get("allowChat").getAsBoolean();
 		founder = new BungieUser(jo.getAsJsonObject("founder").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString());
+		// members = getMembers();
 
-		// founder = new BungieUser(jo.get("founder").getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString());
 	}
 
 	public String getClanID() {
@@ -134,6 +134,10 @@ public class Clan {
 	public List<BungieUser> getMembers() {
 		List<BungieUser> temp = new ArrayList<>();
 
+		if(members != null) {
+			return members;
+		}
+
 		if(jj == null) {
 			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
 		}
@@ -150,7 +154,28 @@ public class Clan {
 				e.printStackTrace();
 			}
 		}
+		members = temp;
 		return temp;
+	}
+
+	public boolean isMember(BungieUser bungieUser) {
+		for(BungieUser bungieUser1 : getMembers()) {
+			if(bungieUser1.getBungieMembershipID().equals(bungieUser.getBungieMembershipID())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isMember(String bungieID) {
+		for(BungieUser bungieUser : getMembers()) {
+			if(bungieUser.getBungieMembershipID().equals(bungieID)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public Date getJoinDate(BungieUser member) {
