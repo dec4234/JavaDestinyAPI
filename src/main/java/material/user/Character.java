@@ -73,6 +73,7 @@ public class Character {
 	public String getEmblemPath() { return emblemPath; }
 	public String getEmblemBackgroungPath() { return emblemBackgroungPath; }
 	public String getEmblemHash() { return emblemHash; }
+	public JsonObject getJsonObject() { return jo; }
 
 	/**
 	 * A very resource intensive task, use at your own risk
@@ -125,7 +126,7 @@ public class Character {
 		return null;
 	}
 
-	enum Gender {
+	public enum Gender {
 		MALE("Male"),
 		FEMALE("Female");
 
@@ -137,7 +138,7 @@ public class Character {
 
 	}
 
-	enum Class {
+	public enum Class {
 		HUNTER("Hunter"),
 		TITAN("Titan"),
 		WARLOCK("Warlock");
@@ -149,7 +150,7 @@ public class Character {
 		public String getValue() { return value; }
 	}
 
-	enum Race {
+	public enum Race {
 		AWOKEN("Awoken"),
 		EXO("Exo"),
 		HUMAN("Human");

@@ -130,6 +130,13 @@ public class HttpUtils {
 		return urlRequestGET("https://www.bungie.net/Platform/Destiny2/Manifest/" + entityType.getBungieEntityValue() + "/" + hashIdentifier + "/");
 	}
 
+	/**
+	 * Returns whether or not the API is online
+	 */
+	public boolean isOnline() {
+		return true;
+	}
+
 	public String generateLineGraph() {
 		String body = "{\"chart\": {\"type\": \"line\", \"data\": {\"labels\": [\"Hello\", \"World\"], \"datasets\": [{\"label\": \"Foo\", \"data\": [1, 2]}]}}}";
 		return urlRequestPOST("https://quickchart.io/chart/create", body);

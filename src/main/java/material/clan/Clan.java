@@ -68,7 +68,6 @@ public class Clan {
 		isPublic = cjo.get("isPublic").getAsBoolean();
 		motto = cjo.get("motto").getAsString();
 		allowChat = cjo.get("allowChat").getAsBoolean();
-		founder = new BungieUser(jo.getAsJsonObject("founder").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString());
 		// members = getMembers();
 
 	}
@@ -93,7 +92,7 @@ public class Clan {
 
 	public boolean isAllowChat() { return allowChat; }
 
-	public BungieUser getFounder() { return founder; }
+	public BungieUser getFounder() { return new BungieUser(jo.getAsJsonObject("founder").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()); }
 
 	/**
 	 * Returns a list of the founder and the admins of the clan
@@ -148,10 +147,9 @@ public class Clan {
 			cf.completeAsync(() -> new BungieUser(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()));
 			try {
 				temp.add(cf.get());
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
+			} catch (InterruptedException | ExecutionException e) {
+				System.out.println("Returned a null list of users for the clan in Clan.getMembers()");
+				return null;
 			}
 		}
 		members = temp;
@@ -176,6 +174,10 @@ public class Clan {
 		}
 
 		return false;
+	}
+
+	public JsonObject getClanStats() {
+		return hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/Stats/AggregateClanStats/" + getClanID() + "/?modes=4");
 	}
 
 	public Date getJoinDate(BungieUser member) {

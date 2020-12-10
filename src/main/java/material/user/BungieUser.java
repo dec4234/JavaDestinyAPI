@@ -44,6 +44,7 @@ public class BungieUser {
 	 */
 	public boolean isValidUser() {
 		try {
+			checkJO();
 			return jo.get("Response").getAsJsonObject().get("profiles").getAsJsonArray().size() != 0;
 		} catch (NullPointerException nullPointerException) {
 			return false;
@@ -57,22 +58,20 @@ public class BungieUser {
 
 	/**
 	 * Gets the display name of the user
+	 * Prefers returning the name of their account on steam, if they have one
 	 */
 	public String getDisplayName() {
 		if (displayName == null) {
 			checkJE();
+			displayName = je.get("displayName").getAsString();
 			JsonArray array = jo.getAsJsonObject("Response").getAsJsonArray("profilesWithErrors");
 			if (array != null && array.size() != 0 && je.get("membershipType").getAsInt() != 3) {
 				for(JsonElement je : array) {
 					if(je.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == 3) {
 						checkJE();
 						displayName = je.getAsJsonObject().getAsJsonObject("infoCard").get("displayName").getAsString();
-						return displayName;
 					}
 				}
-			} else {
-				checkJE();
-				displayName = je.get("displayName").getAsString();
 			}
 		}
 
@@ -181,6 +180,11 @@ public class BungieUser {
 	 */
 	public void requestToJoinClan(Clan clan) {
 		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Apply/" + getMembershipType() + "/", "");
+	}
+
+	public JsonObject getJsonObject() {
+		checkJO();
+		return jo;
 	}
 
 	public void checkJO() {

@@ -49,30 +49,20 @@ public class DestinyAPI {
 		HttpUtils hu = new HttpUtils();
 		List<BungieUser> temp = new ArrayList<>();
 		List<String> ids = new ArrayList<>();
-		try {
-			String url = "https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name.replace(" ", "%20");
-			HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-			connection.setRequestMethod("GET");
-			connection.addRequestProperty("X-API-KEY", apiKey);
 
-			InputStreamReader reader = new InputStreamReader(connection.getInputStream());
-			JsonElement parse = new JsonParser().parse(reader);
-			JsonObject obj = parse.getAsJsonObject();
-			if (obj.get("Response").isJsonArray()) {
-				for (JsonElement objj : obj.getAsJsonArray("Response")) {
-					JsonObject us = objj.getAsJsonObject();
-					BungieUser bu = new BungieUser(us.get("membershipId").getAsString());
-					if(!ids.contains(bu.getBungieMembershipID())) {
-						temp.add(bu);
-						ids.add(bu.getBungieMembershipID());
-					}
-				}
+		JsonObject obj = hu.urlRequestGET("https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name.replace(" ", "%20") + "/?components=204");
+		JsonArray ja = obj.getAsJsonArray("Response");
+		for (JsonElement je : ja) {
+			JsonObject us = je.getAsJsonObject();
+			BungieUser bu = new BungieUser(us.get("membershipId").getAsString());
+			if (!ids.contains(bu.getBungieMembershipID())) {
+				temp.add(bu);
+				ids.add(bu.getBungieMembershipID());
+				System.out.println(bu.getBungieMembershipID());
+			}
 		}
-	} catch (IOException ioException) {
-		ioException.printStackTrace();
-	}
 		return temp;
-}
+	}
 
 	public Clan getClan(long id) {
 		return new Clan(id);
