@@ -7,10 +7,7 @@ import material.clan.Clan;
 import utils.HttpUtils;
 import utils.StringUtils;
 
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,13 +59,22 @@ public class BungieUser {
 	 */
 	public String getDisplayName() {
 		if (displayName == null) {
-			checkJE();
-			displayName = je.get("displayName").getAsString();
-			JsonArray array = jo.getAsJsonObject("Response").getAsJsonArray("profilesWithErrors");
-			if (array != null && array.size() != 0 && je.get("membershipType").getAsInt() != 3) {
-				for(JsonElement je : array) {
+			try {
+				checkJE();
+				displayName = je.get("displayName").getAsString();
+				JsonArray array = jo.getAsJsonObject("Response").getAsJsonArray("profilesWithErrors");
+				if (array != null && array.size() != 0 && je.get("membershipType").getAsInt() != 3) {
+					for (JsonElement je : array) {
+						if (je.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == 3) {
+							checkJE();
+							displayName = je.getAsJsonObject().getAsJsonObject("infoCard").get("displayName").getAsString();
+						}
+					}
+				}
+			} catch (NullPointerException exception) {
+				JsonArray ja = jo.getAsJsonObject("Response").getAsJsonArray("profilesWithErrors");
+				for(JsonElement je : ja) {
 					if(je.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == 3) {
-						checkJE();
 						displayName = je.getAsJsonObject().getAsJsonObject("infoCard").get("displayName").getAsString();
 					}
 				}
@@ -139,17 +145,17 @@ public class BungieUser {
 	 * Gets the characters that are attached to this bungieuser
 	 */
 	public List<Character> getCharacters() {
-		if (clan != null) { return characters; }
-		characters = new ArrayList<>();
-		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieMembershipID + "/?components=100").getAsJsonObject("Response").getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
-		if (ja == null) {
-			return null;
-		}
+		if (characters == null) {
+			characters = new ArrayList<>();
+			JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieMembershipID + "/?components=100").getAsJsonObject("Response").getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
+			if (ja == null) {
+				return null;
+			}
 
-		for (JsonElement je : ja) {
-			characters.add(new Character(this, je.getAsString()));
+			for (JsonElement je : ja) {
+				characters.add(new Character(this, je.getAsString()));
+			}
 		}
-
 		return characters;
 	}
 
@@ -202,7 +208,12 @@ public class BungieUser {
 	public void checkJE() {
 		checkJO();
 		if (je == null) {
-			je = jo.get("Response").getAsJsonObject().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
+			try {
+				je = jo.get("Response").getAsJsonObject().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
+			} catch (Exception e) {
+				System.out.println("BungieUser:checkJE()");
+				System.out.println(jo);
+			}
 		}
 	}
 }

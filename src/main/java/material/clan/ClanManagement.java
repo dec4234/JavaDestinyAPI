@@ -83,6 +83,7 @@ public class ClanManagement {
 
 	/**
 	 * Abdicates foundership to the admin specified (This user must already be an admin of the clan)
+	 *
 	 * @param bungieUser The user who will be the new founder (leader) of the clan
 	 */
 	public void abdicateFoundership(BungieUser bungieUser) {
@@ -91,15 +92,16 @@ public class ClanManagement {
 
 	/**
 	 * Gets a list of members who have been banned from the clan
+	 *
 	 * @return The list of banned users
 	 */
 	public List<BungieUser> getBannedMembers() {
-		if(bannedMembers != null) return bannedMembers;
+		if (bannedMembers != null) { return bannedMembers; }
 
 		List<BungieUser> temp = new ArrayList<BungieUser>();
 
 		JsonArray jo = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Banned/?componenets=200").getAsJsonObject("Response").get("results").getAsJsonArray();
-		for(JsonElement je : jo) {
+		for (JsonElement je : jo) {
 			temp.add(new BungieUser(je.getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString()));
 		}
 		return temp;
@@ -112,7 +114,7 @@ public class ClanManagement {
 		List<BungieUser> temp = new ArrayList<>();
 		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Pending/?components=200").get("Response").getAsJsonObject().get("results").getAsJsonArray();
 
-		for(JsonElement je : ja) {
+		for (JsonElement je : ja) {
 			temp.add(new BungieUser(je.getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString()));
 		}
 

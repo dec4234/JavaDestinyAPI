@@ -1,23 +1,18 @@
 package utils;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import exceptions.AccessTokenInvalidException;
 import material.DestinyAPI;
 import material.manifest.ManifestEntityTypes;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Base64;
-import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -43,7 +38,7 @@ public class HttpUtils {
 		try {
 			parse = new JsonParser().parse(response.get()); // Parse response to JSON
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			return null;
 		}
 		return parse.getAsJsonObject();
 	}
@@ -69,12 +64,12 @@ public class HttpUtils {
 	public JsonObject urlRequestGETOauth(String url) {
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(url))
-				.timeout(Duration.ofMinutes(1))
-				.setHeader("X-API-KEY", apiKey)
-				.setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
-				.GET()
-				.build();
+										 .uri(URI.create(url))
+										 .timeout(Duration.ofMinutes(1))
+										 .setHeader("X-API-KEY", apiKey)
+										 .setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
+										 .GET()
+										 .build();
 		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
 		JsonElement parse = null;
 		try {
@@ -87,7 +82,7 @@ public class HttpUtils {
 	}
 
 	public String urlRequestPOST(String url, String body) {
-		if(body.isEmpty()) body = "{\"message\": \"\",}";
+		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
 										 .uri(URI.create(url))
@@ -106,7 +101,7 @@ public class HttpUtils {
 	}
 
 	public String urlRequestPOSTOauth(String url, String body) {
-		if(body.isEmpty()) body = "{\"message\": \"\",}";
+		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
 										 .uri(URI.create(url))
@@ -144,6 +139,7 @@ public class HttpUtils {
 
 	/**
 	 * Gets an access token using the refresh token in storage and replaces the old refresh token with the new one
+	 *
 	 * @return Returns the new access token
 	 */
 	public String setTokenViaRefresh() {
@@ -202,7 +198,7 @@ public class HttpUtils {
 	}
 
 	public void checkFor401(String input) {
-		if(input.contains("401 - Unauthorized")) {
+		if (input.contains("401 - Unauthorized")) {
 			try {
 				setTokenViaRefresh();
 				throw new AccessTokenInvalidException("The access token used in this OAuth request was not accepted by the server \nI've already taken the liberty of getting a new access token for you :D");

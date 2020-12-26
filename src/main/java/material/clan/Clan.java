@@ -3,8 +3,8 @@ package material.clan;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import material.user.BungieUser;
 import material.DestinyAPI;
+import material.user.BungieUser;
 import utils.HttpUtils;
 import utils.StringUtils;
 
@@ -13,11 +13,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 
 public class Clan {
 
-	private String apiKey = DestinyAPI.getApiKey();
 	private HttpUtils hu = new HttpUtils();
 	private JsonObject jo; // The entire Clan response
 	private JsonObject cjo; // "detail"
@@ -68,7 +66,7 @@ public class Clan {
 		isPublic = cjo.get("isPublic").getAsBoolean();
 		motto = cjo.get("motto").getAsString();
 		allowChat = cjo.get("allowChat").getAsBoolean();
-		// members = getMembers();
+		members = getMembers();
 
 	}
 
@@ -92,7 +90,9 @@ public class Clan {
 
 	public boolean isAllowChat() { return allowChat; }
 
-	public BungieUser getFounder() { return new BungieUser(jo.getAsJsonObject("founder").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()); }
+	public BungieUser getFounder() {
+		return new BungieUser(jo.getAsJsonObject("founder").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString());
+	}
 
 	/**
 	 * Returns a list of the founder and the admins of the clan
@@ -138,7 +138,10 @@ public class Clan {
 		}
 
 		if(jj == null) {
-			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
+			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").getAsJsonObject("Response");
+			if(jj == null) {
+				return null;
+			}
 		}
 
 		for(JsonElement je : jj.getAsJsonArray("results")) {

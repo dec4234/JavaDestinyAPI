@@ -1,14 +1,12 @@
 package material;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import material.clan.Clan;
 import material.user.BungieUser;
 import utils.HttpUtils;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +56,6 @@ public class DestinyAPI {
 			if (!ids.contains(bu.getBungieMembershipID())) {
 				temp.add(bu);
 				ids.add(bu.getBungieMembershipID());
-				System.out.println(bu.getBungieMembershipID());
 			}
 		}
 		return temp;
