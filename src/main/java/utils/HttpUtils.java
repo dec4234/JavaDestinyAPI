@@ -9,6 +9,7 @@ import material.manifest.ManifestEntityTypes;
 
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpConnectTimeoutException;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
@@ -26,21 +27,25 @@ public class HttpUtils {
 	private static String bearerToken = FileUtils.getInfo("access_token");
 
 	public JsonObject urlRequestGET(String url) {
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-										 .uri(URI.create(url))
-										 .timeout(Duration.ofMinutes(2))
-										 .header("X-API-KEY", apiKey)
-										 .GET()
-										 .build();
-		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
-		JsonElement parse = null;
 		try {
-			parse = new JsonParser().parse(response.get()); // Parse response to JSON
-		} catch (InterruptedException | ExecutionException e) {
+			HttpClient client = HttpClient.newHttpClient();
+			HttpRequest request = HttpRequest.newBuilder()
+											 .uri(URI.create(url))
+											 .timeout(Duration.ofMinutes(2))
+											 .header("X-API-KEY", apiKey)
+											 .GET()
+											 .build();
+			CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
+			JsonElement parse = null;
+			try {
+				parse = new JsonParser().parse(response.get()); // Parse response to JSON
+			} catch (InterruptedException | ExecutionException e) {
+				return null;
+			}
+			return parse.getAsJsonObject();
+		} catch (Exception exception) {
 			return null;
 		}
-		return parse.getAsJsonObject();
 	}
 
 	public String urlRequestGETstring(String url) {
