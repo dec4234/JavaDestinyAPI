@@ -21,6 +21,7 @@ public class BungieUser {
 	private String bungieMembershipID;
 	private String displayName;
 	private Date lastPlayed;
+	private int bungieMembershipType;
 	private JsonObject jo, je; // The JsonObject containing all data related to the user
 	private HttpUtils hu = new HttpUtils();
 
@@ -33,6 +34,12 @@ public class BungieUser {
 
 	public BungieUser(String bungieMembershipID) {
 		this.bungieMembershipID = bungieMembershipID;
+	}
+
+	public BungieUser(String bungieMembershipID, String displayName, int bungieMembershipType) {
+		this.bungieMembershipID = bungieMembershipID;
+		this.displayName = displayName;
+		this.bungieMembershipType = bungieMembershipType;
 	}
 
 	/**
