@@ -1,0 +1,27 @@
+# JavaDestinyAPI
+This is a java wrapper for the API provided by bungie to control things on the Bungie.net platform.
+The API is far from complete, and currently only handles the basics of what you might need. You can get users and clans by their names or ids and get details about them. You can also control your clan such as kicking, banning and inviting players, as long as you have set up OAuth.
+
+## Getting Started
+This project is currently not a member of any maven repository, so you have to download a jar and place it into your project. If you are using maven you should do the following:
+- Download the most recently available jar from [releases](https://github.com/dec4234/JavaDestinyAPI/releases)
+- Create a folder called lib inside of your project folder (the one in such place as eclipse-workspace)
+- Place the jar into that folder then add this maven dependency inside of your pom.xml
+This project can be currently accesed through the jitpack repository, which allows any github repo to be used as a dependency
+```
+<repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+</repository>
+```
+And then this dependency:
+```
+<dependency>
+    <groupId>com.github.dec4234</groupId>
+    <artifactId>JavaDestinyAPI</artifactId>
+    <version>1.0</version>
+    <scope>system</scope>
+    <systemPath>${basedir}/lib/JavaDestinyAPI.jar</systemPath>
+    <version>master</version>
+</dependency>
+```
