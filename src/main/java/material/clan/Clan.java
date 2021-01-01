@@ -3,8 +3,8 @@ package material.clan;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import material.user.BungieUser;
 import material.DestinyAPI;
+import material.user.BungieUser;
 import utils.HttpUtils;
 import utils.StringUtils;
 
@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 
 public class Clan {
 
@@ -40,6 +39,7 @@ public class Clan {
 	private ClanManagement clanManagement;
 	private JsonObject jso;
 	private JsonArray ja;
+	private JsonObject jj;
 
 	public Clan(long clanId) {
 		this.clanId = clanId;
@@ -54,7 +54,12 @@ public class Clan {
 		assignValues();
 	}
 
-	JsonObject jj;
+	public Clan(long clanId, String clanName) {
+		this.clanId = clanId;
+		this.clanName = clanName;
+		cjo = hu.urlRequestGET("https://www.bungie.net/platform/GroupV2/" + clanId + "/?components=200").get("Response").getAsJsonObject().get("detail").getAsJsonObject();
+		assignValues();
+	}
 
 	private void assignValues() {
 		if (clanName == null) { // If the clan object was created via ID then the clanName would be null by default
@@ -66,9 +71,8 @@ public class Clan {
 		creationDate = StringUtils.valueOfZTime(cjo.get("creationDate").getAsString());
 		memberCount = cjo.get("memberCount").getAsInt();
 		isPublic = cjo.get("isPublic").getAsBoolean();
-		motto = cjo.get("motto").getAsString();
+		// motto = cjo.get("motto").getAsString();
 		allowChat = cjo.get("allowChat").getAsBoolean();
-		// members = getMembers();
 
 	}
 

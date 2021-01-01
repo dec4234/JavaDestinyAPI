@@ -30,6 +30,9 @@ public class HttpUtils {
 	String apiKey = DestinyAPI.getApiKey();
 	private static String bearerToken = FileUtils.getInfo("access_token");
 
+	/**
+	 * Send a GET url request to the url provided, returns a JsonObject of the response
+	 */
 	public JsonObject urlRequestGET(String url) {
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
@@ -44,6 +47,7 @@ public class HttpUtils {
 			parse = new JsonParser().parse(response.get()); // Parse response to JSON
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
+			return null;
 		}
 		return parse.getAsJsonObject();
 	}

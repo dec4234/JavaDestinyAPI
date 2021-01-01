@@ -18,6 +18,7 @@ public class DestinyAPI {
 	private static String clientId = null;
 	private static String clientSecret = null;
 	private static String oauthCode = null;
+	private static String accessToken = null;
 
 	public DestinyAPI setApiKey(String apiKey) {
 		DestinyAPI.apiKey = apiKey;
@@ -39,36 +40,45 @@ public class DestinyAPI {
 		return this;
 	}
 
+	public DestinyAPI setAccessToken(String accessToken) {
+		DestinyAPI.accessToken = accessToken;
+		return this;
+	}
 
-	public BungieUser getUser(String id) { return new BungieUser(id); }
+
+	public static BungieUser getUser(String id) { return new BungieUser(id); }
 
 	/**
 	 * Gets the users with this name (There can be multiple users with the same name)
 	 */
-	public List<BungieUser> getUsersWithName(String name) {
+	public static List<BungieUser> getUsersWithName(String name) {
 		HttpUtils hu = new HttpUtils();
 		List<BungieUser> temp = new ArrayList<>();
 		List<String> ids = new ArrayList<>();
 
-		JsonObject obj = hu.urlRequestGET("https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name.replace(" ", "%20") + "/?components=204");
-		JsonArray ja = obj.getAsJsonArray("Response");
-		for (JsonElement je : ja) {
-			JsonObject us = je.getAsJsonObject();
-			BungieUser bu = new BungieUser(us.get("membershipId").getAsString());
-			if (!ids.contains(bu.getBungieMembershipID())) {
-				temp.add(bu);
-				ids.add(bu.getBungieMembershipID());
-				System.out.println(bu.getBungieMembershipID());
+		try {
+			JsonObject obj = hu.urlRequestGET("https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name.replace(" ", "%20") + "/?components=204");
+			JsonArray ja = obj.getAsJsonArray("Response");
+			for (JsonElement je : ja) {
+				JsonObject us = je.getAsJsonObject();
+				BungieUser bu = new BungieUser(us.get("membershipId").getAsString());
+				if (!ids.contains(bu.getBungieMembershipID())) {
+					temp.add(bu);
+					ids.add(bu.getBungieMembershipID());
+					System.out.println(bu.getBungieMembershipID());
+				}
 			}
+		} catch (NullPointerException exception) {
+
 		}
 		return temp;
 	}
 
-	public Clan getClan(long id) {
+	public static Clan getClan(long id) {
 		return new Clan(id);
 	}
 
-	public Clan getClan(String name) {
+	public static Clan getClan(String name) {
 		return new Clan(name);
 	}
 

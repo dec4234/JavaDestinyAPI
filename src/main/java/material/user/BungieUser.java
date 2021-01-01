@@ -7,10 +7,7 @@ import material.clan.Clan;
 import utils.HttpUtils;
 import utils.StringUtils;
 
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -142,7 +139,7 @@ public class BungieUser {
 		if (clan != null) { return characters; }
 		characters = new ArrayList<>();
 		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieMembershipID + "/?components=100").getAsJsonObject("Response").getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
-		if (ja == null) {
+		if (ja == null || ja.size() == 0) {
 			return null;
 		}
 
@@ -173,6 +170,7 @@ public class BungieUser {
 	}
 
 	public void allowClanInvites(boolean allowInvites) {
+
 	}
 
 	/**
