@@ -1,14 +1,14 @@
 package material;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import material.clan.Clan;
 import material.user.BungieUser;
 import utils.HttpUtils;
+import utils.framework.JDAOAuth;
+import utils.framework.OAuthManager;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +19,14 @@ public class DestinyAPI {
 	private static String clientSecret = null;
 	private static String oauthCode = null;
 	private static String accessToken = null;
+	private static String refreshToken = null;
+	private static OAuthManager oam = null;
 
 	public DestinyAPI setApiKey(String apiKey) {
 		DestinyAPI.apiKey = apiKey;
+		if(hasOauthManager()) {
+			setApiKey(apiKey);
+		}
 		return this;
 	}
 
@@ -42,7 +47,37 @@ public class DestinyAPI {
 
 	public DestinyAPI setAccessToken(String accessToken) {
 		DestinyAPI.accessToken = accessToken;
+		if(hasOauthManager()) {
+			setAccessToken(accessToken);
+		}
 		return this;
+	}
+
+	public DestinyAPI setRefreshToken(String refreshToken) {
+		DestinyAPI.refreshToken = refreshToken;
+		if(hasOauthManager()) {
+			setRefreshToken(refreshToken);
+		}
+		return this;
+	}
+
+	/**
+	 * Set the OAuth managment class
+	 * The class passed in this parameter must "extends OAuthManager"
+	 */
+	public DestinyAPI setOauthManaer(OAuthManager oam) {
+		DestinyAPI.oam = oam;
+		setApiKey(oam.getAPIToken());
+		setAccessToken(oam.getAccessToken());
+
+		return this;
+	}
+
+	/**
+	 * Return if the OauthManager class has been defined
+	 */
+	public static boolean hasOauthManager() {
+		return oam != null;
 	}
 
 
@@ -65,10 +100,9 @@ public class DestinyAPI {
 				if (!ids.contains(bu.getBungieMembershipID())) {
 					temp.add(bu);
 					ids.add(bu.getBungieMembershipID());
-					System.out.println(bu.getBungieMembershipID());
 				}
 			}
-		} catch (NullPointerException exception) {
+		} catch (NullPointerException ignored) {
 
 		}
 		return temp;
@@ -89,5 +123,9 @@ public class DestinyAPI {
 	public static String getClientSecret() { return clientSecret; }
 
 	public static String getOauthCode() { return oauthCode; }
+
+	public static String getAccessToken() { return accessToken; }
+
+	public static String getRefreshToken() { return refreshToken; }
 
 }

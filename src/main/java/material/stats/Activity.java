@@ -2,9 +2,9 @@ package material.stats;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import material.user.BungieUser;
 import utils.HttpUtils;
 import utils.StringUtils;
+import utils.framework.ContentFramework;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,52 +14,73 @@ import java.util.List;
  * An activity in this case is a PGCR (Post Game Carnage Report)
  * It contains data about an activity that happened like a raid or crucible match
  */
-public class Activity {
+public class Activity extends ContentFramework {
 
-	HttpUtils hu = new HttpUtils();
-	String activityId;
-	JsonObject jo;
+	private HttpUtils hu = new HttpUtils();
 
 	private Date time;
-	private String referenceId, directoryActivityHash, instanceId;
-	private int mode;
+	private String activityId, referenceId, directoryActivityHash, instanceId;
+	private int mode = -1;
+	private int[] modes;
 
 	public Activity(String activityId) {
+		super("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/" + activityId + "/");
 		this.activityId = activityId;
-		jo = hu.urlRequestGET("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/" + activityId + "/").getAsJsonObject("Response");
 	}
 
+	/**
+	 * Initialize an activity with more information which could improve load times
+	 */
+	public Activity(String activityId,  String referenceId, String directoryActivityHash, String rawDate, int mode, int[] modes) {
+		super("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/" + activityId + "/");
+		this.activityId = activityId;
+		this.referenceId = referenceId;
+		this.directoryActivityHash = directoryActivityHash;
+		this.time = StringUtils.valueOfZTime(rawDate);
+		this.mode = mode;
+		this.modes = modes;
+	}
+
+	/**
+	 * Get the date this Activity was played
+	 * @return
+	 */
 	public Date getDatePlayed() {
-		if(time != null) return time;
-		time = StringUtils.valueOfZTime(jo.get("period").getAsString());
-		return time;
+		checkJO();
+		return time == null ? time = StringUtils.valueOfZTime(jo.get("period").getAsString()) : time;
 	}
 
+	/**
+	 * Get the referenceID of this activity
+	 * @return
+	 */
 	public String getReferenceId() {
-		if(referenceId != null) return referenceId;
-		referenceId = jo.getAsJsonObject("activityDetails").get("referenceId").getAsString();
-		return referenceId;
+		checkJO();
+		return referenceId == null ? referenceId = jo.getAsJsonObject("activityDetails").get("referenceId").getAsString() : referenceId;
 	}
 
+	/**
+	 * Get the director activity hash (the type of activity played?)
+	 */
 	public String getDirectoryActivityHash() {
-		if(directoryActivityHash != null) return directoryActivityHash;
-		directoryActivityHash = jo.getAsJsonObject("activityDetails").get("directorActivityHash").getAsString();
-		return directoryActivityHash;
+		checkJO();
+		return directoryActivityHash == null ? directoryActivityHash = jo.getAsJsonObject("activityDetails").get("directorActivityHash").getAsString() : directoryActivityHash;
 	}
 
 	/**
 	 * Gets the instance id, which happens to be the same as the activityId :)
 =	 */
 	public String getInstanceId() {
-		if(instanceId != null) return instanceId;
-		instanceId = jo.get("instanceId").getAsString();
-		return instanceId;
+		checkJO();
+		return instanceId == null ? instanceId = jo.get("instanceId").getAsString() : instanceId;
 	}
 
+	/**
+	 * Get the mode number of the Activity
+	 */
 	private int getModeNumber() {
-		if(mode != 0) return mode;
-		mode = jo.getAsJsonObject("activityDetails").get("mode").getAsInt();
-		return mode;
+		checkJO();
+		return mode == -1 ? mode = jo.getAsJsonObject("activityDetails").get("mode").getAsInt() : mode;
 	}
 
 	/**
@@ -68,6 +89,7 @@ public class Activity {
 	 * https://bungie-net.github.io/multi/schema_Destiny-Definitions-DestinyActivityDefinition.html
 	 */
 	public ActivityMode getMode() {
+		checkJO();
 		for(ActivityMode am : ActivityMode.values()) {
 			if(am.getBungieValue() == getModeNumber()) {
 				return am;
@@ -76,7 +98,13 @@ public class Activity {
 		return null;
 	}
 
+	/**
+	 * Get all of the participants of this activity
+	 * @return
+	 */
 	public List<ActivityParticipant> getParticipants() {
+		checkJO();
+
 		List<ActivityParticipant> temp = new ArrayList<>();
 		for(JsonElement je : jo.get("entries").getAsJsonArray()) {
 			temp.add(new ActivityParticipant(je.getAsJsonObject()));
@@ -88,7 +116,7 @@ public class Activity {
 	 * If you need to get data not inside of this class
 	 */
 	public JsonObject getJsonObject() {
+		checkJO();
 		return jo;
 	}
-
 }

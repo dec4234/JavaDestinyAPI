@@ -27,12 +27,21 @@ public class BungieUser {
 	private ArrayList<Integer> applicableMembershipTypes = new ArrayList<>();
 
 	private List<Character> characters;
-	private int playTime = -1;
+	private int playTime, crossSaveOverride, membershipType = -1;
+	private boolean isPublic, isCrossSavePrimary, isOverriden = false;
 
 	private Clan clan;
 
 	public BungieUser(String bungieMembershipID) {
 		this.bungieMembershipID = bungieMembershipID;
+	}
+
+	public BungieUser(String bungieMembershipID, String displayName, int crossSaveOverride, int membershipType, boolean isPublic) {
+		this.bungieMembershipID = bungieMembershipID;
+		this.displayName = displayName;
+		this.crossSaveOverride = crossSaveOverride;
+		this.membershipType = membershipType;
+		this.isPublic = isPublic;
 	}
 
 	/**
@@ -63,8 +72,8 @@ public class BungieUser {
 			displayName = je.get("displayName").getAsString();
 			JsonArray array = jo.getAsJsonObject("Response").getAsJsonArray("profilesWithErrors");
 			if (array != null && array.size() != 0 && je.get("membershipType").getAsInt() != 3) {
-				for(JsonElement je : array) {
-					if(je.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == 3) {
+				for (JsonElement je : array) {
+					if (je.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == 3) {
 						checkJE();
 						displayName = je.getAsJsonObject().getAsJsonObject("infoCard").get("displayName").getAsString();
 					}
@@ -95,17 +104,17 @@ public class BungieUser {
 
 	public boolean isOverriden() {
 		checkJE();
-		return je.get("isOverridden").getAsBoolean();
+		return !isOverriden ? isOverriden = je.get("isOverridden").getAsBoolean() : isOverriden;
 	}
 
 	public boolean isCrossSavePrimary() {
 		checkJE();
-		return je.get("isCrossSavePrimary").getAsBoolean();
+		return !isCrossSavePrimary ? isCrossSavePrimary = je.get("isCrossSavePrimary").getAsBoolean() : isCrossSavePrimary;
 	}
 
 	public int getCrossSaveOverride() {
 		checkJE();
-		return je.get("crossSaveOverride").getAsInt();
+		return crossSaveOverride == -1 ? crossSaveOverride = je.get("crossSaveOverride").getAsInt() : crossSaveOverride;
 	}
 
 	public ArrayList<Integer> getApplicableMembershipTypes() {
@@ -121,7 +130,7 @@ public class BungieUser {
 
 	public boolean isPublic() {
 		checkJE();
-		return je.get("isPublic").getAsBoolean();
+		return !isPublic ? isPublic = je.get("isPublic").getAsBoolean() : isPublic;
 	}
 
 	/**
@@ -129,14 +138,14 @@ public class BungieUser {
 	 */
 	public int getMembershipType() {
 		checkJE();
-		return je.get("membershipType").getAsInt();
+		return membershipType == -1 ? membershipType = je.get("membershipType").getAsInt() : membershipType;
 	}
 
 	/**
 	 * Gets the characters that are attached to this bungieuser
 	 */
 	public List<Character> getCharacters() {
-		if (clan != null) { return characters; }
+		if (characters != null) { return characters; }
 		characters = new ArrayList<>();
 		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieMembershipID + "/?components=100").getAsJsonObject("Response").getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
 		if (ja == null || ja.size() == 0) {
@@ -169,6 +178,11 @@ public class BungieUser {
 		return clan;
 	}
 
+	/**
+	 * An oauth request as this user to allow or disallow clan invites
+	 * Not currently working
+	 */
+	@Deprecated
 	public void allowClanInvites(boolean allowInvites) {
 
 	}

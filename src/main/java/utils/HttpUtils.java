@@ -171,9 +171,12 @@ public class HttpUtils {
 			e.printStackTrace();
 		}
 		String at = parse.getAsJsonObject().get("access_token").getAsString();
-		FileUtils.setInfo("refresh_token", parse.getAsJsonObject().get("refresh_token").getAsString());
+		String rt = parse.getAsJsonObject().get("refresh_token").getAsString();
+		FileUtils.setInfo("refresh_token", rt);
 		FileUtils.setInfo("access_token", at);
 		bearerToken = at;
+		new DestinyAPI().setAccessToken(at).setRefreshToken(rt);
+
 		return parse.getAsJsonObject().get("access_token").getAsString();
 	}
 
@@ -203,6 +206,8 @@ public class HttpUtils {
 		FileUtils.setInfo("access_token", accessToken);
 		FileUtils.setInfo("refresh_token", refreshToken);
 		HttpUtils.bearerToken = FileUtils.getInfo("access_token");
+
+		new DestinyAPI().setAccessToken(accessToken).setRefreshToken(refreshToken);
 	}
 
 	public void checkFor401(String input) {
