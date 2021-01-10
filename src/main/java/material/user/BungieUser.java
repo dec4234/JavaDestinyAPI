@@ -26,8 +26,8 @@ public class BungieUser {
 
 	private ArrayList<Integer> applicableMembershipTypes = new ArrayList<>();
 
-	private List<Character> characters;
-	private int playTime, crossSaveOverride, membershipType = -1;
+	private List<Character> characters = null;
+	private int playTime = -1, crossSaveOverride = -1, membershipType = -1;
 	private boolean isPublic, isCrossSavePrimary, isOverriden = false;
 
 	private Clan clan;
