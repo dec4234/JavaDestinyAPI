@@ -68,7 +68,7 @@ public class DestinyAPI {
 	public DestinyAPI setOauthManaer(OAuthManager oam) {
 		DestinyAPI.oam = oam;
 		// setApiKey(oam.getAPIToken());
-		setAccessToken(oam.getAccessToken());
+		// setAccessToken(oam.getAccessToken());
 
 		return this;
 	}
