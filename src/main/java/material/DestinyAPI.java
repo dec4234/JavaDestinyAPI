@@ -25,7 +25,7 @@ public class DestinyAPI {
 	public DestinyAPI setApiKey(String apiKey) {
 		DestinyAPI.apiKey = apiKey;
 		if(hasOauthManager()) {
-			setApiKey(apiKey);
+			oam.setAPIToken(apiKey);
 		}
 		return this;
 	}
@@ -48,7 +48,7 @@ public class DestinyAPI {
 	public DestinyAPI setAccessToken(String accessToken) {
 		DestinyAPI.accessToken = accessToken;
 		if(hasOauthManager()) {
-			setAccessToken(accessToken);
+			oam.setAccessToken(accessToken);
 		}
 		return this;
 	}
@@ -56,7 +56,7 @@ public class DestinyAPI {
 	public DestinyAPI setRefreshToken(String refreshToken) {
 		DestinyAPI.refreshToken = refreshToken;
 		if(hasOauthManager()) {
-			setRefreshToken(refreshToken);
+			oam.setRefreshToken(refreshToken);
 		}
 		return this;
 	}
