@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 public class HttpUtils {
 
 	String apiKey = DestinyAPI.getApiKey();
-	private static String bearerToken = FileUtils.getInfo("access_token");
+	private static String bearerToken = DestinyAPI.getAccessToken();
 
 	/**
 	 * Send a GET url request to the url provided, returns a JsonObject of the response
@@ -61,7 +61,6 @@ public class HttpUtils {
 										 .GET()
 										 .build();
 		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
-		JsonElement parse = null;
 		try {
 			return response.get();
 		} catch (InterruptedException | ExecutionException e) {
@@ -153,7 +152,7 @@ public class HttpUtils {
 	public String setTokenViaRefresh() {
 		String url = "https://www.bungie.net/Platform/App/OAuth/Token/";
 
-		String requestBody = "grant_type=refresh_token&refresh_token=" + FileUtils.getInfo("refresh_token");
+		String requestBody = "grant_type=refresh_token&refresh_token=" + DestinyAPI.getRefreshToken();
 
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
@@ -172,12 +171,14 @@ public class HttpUtils {
 		}
 		String at = parse.getAsJsonObject().get("access_token").getAsString();
 		String rt = parse.getAsJsonObject().get("refresh_token").getAsString();
+		/*
 		FileUtils.setInfo("refresh_token", rt);
 		FileUtils.setInfo("access_token", at);
+		 */
 		bearerToken = at;
 		new DestinyAPI().setAccessToken(at).setRefreshToken(rt);
 
-		return parse.getAsJsonObject().get("access_token").getAsString();
+		return at;
 	}
 
 	public void setTokenViaAuth() {
@@ -202,23 +203,28 @@ public class HttpUtils {
 		}
 		String accessToken = parse.getAsJsonObject().get("access_token").getAsString();
 		String refreshToken = parse.getAsJsonObject().get("refresh_token").getAsString();
+		/*
 		FileUtils.clear();
 		FileUtils.setInfo("access_token", accessToken);
 		FileUtils.setInfo("refresh_token", refreshToken);
-		HttpUtils.bearerToken = FileUtils.getInfo("access_token");
+		 */
 
 		new DestinyAPI().setAccessToken(accessToken).setRefreshToken(refreshToken);
+
+		HttpUtils.bearerToken = accessToken;
 	}
 
-	public void checkFor401(String input) {
+	public boolean checkFor401(String input) {
 		if(input.contains("401 - Unauthorized")) {
 			try {
 				setTokenViaRefresh();
 				throw new AccessTokenInvalidException("The access token used in this OAuth request was not accepted by the server \nI've already taken the liberty of getting a new access token for you :D");
 			} catch (AccessTokenInvalidException e) {
 				e.printStackTrace();
-				System.exit(401);
+				return true;
 			}
 		}
+
+		return false;
 	}
 }

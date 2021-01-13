@@ -124,8 +124,12 @@ public class DestinyAPI {
 
 	public static String getOauthCode() { return oauthCode; }
 
-	public static String getAccessToken() { return accessToken; }
+	public static String getAccessToken() {
+		return oam.getAccessToken();
+	}
 
-	public static String getRefreshToken() { return refreshToken; }
+	public static String getRefreshToken() {
+		return oam.getRefreshToken();
+	}
 
 }
