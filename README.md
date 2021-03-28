@@ -24,7 +24,6 @@ And then this dependency:
 <dependency>
     <groupId>com.github.dec4234</groupId>
     <artifactId>JavaDestinyAPI</artifactId>
-<<<<<<< HEAD
     <version>master</version>
 </dependency>
 ```
@@ -33,11 +32,3 @@ Check out the [wiki](https://github.com/dec4234/JavaDestinyAPI/wiki/Getting-Star
 
 ## How's it made?
 There is both offical and unoffical documentation for the API available on [destinydevs.github.io](http://destinydevs.github.io/BungieNetPlatform/docs/Endpoints) and on the [offical bungie api documentation](https://bungie-net.github.io/).
-```
-<dependency>
-    <version>1.0</version>
-    <scope>system</scope>
-    <systemPath>${basedir}/lib/JavaDestinyAPI.jar</systemPath>
-    <version>master</version>
-</dependency>
-```
