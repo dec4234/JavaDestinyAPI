@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import material.clan.Clan;
 import material.user.BungieUser;
 import utils.HttpUtils;
-import utils.framework.JDAOAuth;
 import utils.framework.OAuthManager;
 
 import java.util.ArrayList;
@@ -106,6 +105,15 @@ public class DestinyAPI {
 
 		}
 		return temp;
+	}
+
+	/**
+	 * Return a list of valid bungie users with that name
+	 */
+	public static List<BungieUser> getValidUsers(String name) {
+		List<BungieUser> list = getUsersWithName(name);
+		list.removeIf(bungieUser -> !bungieUser.isValidUser());
+		return list;
 	}
 
 	public static Clan getClan(long id) {
