@@ -5,7 +5,7 @@ The API is far from complete, and currently only handles the basics of what you 
 
 ## Getting Started
 This is a java wrapper for the API provided by bungie to control things on the Bungie.net platform.
-The API is far from complete, and currently only handles the basics of what you might need. You can get users and clans by their names or ids and get details about them. You can also control your clan such as kicking, banning and inviting players, as long as you have set up OAuth.
+The API is currently capable of handling most things, such as retrieving stats, managing your clan and making simple requests. 
 
 ## Getting Started
 This project is currently not a member of any maven repository, so you have to download a jar and place it into your project. If you are using maven you should do the following:
@@ -32,3 +32,8 @@ Check out the [wiki](https://github.com/dec4234/JavaDestinyAPI/wiki/Getting-Star
 
 ## How's it made?
 There is both offical and unoffical documentation for the API available on [destinydevs.github.io](http://destinydevs.github.io/BungieNetPlatform/docs/Endpoints) and on the [offical bungie api documentation](https://bungie-net.github.io/).
+
+### TO-DO
+- Managing inventory / Item transfering
+- ASync pulls of large lists such as members of clans (Split the list into 2 or 3 parts to be ran concurrently)
+- Comprehensive Wiki / Youtube tutorials
