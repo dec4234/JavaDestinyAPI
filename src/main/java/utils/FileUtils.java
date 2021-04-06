@@ -16,6 +16,7 @@ import java.util.Properties;
  * A not so elegant solution to the problem of storing refresh tokens between uses
  * I'll change this to JSON at a later date
  */
+@Deprecated
 public class FileUtils {
 
 	private static Properties prop;
