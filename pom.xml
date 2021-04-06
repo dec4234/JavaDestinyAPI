@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+  ~ any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
+  ~ ownership of this software without the explicit permission of the author.
+  ~
+  ~ GitHub -> https://github.com/dec4234/JavaDestinyAPI
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -6,10 +14,10 @@
 
     <groupId>com.github.dec4234</groupId>
     <artifactId>JavaDestinyAPI</artifactId>
-    <version>1.0</version>
+    <version>1.2</version>
     <packaging>jar</packaging>
 
-    <name>JavaDestinyAPI-1.0</name>
+    <name>JavaDestinyAPI</name>
     <description>A Java wrapper for bungie.net platform api, allowing users to get data about the video games Destiny and Destiny 2</description>
     <url>https://github.com/dec4234/JavaDestinyAPI</url>
 
@@ -54,11 +62,6 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-legacy</artifactId>
-            <version>4.1.1</version>
         </dependency>
     </dependencies>
 

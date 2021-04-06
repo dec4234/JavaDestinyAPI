@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+ * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
+ * ownership of this software without the explicit permission of the author.
+ *
+ * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ */
+
 package utils;
 
 import com.google.gson.*;
@@ -164,10 +172,6 @@ public class HttpUtils {
 		}
 		String at = parse.getAsJsonObject().get("access_token").getAsString();
 		String rt = parse.getAsJsonObject().get("refresh_token").getAsString();
-		/*
-		FileUtils.setInfo("refresh_token", rt);
-		FileUtils.setInfo("access_token", at);
-		 */
 		bearerToken = at;
 		new DestinyAPI().setAccessToken(at).setRefreshToken(rt);
 
@@ -196,11 +200,6 @@ public class HttpUtils {
 		}
 		String accessToken = parse.getAsJsonObject().get("access_token").getAsString();
 		String refreshToken = parse.getAsJsonObject().get("refresh_token").getAsString();
-		/*
-		FileUtils.clear();
-		FileUtils.setInfo("access_token", accessToken);
-		FileUtils.setInfo("refresh_token", refreshToken);
-		 */
 
 		new DestinyAPI().setAccessToken(accessToken).setRefreshToken(refreshToken);
 

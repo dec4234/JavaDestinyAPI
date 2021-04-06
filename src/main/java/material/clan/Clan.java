@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+ * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
+ * ownership of this software without the explicit permission of the author.
+ *
+ * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ */
+
 package material.clan;
 
 import com.google.gson.JsonArray;
@@ -22,20 +30,15 @@ public class Clan {
 	private JsonObject cjo; // "detail"
 
 	private long clanId;
-	private String clanName = null;
+	private String clanName, clanDescription, motto;
 
 	// Details about the clan (more or less in the order they appear in the JSON response)
-	private String clanDescription;
 	private Date creationDate;
 	private int memberCount;
-	private boolean isPublic;
-	private String motto;
-
-	private boolean allowChat;
+	private boolean isPublic, allowChat;
 
 	private BungieUser founder;
-	private List<BungieUser> admins;
-	private List<BungieUser> members;
+	private List<BungieUser> admins, members;
 	private ClanManagement clanManagement;
 	private JsonObject jso;
 	private JsonArray ja;
@@ -50,7 +53,7 @@ public class Clan {
 	public Clan(String clanName) {
 		this.clanName = clanName;
 		jo = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/Name/" + clanName.replace(" ", "%20") + "/1/?components=200").get("Response").getAsJsonObject();
-		cjo = jo.get("detail").getAsJsonObject();
+		cjo = jo.getAsJsonObject("detail");
 		assignValues();
 	}
 
@@ -122,13 +125,13 @@ public class Clan {
 	public double getAverageInactivityAmongMembers() {
 		ArrayList<Double> averages = new ArrayList<Double>();
 		int a = 0;
-		for(BungieUser bu : this.getMembers()) {
+		for (BungieUser bu : this.getMembers()) {
 			averages.add(bu.getDaysSinceLastPlayed());
 		}
-		for(Double d : averages) {
+		for (Double d : averages) {
 			a += d;
 		}
-		return a / getMembers().size();
+		return (double) a / getMembers().size();
 	}
 
 	/**
@@ -137,15 +140,15 @@ public class Clan {
 	public List<BungieUser> getMembers() {
 		List<BungieUser> temp = new ArrayList<>();
 
-		if(members != null) {
+		if (members != null) {
 			return members;
 		}
 
-		if(jj == null) {
+		if (jj == null) {
 			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
 		}
 
-		for(JsonElement je : jj.getAsJsonArray("results")) {
+		for (JsonElement je : jj.getAsJsonArray("results")) {
 			CompletableFuture<BungieUser> cf = new CompletableFuture<>();
 
 			cf.completeAsync(() -> new BungieUser(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()));
@@ -160,9 +163,50 @@ public class Clan {
 		return temp;
 	}
 
+	/**
+	 * Experimental way to get members of a clan
+	 * Significantly faster but still in the works
+	 *
+	 * Will eventually be merged into the getMembers() function
+	 */
+	public List<BungieUser> getMembersExperimental() {
+		List<BungieUser> source = new ArrayList<>();
+		List<String> stream = new ArrayList<>();
+
+		if (members != null) {
+			return members;
+		}
+
+		if (jj == null) {
+			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
+		}
+
+		for (JsonElement jsonElement : jj.getAsJsonArray("results")) {
+			stream.add(jsonElement.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString());
+		}
+
+		if (stream.size() < 20) { // If the amount of people to be scanned is too small to benefit from
+			return getMembers();
+		}
+
+
+		int beginIndex = 0;
+		int offset = stream.size() % 10;
+		int divide = stream.size() / 10;
+
+		for (int i = 1; i < 10; i++) {
+			new MemberThread(source, stream.subList(beginIndex, i == 1 ? divide + offset : divide)).start(); // IF it is the first one, start with the offset and divide
+
+			beginIndex++;
+		}
+
+		members = source;
+		return members;
+	}
+
 	public boolean isMember(BungieUser bungieUser) {
-		for(BungieUser bungieUser1 : getMembers()) {
-			if(bungieUser1.getBungieMembershipID().equals(bungieUser.getBungieMembershipID())) {
+		for (BungieUser bungieUser1 : getMembers()) {
+			if (bungieUser1.getBungieMembershipID().equals(bungieUser.getBungieMembershipID())) {
 				return true;
 			}
 		}
@@ -171,8 +215,8 @@ public class Clan {
 	}
 
 	public boolean isMember(String bungieID) {
-		for(BungieUser bungieUser : getMembers()) {
-			if(bungieUser.getBungieMembershipID().equals(bungieID)) {
+		for (BungieUser bungieUser : getMembers()) {
+			if (bungieUser.getBungieMembershipID().equals(bungieID)) {
 				return true;
 			}
 		}
@@ -185,13 +229,13 @@ public class Clan {
 	}
 
 	public Date getJoinDate(BungieUser member) {
-		if(jj == null) {
+		if (jj == null) {
 			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
 		}
 
 		List<String> ids = new ArrayList<>();
-		for(JsonElement je : jj.getAsJsonArray("results")) {
-			if(member.getBungieMembershipID().equals(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString())) {
+		for (JsonElement je : jj.getAsJsonArray("results")) {
+			if (member.getBungieMembershipID().equals(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString())) {
 				return StringUtils.valueOfZTime(je.getAsJsonObject().get("joinDate").getAsString());
 			}
 		}
@@ -203,5 +247,19 @@ public class Clan {
 		if (clanManagement != null) { return clanManagement; }
 		clanManagement = new ClanManagement(this);
 		return clanManagement;
+	}
+
+	class MemberThread extends Thread {
+
+		public MemberThread(List<BungieUser> source, List<String> list) {
+			for (String string : list) {
+				source.add(new BungieUser(string));
+				System.out.println(string);
+			}
+		}
+
+		public void run() {
+
+		}
 	}
 }

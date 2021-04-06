@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+ * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
+ * ownership of this software without the explicit permission of the author.
+ *
+ * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ */
+
 package material.clan;
 
 import com.google.gson.JsonArray;
@@ -98,11 +106,11 @@ public class ClanManagement {
 	public List<BungieUser> getBannedMembers() {
 		if (bannedMembers != null) { return bannedMembers; }
 
-		List<BungieUser> temp = new ArrayList<BungieUser>();
+		List<BungieUser> temp = new ArrayList<>();
 
 		JsonArray jo = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Banned/?componenets=200").getAsJsonObject("Response").get("results").getAsJsonArray();
 		for (JsonElement je : jo) {
-			temp.add(new BungieUser(je.getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString()));
+			temp.add(new BungieUser(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()));
 		}
 		return temp;
 	}
@@ -115,9 +123,24 @@ public class ClanManagement {
 		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Pending/?components=200").get("Response").getAsJsonObject().get("results").getAsJsonArray();
 
 		for (JsonElement je : ja) {
-			temp.add(new BungieUser(je.getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString()));
+			temp.add(new BungieUser(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()));
 		}
 
 		return temp;
+	}
+
+	/**
+	 * Check if a BungieUser is a pending applicant without the performance overhead of creating multiple BungieUsers
+	 */
+	public boolean isPendingMember(BungieUser bungieUser) {
+		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Pending/?components=200").get("Response").getAsJsonObject().get("results").getAsJsonArray();
+
+		for(JsonElement jsonElement : ja) {
+			if(bungieUser.getBungieMembershipID().equals(jsonElement.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
