@@ -1,5 +1,5 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+ * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
  * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
  * ownership of this software without the explicit permission of the author.
  *
@@ -36,7 +36,7 @@ public class BungieUser {
 
 	private List<Character> characters = null;
 	private int playTime = -1, crossSaveOverride = -1, membershipType = -1;
-	private boolean isPublic, isCrossSavePrimary, isOverriden = false;
+	private boolean isPublic, isCrossSavePrimary, isOverridden = false;
 
 	private Clan clan;
 
@@ -110,9 +110,9 @@ public class BungieUser {
 		return (double) ChronoUnit.DAYS.between(getLastPlayed().toInstant(), new Date().toInstant());
 	}
 
-	public boolean isOverriden() {
+	public boolean isOverridden() {
 		checkJE();
-		return !isOverriden ? isOverriden = je.get("isOverridden").getAsBoolean() : isOverriden;
+		return !isOverridden ? isOverridden = je.get("isOverridden").getAsBoolean() : isOverridden;
 	}
 
 	public boolean isCrossSavePrimary() {

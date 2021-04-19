@@ -1,5 +1,5 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+ * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
  * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
  * ownership of this software without the explicit permission of the author.
  *
@@ -46,7 +46,7 @@ public class DestinyItem {
 		hasIcon = dp.get("hasIcon").getAsBoolean();
 		collectibleHash = jo.get("collectibleHash").getAsString();
 		screenshot = jo.get("screenshot").getAsString();
-		itemType = asessItemTier();
+		itemType = assessItemTier();
 	}
 
 	public String getHashID() {
@@ -82,7 +82,7 @@ public class DestinyItem {
 		return collectibleHash;
 	}
 
-	public ItemTier asessItemTier() {
+	public ItemTier assessItemTier() {
 		switch(jo.getAsJsonObject("inventory").get("tierTypeName").getAsString()) {
 			case "Common":
 				return ItemTier.COMMON;

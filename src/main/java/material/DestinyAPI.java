@@ -1,5 +1,5 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+ * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
  * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
  * ownership of this software without the explicit permission of the author.
  *
@@ -69,10 +69,10 @@ public class DestinyAPI {
 	}
 
 	/**
-	 * Set the OAuth managment class
+	 * Set the OAuth management class
 	 * The class passed in this parameter must "extends OAuthManager"
 	 */
-	public DestinyAPI setOauthManaer(OAuthManager oam) {
+	public DestinyAPI setOauthManager(OAuthManager oam) {
 		DestinyAPI.oam = oam;
 		// setApiKey(oam.getAPIToken());
 		// setAccessToken(oam.getAccessToken());
