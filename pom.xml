@@ -36,9 +36,10 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/dec4234/JavaDestinyAPI.git</connection>
-        <developerConnection>scm:git:ssh://github.com:dec4234.git</developerConnection>
-        <url>https://github.com/dec4234/JavaDestinyAPI/tree/master/JavaDestinyAPI</url>
+        <connection>scm:git:${project.scm.url}</connection>
+        <developerConnection>scm:git:${project.scm.url}</developerConnection>
+        <url>git@github.com:idhub-io/idhub-api.git</url>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
@@ -78,6 +79,14 @@
     </distributionManagement>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <configuration>
+                    <scmCommentPrefix>[ci skip]</scmCommentPrefix>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
