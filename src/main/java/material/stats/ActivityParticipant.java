@@ -1,5 +1,5 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+ * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
  * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
  * ownership of this software without the explicit permission of the author.
  *
@@ -17,7 +17,7 @@ public class ActivityParticipant {
 	private BungieUser bungieUser;
 	private String membershipId, characterId;
 	private int score, assists, deaths, kills, opponentsDefeated, activityDuration, completionReason;
-	private double kdr, kda, completed, effeciency, startSeconds, timePlayed;
+	private double kdr, kda, completed, efficiency, startSeconds, timePlayed;
 	JsonObject values;
 
 	public ActivityParticipant(JsonObject entry) {
@@ -106,12 +106,12 @@ public class ActivityParticipant {
 	}
 
 	/**
-	 * Get the effeciency of this user
+	 * Get the efficiency of this user
 	 */
-	public double getEffeciency() {
-		if(effeciency != 0) return effeciency;
-		effeciency = jo.getAsJsonObject("efficiency").getAsJsonObject("basic").get("value").getAsDouble();
-		return effeciency;
+	public double getEfficiency() {
+		if(efficiency != 0) return efficiency;
+		efficiency = jo.getAsJsonObject("efficiency").getAsJsonObject("basic").get("value").getAsDouble();
+		return efficiency;
 	}
 
 	/**

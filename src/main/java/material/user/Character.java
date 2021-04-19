@@ -1,5 +1,5 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+ * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
  * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
  * ownership of this software without the explicit permission of the author.
  *
@@ -34,7 +34,7 @@ public class Character {
 	private Race race;
 
 	private String emblemPath;
-	private String emblemBackgroungPath;
+	private String emblemBackgroundPath;
 	private String emblemHash;
 
 	private List<Activity> allActivities;
@@ -62,7 +62,7 @@ public class Character {
 		d2class = evaluateClass(jo.get("classHash").getAsString());
 
 		emblemPath = jo.get("emblemPath").getAsString();
-		emblemBackgroungPath = jo.get("emblemBackgroundPath").getAsString();
+		emblemBackgroundPath = jo.get("emblemBackgroundPath").getAsString();
 		emblemHash = jo.get("emblemHash").getAsString();
 	}
 
@@ -79,7 +79,7 @@ public class Character {
 	public Class getD2class() { return d2class; }
 
 	public String getEmblemPath() { return emblemPath; }
-	public String getEmblemBackgroungPath() { return emblemBackgroungPath; }
+	public String getEmblemBackgroundPath() { return emblemBackgroundPath; }
 	public String getEmblemHash() { return emblemHash; }
 	public JsonObject getJsonObject() { return jo; }
 

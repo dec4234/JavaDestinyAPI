@@ -1,5 +1,5 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+ * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
  * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
  * ownership of this software without the explicit permission of the author.
  *
@@ -110,7 +110,7 @@ public class Clan {
 		if (admins != null) { return admins; }
 
 		List<BungieUser> temp = new ArrayList<>();
-		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/AdminsAndFounder/?componenets=200").get("Response").getAsJsonObject().get("results").getAsJsonArray();
+		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/AdminsAndFounder/?components=200").get("Response").getAsJsonObject().get("results").getAsJsonArray();
 
 		for (JsonElement je : ja) {
 			temp.add(new BungieUser(je.getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString()));

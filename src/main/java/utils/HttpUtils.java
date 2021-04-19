@@ -1,5 +1,5 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarentees of
+ * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
  * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
  * ownership of this software without the explicit permission of the author.
  *
@@ -13,19 +13,12 @@ import exceptions.AccessTokenInvalidException;
 import material.DestinyAPI;
 import material.manifest.ManifestEntityTypes;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Base64;
-import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
