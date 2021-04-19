@@ -25,14 +25,6 @@ jobs:
           git-release-bot-name: "bot-idhub"
           git-release-bot-email: "bot@idhub.io"
 
-          docker-registry-id: registry.hub.docker.com
-          docker-registry-username: qcastel
-          docker-registry-password: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
-
           maven-args: "clean install"
           
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-          gpg-enabled: true
-          gpg-key-id: ${{ secrets.GPG_KEY_ID }}
-          gpg-key: ${{ secrets.GPG_KEY }}
