@@ -3,11 +3,9 @@ package material.stats;
 import com.google.gson.JsonObject;
 import material.user.BungieUser;
 import material.user.Character;
-import org.jetbrains.annotations.NotNull;
 import utils.HttpUtils;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 public class UserStats {
 
@@ -19,7 +17,7 @@ public class UserStats {
 	DecimalFormat df = new DecimalFormat("##.00");
 
 	private int activitiesCleared, activitiesEntered, assists, totalKillDistance, kills, deaths;
-	private double pgaAssits, pgaKills, averageKillDistance, pgaSecondsPlayed, pgaDeaths;
+	private double pgaAssists, pgaKills, averageKillDistance, pgaSecondsPlayed, pgaDeaths;
 	private long secondsPlayed;
 
 	/**
@@ -58,10 +56,10 @@ public class UserStats {
 		return assists;
 	}
 
-	public double getPgaAssits() {
-		if(pgaAssits != 0) return pgaAssits;
-		pgaAssits = getPGAPVE("assists").get("displayValue").getAsDouble();
-		return pgaAssits;
+	public double getPgaAssists() {
+		if(pgaAssists != 0) return pgaAssists;
+		pgaAssists = getPGAPVE("assists").get("displayValue").getAsDouble();
+		return pgaAssists;
 	}
 
 	public int getTotalKillDistance() {
