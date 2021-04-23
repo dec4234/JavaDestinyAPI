@@ -164,18 +164,13 @@ public class Clan {
 	}
 
 	/**
-	 * Experimental way to get members of a clan
-	 * Significantly faster but still in the works
+	 * Old getExperimental method
 	 *
-	 * Will eventually be merged into the getMembers() function
+	 * Now used as a way to get members of a clan without caching
 	 */
-	public List<BungieUser> getMembersExperimental() {
+	public List<BungieUser> getMembersNoCache() {
 		List<BungieUser> source = new ArrayList<>();
 		List<String> stream = new ArrayList<>();
-
-		if (members != null) {
-			return members;
-		}
 
 		if (jj == null) {
 			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
@@ -199,8 +194,6 @@ public class Clan {
 
 			beginIndex++;
 		}
-
-		members = source;
 		return members;
 	}
 
