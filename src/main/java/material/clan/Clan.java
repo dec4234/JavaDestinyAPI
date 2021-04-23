@@ -184,7 +184,7 @@ public class Clan {
 		}
 
 		if (stream.size() < 20) { // If the amount of people to be scanned is too small to benefit from
-			return getMembers();
+			return getMembersOld();
 		}
 
 
@@ -197,7 +197,8 @@ public class Clan {
 
 			beginIndex++;
 		}
-		return members;
+
+		return source;
 	}
 
 	public boolean isMember(BungieUser bungieUser) {
