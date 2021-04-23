@@ -187,18 +187,33 @@ public class Clan {
 			return getMembersOld();
 		}
 
+		int index = 0; // The index of the stream to start from
+		int[] list = splitIntoParts(stream.size(), 15); // A list of integers used to separate the stream
+		int listIndex = 0; // The index in the integer array we are currently on
 
-		int beginIndex = 0;
-		int offset = stream.size() % 10;
-		int divide = stream.size() / 10;
+		while(index < stream.size()) { // Until we have completely looped through the stream
+			int i = list[listIndex];
+			new MemberThread(source, stream.subList(index, index + i)).start();
 
-		for (int i = 1; i < 10; i++) {
-			new MemberThread(source, stream.subList(beginIndex, i == 1 ? divide + offset : divide)).start(); // IF it is the first one, start with the offset and divide
+			index += i;
 
-			beginIndex++;
+			listIndex++;
 		}
 
 		return source;
+	}
+
+	private int[] splitIntoParts(int whole, int parts) {
+		int[] arr = new int[parts];
+		int remain = whole;
+		int partsLeft = parts;
+		for (int i = 0; partsLeft > 0; i++) {
+			int size = (remain + partsLeft - 1) / partsLeft; // rounded up, aka ceiling
+			arr[i] = size;
+			remain -= size;
+			partsLeft--;
+		}
+		return arr;
 	}
 
 	public boolean isMember(BungieUser bungieUser) {
@@ -251,7 +266,6 @@ public class Clan {
 		public MemberThread(List<BungieUser> source, List<String> list) {
 			for (String string : list) {
 				source.add(new BungieUser(string));
-				System.out.println(string);
 			}
 		}
 
