@@ -136,8 +136,10 @@ public class Clan {
 
 	/**
 	 * Returns a list of all members of the clan
+	 * Now deprecated in favor of getMembers()
 	 */
-	public List<BungieUser> getMembers() {
+	@Deprecated
+	public List<BungieUser> getMembersOld() {
 		List<BungieUser> temp = new ArrayList<>();
 
 		if (members != null) {
@@ -166,9 +168,10 @@ public class Clan {
 	/**
 	 * Old getExperimental method
 	 *
-	 * Now used as a way to get members of a clan without caching
+	 * Does not cache valus anymore, now the developer is responsible for that
+	 * Should be faster than before
 	 */
-	public List<BungieUser> getMembersNoCache() {
+	public List<BungieUser> getMembers() {
 		List<BungieUser> source = new ArrayList<>();
 		List<String> stream = new ArrayList<>();
 
