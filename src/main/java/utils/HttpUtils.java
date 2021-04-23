@@ -71,6 +71,8 @@ public class HttpUtils {
 	}
 
 	public JsonObject urlRequestGETOauth(String url) {
+		setTokenViaRefresh();
+
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(url))
@@ -110,6 +112,8 @@ public class HttpUtils {
 	}
 
 	public String urlRequestPOSTOauth(String url, String body) {
+		setTokenViaRefresh();
+
 		if(body.isEmpty()) body = "{\"message\": \"\",}";
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
