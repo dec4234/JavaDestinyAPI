@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 public class HttpUtils {
 
 	String apiKey = DestinyAPI.getApiKey();
-	private static String bearerToken = DestinyAPI.getAccessToken();
+	private static String bearerToken;
 
 	/**
 	 * Send a GET url request to the url provided, returns a JsonObject of the response
