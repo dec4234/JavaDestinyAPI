@@ -8,11 +8,7 @@ This is a java wrapper for the API provided by bungie to control things on the B
 The API is currently capable of handling most things, such as retrieving stats, managing your clan and making simple requests. 
 
 ## Getting Started
-This project is currently not a member of any maven repository, so you have to download a jar and place it into your project. If you are using maven you should do the following:
-- Download the most recently available jar from [releases](https://github.com/dec4234/JavaDestinyAPI/releases)
-- Create a folder called lib inside of your project folder (the one in such place as eclipse-workspace)
-- Place the jar into that folder then add this maven dependency inside of your pom.xml
-This project can be currently accesed through the jitpack repository, which allows any github repo to be used as a dependency
+This project can be currently accessed through the jitpack repository, which allows any github repo to be used as a dependency
 ```
 <repository>
     <id>jitpack.io</id>
@@ -28,12 +24,14 @@ And then this dependency:
 </dependency>
 ```
 
+If you happen to need a JAR version, check out [releases](https://github.com/dec4234/JavaDestinyAPI/releases).
+
 Check out the [wiki](https://github.com/dec4234/JavaDestinyAPI/wiki/Getting-Started) for more specific examples and information.
 
 ## How's it made?
-There is both offical and unoffical documentation for the API available on [destinydevs.github.io](http://destinydevs.github.io/BungieNetPlatform/docs/Endpoints) and on the [offical bungie api documentation](https://bungie-net.github.io/).
+There is both official and unofficial documentation for the API available on [destinydevs.github.io](http://destinydevs.github.io/BungieNetPlatform/docs/Endpoints) and on the [offical bungie api documentation](https://bungie-net.github.io/).
 
 ### TO-DO
-- Managing inventory / Item transfering
+- Managing inventory / Item transferring
 - ASync pulls of large lists such as members of clans (Split the list into 2 or 3 parts to be ran concurrently)
 - Comprehensive Wiki / Youtube tutorials
