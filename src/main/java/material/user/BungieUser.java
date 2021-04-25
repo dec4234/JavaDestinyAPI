@@ -34,7 +34,7 @@ public class BungieUser {
 
 	private ArrayList<Integer> applicableMembershipTypes = new ArrayList<>();
 
-	private List<Character> characters = null;
+	private List<DestinyCharacter> destinyCharacters = null;
 	private int playTime = -1, crossSaveOverride = -1, membershipType = -1;
 	private boolean isPublic, isCrossSavePrimary, isOverridden = false;
 
@@ -152,24 +152,24 @@ public class BungieUser {
 	/**
 	 * Gets the characters that are attached to this bungieuser
 	 */
-	public List<Character> getCharacters() {
-		if (characters != null) { return characters; }
-		characters = new ArrayList<>();
+	public List<DestinyCharacter> getCharacters() {
+		if (destinyCharacters != null) { return destinyCharacters; }
+		destinyCharacters = new ArrayList<>();
 		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieMembershipID + "/?components=100").getAsJsonObject("Response").getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
 		if (ja == null || ja.size() == 0) {
 			return null;
 		}
 
 		for (JsonElement je : ja) {
-			characters.add(new Character(this, je.getAsString()));
+			destinyCharacters.add(new DestinyCharacter(this, je.getAsString()));
 		}
 
-		return characters;
+		return destinyCharacters;
 	}
 
 	public int getTimePlayed() {
 		if (playTime != -1) { return playTime; }
-		for (Character c : getCharacters()) {
+		for (DestinyCharacter c : getCharacters()) {
 			playTime += Integer.parseInt(c.getMinutesPlayedTotal());
 		}
 		return playTime;

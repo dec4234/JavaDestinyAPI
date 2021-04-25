@@ -44,8 +44,13 @@ public class DestinyItem {
 		description = dp.get("description").getAsString();
 		icon = dp.get("icon").getAsString();
 		hasIcon = dp.get("hasIcon").getAsBoolean();
-		collectibleHash = jo.get("collectibleHash").getAsString();
-		screenshot = jo.get("screenshot").getAsString();
+		if(jo.has("collectibleHash")) {
+			collectibleHash = jo.get("collectibleHash").getAsString();
+		}
+
+		if(jo.has("screenshot")) {
+			screenshot = jo.get("screenshot").getAsString();
+		}
 		itemType = assessItemTier();
 	}
 

@@ -8,8 +8,10 @@
 
 package material.user;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import material.inventory.DestinyItem;
 import material.manifest.ManifestEntityTypes;
 import material.stats.Activity;
 import utils.HttpUtils;
@@ -19,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Character {
+public class DestinyCharacter {
 
 	private String membershipID;
 	private String characterID;
@@ -30,7 +32,7 @@ public class Character {
 	private String membershipType;
 
 	private Gender gender;
-	private Class d2class;
+	private DestinyClass d2class;
 	private Race race;
 
 	private String emblemPath;
@@ -42,7 +44,7 @@ public class Character {
 	HttpUtils hu = new HttpUtils();
 	private JsonObject jo;
 
-	public Character(BungieUser bungieUser, String characterID) {
+	public DestinyCharacter(BungieUser bungieUser, String characterID) {
 		this.characterID = characterID;
 		jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Profile/" + bungieUser.getBungieMembershipID() + "/Character/" + characterID + "/?components=200").getAsJsonObject("Response").getAsJsonObject("character").getAsJsonObject("data");
 		assignValues();
@@ -76,12 +78,25 @@ public class Character {
 
 	public Race getRace() { return race; }
 	public Gender getGender() { return gender; }
-	public Class getD2class() { return d2class; }
+	public DestinyClass getD2class() { return d2class; }
 
 	public String getEmblemPath() { return emblemPath; }
 	public String getEmblemBackgroundPath() { return emblemBackgroundPath; }
 	public String getEmblemHash() { return emblemHash; }
 	public JsonObject getJsonObject() { return jo; }
+
+	public List<DestinyItem> getEquippedItems() {
+		JsonArray jsonArray = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + membershipID + "/Character/"
+				+ getCharacterID() + "/?components=205").getAsJsonObject("Response").getAsJsonObject("equipment").getAsJsonObject("data").getAsJsonArray("items");
+
+		List<DestinyItem> destinyItems = new ArrayList<>();
+
+		for(JsonElement jsonElement : jsonArray) {
+			destinyItems.add(new DestinyItem(jsonElement.getAsJsonObject().get("itemHash").getAsString()));
+		}
+
+		return destinyItems;
+	}
 
 	/**
 	 * A very resource intensive task, use at your own risk
@@ -108,15 +123,15 @@ public class Character {
 		return null;
 	}
 
-	private Class evaluateClass(String classHash) {
+	private DestinyClass evaluateClass(String classHash) {
 		JsonObject jj = hu.manifestGET(ManifestEntityTypes.CLASS, classHash).getAsJsonObject("Response");
 		switch(jj.getAsJsonObject("displayProperties").get("name").getAsString()) {
 			case "Warlock":
-				return Class.WARLOCK;
+				return DestinyClass.WARLOCK;
 			case "Titan":
-				return Class.TITAN;
+				return DestinyClass.TITAN;
 			case "Hunter":
-				return Class.HUNTER;
+				return DestinyClass.HUNTER;
 		}
 		return null;
 	}
@@ -146,13 +161,13 @@ public class Character {
 
 	}
 
-	public enum Class {
+	public enum DestinyClass {
 		HUNTER("Hunter"),
 		TITAN("Titan"),
 		WARLOCK("Warlock");
 
 		private String value;
-		private Class(String value) {
+		private DestinyClass(String value) {
 			this.value = value;
 		}
 		public String getValue() { return value; }

@@ -10,7 +10,7 @@ package material.stats;
 
 import com.google.gson.JsonObject;
 import material.user.BungieUser;
-import material.user.Character;
+import material.user.DestinyCharacter;
 import utils.HttpUtils;
 
 import java.text.DecimalFormat;
@@ -19,7 +19,7 @@ public class UserStats {
 
 	HttpUtils hu = new HttpUtils();
 	BungieUser bungieUser;
-	Character character;
+	DestinyCharacter destinyCharacter;
 	JsonObject jo;
 	JsonObject allPve;
 	DecimalFormat df = new DecimalFormat("##.00");
@@ -40,9 +40,9 @@ public class UserStats {
 	/**
 	 * Gets stats for this user's specific character
 	 */
-	public UserStats(BungieUser bungieUser, Character character) {
+	public UserStats(BungieUser bungieUser, DestinyCharacter destinyCharacter) {
 		this.bungieUser = bungieUser;
-		jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getBungieMembershipID() + "/Character/" + character.getCharacterID() + "/Stats/").getAsJsonObject("Response");
+		jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getBungieMembershipID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/").getAsJsonObject("Response");
 		allPve = jo.getAsJsonObject("allPvE").getAsJsonObject("allTime");
 	}
 
