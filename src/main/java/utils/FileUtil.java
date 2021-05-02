@@ -17,7 +17,7 @@ import java.util.Properties;
  * I'll change this to JSON at a later date
  */
 @Deprecated
-public class FileUtils {
+public class FileUtil {
 
 	private static Properties prop;
 	private static OutputStream output;

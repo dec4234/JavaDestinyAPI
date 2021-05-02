@@ -103,7 +103,7 @@ public class DestinyItem {
 		return null;
 	}
 
-	enum ItemTier {
+	public enum ItemTier {
 		COMMON,
 		UNCOMMON,
 		RARE,
