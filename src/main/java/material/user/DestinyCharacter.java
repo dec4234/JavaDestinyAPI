@@ -16,82 +16,127 @@ import material.manifest.ManifestEntityTypes;
 import material.stats.Activity;
 import utils.HttpUtils;
 import utils.StringUtils;
+import utils.framework.ContentFramework;
+import utils.framework.ContentInterface;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class DestinyCharacter {
+public class DestinyCharacter extends ContentFramework {
 
-	private String membershipID;
+	private BungieUser bungieUser;
+
 	private String characterID;
 	private Date lastPlayed;
-	private String minutesPlayedThisSession;
-	private String minutesPlayedTotal;
-	private String lightLevel;
-	private String membershipType;
+	private int minutesPlayedThisSession, minutesPlayedTotal, lightLevel = -1;
 
 	private Gender gender;
 	private DestinyClass d2class;
 	private Race race;
 
-	private String emblemPath;
-	private String emblemBackgroundPath;
-	private String emblemHash;
+	private String emblemPath, emblemBackgroundPath, emblemHash;
 
 	private List<Activity> allActivities;
 
 	HttpUtils hu = new HttpUtils();
-	private JsonObject jo;
 
 	public DestinyCharacter(BungieUser bungieUser, String characterID) {
+		super("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Profile/" + bungieUser.getBungieMembershipID() + "/Character/" + characterID + "/?components=200",
+			  source -> source.getAsJsonObject("Response").getAsJsonObject("character").getAsJsonObject("data"));
 		this.characterID = characterID;
-		jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Profile/" + bungieUser.getBungieMembershipID() + "/Character/" + characterID + "/?components=200").getAsJsonObject("Response").getAsJsonObject("character").getAsJsonObject("data");
-		assignValues();
+		this.bungieUser = bungieUser;
 	}
 
-	private void assignValues() {
-		membershipID = jo.get("membershipId").getAsString();
-		membershipType = jo.get("membershipType").getAsString();
-		characterID = jo.get("characterId").getAsString();
-		lastPlayed = StringUtils.valueOfZTime(jo.get("dateLastPlayed").getAsString());
-		minutesPlayedThisSession = jo.get("minutesPlayedThisSession").getAsString();
-		minutesPlayedTotal = jo.get("minutesPlayedTotal").getAsString();
-		lightLevel = jo.get("light").getAsString();
-
-		race = evaluateRace(jo.get("raceHash").getAsString());
-		gender = evaluateGender(jo.get("genderHash").getAsString());
-		d2class = evaluateClass(jo.get("classHash").getAsString());
-
-		emblemPath = jo.get("emblemPath").getAsString();
-		emblemBackgroundPath = jo.get("emblemBackgroundPath").getAsString();
-		emblemHash = jo.get("emblemHash").getAsString();
+	public String getMembershipID() {
+		return bungieUser.getBungieMembershipID();
 	}
 
-	public String getMembershipID() { return membershipID; }
-	public String getMembershipType() { return membershipType; }
+	public int getMembershipType() {
+		return bungieUser.getMembershipType();
+	}
+
 	public String getCharacterID() { return characterID; }
-	public Date getLastPlayed() { return lastPlayed; }
-	public String getMinutesPlayedThisSession() { return minutesPlayedThisSession; }
-	public String getMinutesPlayedTotal() { return minutesPlayedTotal; }
-	public String getLightLevel() { return lightLevel; }
 
-	public Race getRace() { return race; }
-	public Gender getGender() { return gender; }
-	public DestinyClass getD2class() { return d2class; }
+	public Date getLastPlayed() {
+		if (lastPlayed == null) {
+			lastPlayed = StringUtils.valueOfZTime(getJO().get("dateLastPlayed").getAsString());
+		}
+		return lastPlayed;
+	}
 
-	public String getEmblemPath() { return emblemPath; }
-	public String getEmblemBackgroundPath() { return emblemBackgroundPath; }
-	public String getEmblemHash() { return emblemHash; }
-	public JsonObject getJsonObject() { return jo; }
+	public int getMinutesPlayedThisSession() {
+		if (minutesPlayedThisSession == -1) {
+			minutesPlayedThisSession = getJO().get("minutesPlayedThisSession").getAsInt();
+		}
+		return minutesPlayedThisSession;
+	}
+
+	public int getMinutesPlayedTotal() {
+		if (minutesPlayedTotal == -1) {
+			minutesPlayedTotal = getJO().get("minutesPlayedTotal").getAsInt();
+		}
+		return minutesPlayedTotal;
+	}
+
+	public int getLightLevel() {
+		if (lightLevel == -1) {
+			lightLevel = getJO().get("light").getAsInt();
+		}
+		return lightLevel;
+	}
+
+	public Race getRace() {
+		if (race == null) {
+			race = evaluateRace(getJO().get("raceHash").getAsString());
+		}
+		return race;
+	}
+
+	public Gender getGender() {
+		if (gender == null) {
+			gender = evaluateGender(getJO().get("genderHash").getAsString());
+		}
+		return gender;
+	}
+
+	public DestinyClass getD2class() {
+		if (d2class == null) {
+			d2class = evaluateClass(getJO().get("classHash").getAsString());
+		}
+		return d2class;
+	}
+
+	public String getEmblemPath() {
+		if (emblemPath == null) {
+			emblemPath = getJO().get("emblemPath").getAsString();
+		}
+		return emblemPath;
+	}
+
+	public String getEmblemBackgroundPath() {
+		if (emblemBackgroundPath == null) {
+			emblemBackgroundPath = getJO().get("emblemBackgroundPath").getAsString();
+		}
+		return emblemBackgroundPath;
+	}
+
+	public String getEmblemHash() {
+		if (emblemHash == null) {
+			emblemHash = getJO().get("emblemHash").getAsString();
+		}
+		return emblemHash;
+	}
+
+	public JsonObject getJsonObject() { return getJO(); }
 
 	public List<DestinyItem> getEquippedItems() {
-		JsonArray jsonArray = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + membershipID + "/Character/"
-				+ getCharacterID() + "/?components=205").getAsJsonObject("Response").getAsJsonObject("equipment").getAsJsonObject("data").getAsJsonArray("items");
+		JsonArray jsonArray = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getBungieMembershipID() + "/Character/"
+																	+ getCharacterID() + "/?components=205").getAsJsonObject("Response").getAsJsonObject("equipment").getAsJsonObject("data").getAsJsonArray("items");
 
 		List<DestinyItem> destinyItems = new ArrayList<>();
 
-		for(JsonElement jsonElement : jsonArray) {
+		for (JsonElement jsonElement : jsonArray) {
 			destinyItems.add(new DestinyItem(jsonElement.getAsJsonObject().get("itemHash").getAsString()));
 		}
 
@@ -101,12 +146,13 @@ public class DestinyCharacter {
 	/**
 	 * A very resource intensive task, use at your own risk
 	 * Needs work because not all activities return the same JSON info
-=	 */
+	 * =
+	 */
 	public List<Activity> getAllActivities() {
-		if(allActivities != null) return allActivities;
+		if (allActivities != null) { return allActivities; }
 		allActivities = new ArrayList<>();
 		JsonObject jj = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Account/" + getMembershipID() + "/Character/" + getCharacterID() + "/Stats/AggregateActivityStats/");
-		for(JsonElement je : jj.getAsJsonObject("Response").getAsJsonArray("activities")) {
+		for (JsonElement je : jj.getAsJsonObject("Response").getAsJsonArray("activities")) {
 			allActivities.add(new Activity(je.getAsJsonObject().getAsJsonObject("values").getAsJsonObject("fastestCompletionMsForActivity").get("activityId").getAsString()));
 		}
 		return allActivities;
@@ -114,7 +160,7 @@ public class DestinyCharacter {
 
 	private Gender evaluateGender(String genderHash) {
 		JsonObject jj = hu.manifestGET(ManifestEntityTypes.GENDER, genderHash).getAsJsonObject("Response");
-		switch(jj.get("genderType").getAsString()) {
+		switch (jj.get("genderType").getAsString()) {
 			case "0":
 				return Gender.MALE;
 			case "1":
@@ -125,7 +171,7 @@ public class DestinyCharacter {
 
 	private DestinyClass evaluateClass(String classHash) {
 		JsonObject jj = hu.manifestGET(ManifestEntityTypes.CLASS, classHash).getAsJsonObject("Response");
-		switch(jj.getAsJsonObject("displayProperties").get("name").getAsString()) {
+		switch (jj.getAsJsonObject("displayProperties").get("name").getAsString()) {
 			case "Warlock":
 				return DestinyClass.WARLOCK;
 			case "Titan":
@@ -138,7 +184,7 @@ public class DestinyCharacter {
 
 	private Race evaluateRace(String raceHash) {
 		JsonObject jj = hu.manifestGET(ManifestEntityTypes.RACE, raceHash).getAsJsonObject("Response");
-		switch(jj.getAsJsonObject("displayProperties").get("name").getAsString()) {
+		switch (jj.getAsJsonObject("displayProperties").get("name").getAsString()) {
 			case "Exo":
 				return Race.EXO;
 			case "Awoken":
@@ -154,9 +200,11 @@ public class DestinyCharacter {
 		FEMALE("Female");
 
 		private String value;
+
 		private Gender(String value) {
 			this.value = value;
 		}
+
 		public String getValue() { return value; }
 
 	}
@@ -167,9 +215,11 @@ public class DestinyCharacter {
 		WARLOCK("Warlock");
 
 		private String value;
+
 		private DestinyClass(String value) {
 			this.value = value;
 		}
+
 		public String getValue() { return value; }
 	}
 
@@ -179,9 +229,11 @@ public class DestinyCharacter {
 		HUMAN("Human");
 
 		private String value;
+
 		private Race(String value) {
 			this.value = value;
 		}
+
 		public String getValue() { return value; }
 	}
 }

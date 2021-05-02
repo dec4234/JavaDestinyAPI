@@ -11,19 +11,29 @@ package utils.framework;
 import com.google.gson.JsonObject;
 import utils.HttpUtils;
 
+/**
+ * Used as a standard framework for most stuff that bases its content off of a single request
+ */
 public class ContentFramework implements ContentInterface {
 
 	private String url;
-	protected JsonObject jo = null;
+	private JsonObject jo = null;
+	private JsonObjectModifier jsonObjectModifier;
 
-	public ContentFramework(String url) {
+	public ContentFramework(String url, JsonObjectModifier jsonObjectModifier) {
 		this.url = url;
+		this.jsonObjectModifier = jsonObjectModifier;
 	}
 
 	@Override
 	public void checkJO() {
 		if(jo == null) {
-			jo = new HttpUtils().urlRequestGET(url).getAsJsonObject("Response");
+			jo = jsonObjectModifier.modify(new HttpUtils().urlRequestGET(url));
 		}
+	}
+
+	public JsonObject getJO() {
+		checkJO();
+		return jo;
 	}
 }

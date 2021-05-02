@@ -32,7 +32,9 @@ public class Activity extends ContentFramework {
 	private int[] modes;
 
 	public Activity(String activityId) {
-		super("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/" + activityId + "/");
+		super("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/" + activityId + "/", source -> {
+			return source.getAsJsonObject("Response");
+		});
 		this.activityId = activityId;
 	}
 
@@ -40,7 +42,9 @@ public class Activity extends ContentFramework {
 	 * Initialize an activity with more information which could improve load times
 	 */
 	public Activity(String activityId,  String referenceId, String directoryActivityHash, String rawDate, int mode, int[] modes) {
-		super("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/" + activityId + "/");
+		super("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/" + activityId + "/", source -> {
+			return source.getAsJsonObject("Response");
+		});
 		this.activityId = activityId;
 		this.referenceId = referenceId;
 		this.directoryActivityHash = directoryActivityHash;
@@ -55,7 +59,7 @@ public class Activity extends ContentFramework {
 	 */
 	public Date getDatePlayed() {
 		checkJO();
-		return time == null ? time = StringUtils.valueOfZTime(jo.get("period").getAsString()) : time;
+		return time == null ? time = StringUtils.valueOfZTime(getJO().get("period").getAsString()) : time;
 	}
 
 	/**
@@ -64,7 +68,7 @@ public class Activity extends ContentFramework {
 	 */
 	public String getReferenceId() {
 		checkJO();
-		return referenceId == null ? referenceId = jo.getAsJsonObject("activityDetails").get("referenceId").getAsString() : referenceId;
+		return referenceId == null ? referenceId = getJO().getAsJsonObject("activityDetails").get("referenceId").getAsString() : referenceId;
 	}
 
 	/**
@@ -72,7 +76,7 @@ public class Activity extends ContentFramework {
 	 */
 	public String getDirectoryActivityHash() {
 		checkJO();
-		return directoryActivityHash == null ? directoryActivityHash = jo.getAsJsonObject("activityDetails").get("directorActivityHash").getAsString() : directoryActivityHash;
+		return directoryActivityHash == null ? directoryActivityHash = getJO().getAsJsonObject("activityDetails").get("directorActivityHash").getAsString() : directoryActivityHash;
 	}
 
 	/**
@@ -80,7 +84,7 @@ public class Activity extends ContentFramework {
 =	 */
 	public String getInstanceId() {
 		checkJO();
-		return instanceId == null ? instanceId = jo.get("instanceId").getAsString() : instanceId;
+		return instanceId == null ? instanceId = getJO().get("instanceId").getAsString() : instanceId;
 	}
 
 	/**
@@ -88,7 +92,7 @@ public class Activity extends ContentFramework {
 	 */
 	private int getModeNumber() {
 		checkJO();
-		return mode == -1 ? mode = jo.getAsJsonObject("activityDetails").get("mode").getAsInt() : mode;
+		return mode == -1 ? mode = getJO().getAsJsonObject("activityDetails").get("mode").getAsInt() : mode;
 	}
 
 	/**
@@ -114,7 +118,7 @@ public class Activity extends ContentFramework {
 		checkJO();
 
 		List<ActivityParticipant> temp = new ArrayList<>();
-		for(JsonElement je : jo.get("entries").getAsJsonArray()) {
+		for(JsonElement je : getJO().get("entries").getAsJsonArray()) {
 			temp.add(new ActivityParticipant(je.getAsJsonObject()));
 		}
 		return temp;
@@ -125,6 +129,6 @@ public class Activity extends ContentFramework {
 	 */
 	public JsonObject getJsonObject() {
 		checkJO();
-		return jo;
+		return getJO();
 	}
 }
