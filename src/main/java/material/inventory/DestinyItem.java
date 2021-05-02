@@ -8,53 +8,47 @@
 
 package material.inventory;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import material.manifest.ManifestEntityTypes;
 import utils.HttpUtils;
+import utils.framework.ContentInterface;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Destiny Inventory Item such as any weapon or armor piece
  */
-public class DestinyItem {
+public class DestinyItem implements ContentInterface {
 
 	HttpUtils hu = new HttpUtils();
 
-	private String hashID;
-	private String name;
-	private String icon;
-	private String description;
+	private String hashID, name, icon, description;
 	private boolean hasIcon;
-	private String collectibleHash;
-	private String screenshot;
-	private ItemTier itemType;
+	private String collectibleHash, screenshot;
+	private ItemTier itemTier;
 
 	private ItemTier tier;
 
-	private JsonObject jo;
+	private JsonObject jo, dp;
 
 	public DestinyItem(String hashID) {
 		this.hashID = hashID;
-		jo = hu.manifestGET(ManifestEntityTypes.INVENTORYITEM, hashID).getAsJsonObject("Response");
-		assignValues();
 	}
 
-	private void assignValues() {
-		JsonObject dp = jo.getAsJsonObject("displayProperties");
-		name = dp.get("name").getAsString();
-		description = dp.get("description").getAsString();
-		icon = dp.get("icon").getAsString();
-		hasIcon = dp.get("hasIcon").getAsBoolean();
-		if(jo.has("collectibleHash")) {
-			collectibleHash = jo.get("collectibleHash").getAsString();
-		}
-
-		if(jo.has("screenshot")) {
-			screenshot = jo.get("screenshot").getAsString();
-		}
-		itemType = assessItemTier();
+	public DestinyItem(String hashID, String name, String icon, boolean hasIcon) {
+		this.hashID = hashID;
+		this.name = name;
+		this.icon = icon;
+		this.hasIcon = hasIcon;
 	}
 
 	public String getHashID() {
+		if(hashID == null) {
+			checkJO();
+			hashID = jo.get("hash").getAsString();
+		}
 		return hashID;
 	}
 
@@ -62,6 +56,10 @@ public class DestinyItem {
 	 * Gets the name of the item
 	 */
 	public String getName() {
+		if(name == null) {
+			checkDP();
+			name = dp.get("name").getAsString();
+		}
 		return name;
 	}
 
@@ -69,6 +67,10 @@ public class DestinyItem {
 	 * Plug this after https://www.bungie.net/ in a browser
 	 */
 	public String getIcon() {
+		if(icon == null) {
+			checkDP();
+			icon = dp.get("icon").getAsString();
+		}
 		return icon;
 	}
 
@@ -76,18 +78,44 @@ public class DestinyItem {
 	 * Gets the lore descriptions associated with this item
 	 */
 	public String getDescription() {
+		if(description == null) {
+			checkDP();
+			description = dp.get("description").getAsString();
+		}
 		return description;
 	}
 
 	public boolean hasIcon() {
+		checkDP();
+		hasIcon = dp.get("hasIcon").getAsBoolean();
 		return hasIcon;
 	}
 
 	public String getCollectibleHash() {
+		if(jo.has("collectibleHash")) {
+			collectibleHash = jo.get("collectibleHash").getAsString();
+		}
+
 		return collectibleHash;
 	}
 
+	public String getScreenshot() {
+		if(jo.has("screenshot") && screenshot == null) {
+			screenshot = jo.get("screenshot").getAsString();
+		}
+
+		return screenshot;
+	}
+
+	public ItemTier getItemTier() {
+		if(itemTier == null) {
+			itemTier = assessItemTier();
+		}
+		return itemTier;
+	}
+
 	public ItemTier assessItemTier() {
+		checkJO();
 		switch(jo.getAsJsonObject("inventory").get("tierTypeName").getAsString()) {
 			case "Common":
 				return ItemTier.COMMON;
@@ -103,11 +131,41 @@ public class DestinyItem {
 		return null;
 	}
 
+	@Override
+	public void checkJO() {
+		if(jo == null) {
+			jo = hu.manifestGET(ManifestEntityTypes.INVENTORYITEM, hashID).getAsJsonObject("Response");
+		}
+	}
+
+	public void checkDP() {
+		if(dp == null) {
+			checkJO();
+			dp = jo.getAsJsonObject("displayProperties");
+		}
+	}
+
 	public enum ItemTier {
 		COMMON,
 		UNCOMMON,
 		RARE,
 		LEGENDARY,
 		EXOTIC;
+	}
+
+	/**
+	 * Return a list of all items that contain or match the name provided
+	 */
+	public static List<DestinyItem> searchForItems(String itemName) {
+		HttpUtils httpUtils = new HttpUtils();
+		List<DestinyItem> destinyItemList = new ArrayList<>();
+
+		for(JsonElement jsonElement : httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/Armory/Search/DestinyInventoryItemDefinition/" + itemName + "/").getAsJsonObject("Response").getAsJsonObject("results").getAsJsonArray("results")) {
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
+			JsonObject displayProperties = jsonObject.getAsJsonObject("displayProperties");
+			destinyItemList.add(new DestinyItem(jsonObject.get("hash").getAsString(), displayProperties.get("name").getAsString(),
+												displayProperties.get("icon").getAsString(), displayProperties.get("hasIcon").getAsBoolean()));
+		}
+		return destinyItemList;
 	}
 }

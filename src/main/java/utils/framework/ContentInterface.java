@@ -8,8 +8,6 @@
 
 package utils.framework;
 
-import com.google.gson.JsonObject;
-
 public interface ContentInterface {
 
 	/**
