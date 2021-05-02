@@ -12,6 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import material.DestinyAPI;
+import material.stats.ActivityMode;
 import material.user.BungieUser;
 import utils.HttpUtils;
 import utils.StringUtils;
@@ -216,14 +217,11 @@ public class Clan {
 		return arr;
 	}
 
+	/**
+	 * Returns if this BungieUser is a member of the clan
+	 */
 	public boolean isMember(BungieUser bungieUser) {
-		for (BungieUser bungieUser1 : getMembers()) {
-			if (bungieUser1.getBungieMembershipID().equals(bungieUser.getBungieMembershipID())) {
-				return true;
-			}
-		}
-
-		return false;
+		return  isMember(bungieUser.getBungieMembershipID());
 	}
 
 	public boolean isMember(String bungieID) {
@@ -236,10 +234,23 @@ public class Clan {
 		return false;
 	}
 
-	public JsonObject getClanStats() {
-		return hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/Stats/AggregateClanStats/" + getClanID() + "/?modes=4");
+	/**
+	 * Retrieve a JsonObject depicting the top stats of the clna
+	 * Unfortunately does not say who has those top stats
+	 */
+	public JsonObject getClanStats(ActivityMode... filter) {
+		String queryString = "/?modes=";
+		for(ActivityMode activityMode : filter) {
+			queryString = queryString.concat(activityMode.getBungieValue() + ",");
+		}
+		queryString = queryString.substring(0, queryString.length() - 2); // Remove the last comma
+
+		return hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/Stats/AggregateClanStats/" + getClanID() + queryString);
 	}
 
+	/**
+	 * Get the date that this user joined the clan
+	 */
 	public Date getJoinDate(BungieUser member) {
 		if (jj == null) {
 			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
@@ -255,6 +266,9 @@ public class Clan {
 		return null; // Return null if there were no matching users found
 	}
 
+	/**
+	 * Get the management class for this clan
+	 */
 	public ClanManagement getClanManagement() {
 		if (clanManagement != null) { return clanManagement; }
 		clanManagement = new ClanManagement(this);

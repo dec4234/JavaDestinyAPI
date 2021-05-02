@@ -53,7 +53,7 @@ public class HttpUtils {
 		return parse.getAsJsonObject();
 	}
 
-	public String urlRequestGETstring(String url) {
+	public Object urlRequestGETstring(String url) throws ExecutionException, InterruptedException {
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
 										 .uri(URI.create(url))
@@ -61,13 +61,8 @@ public class HttpUtils {
 										 .header("X-API-KEY", apiKey)
 										 .GET()
 										 .build();
-		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
-		try {
-			return response.get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		return null;
+		HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
+		return response;
 	}
 
 	public JsonObject urlRequestGETOauth(String url) {
