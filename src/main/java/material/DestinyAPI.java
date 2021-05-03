@@ -28,6 +28,7 @@ public class DestinyAPI {
 	private static String accessToken = null;
 	private static String refreshToken = null;
 	private static OAuthManager oam = null;
+	private static boolean debugEnabled = false;
 
 	public DestinyAPI setApiKey(String apiKey) {
 		DestinyAPI.apiKey = apiKey;
@@ -68,6 +69,18 @@ public class DestinyAPI {
 		return this;
 	}
 
+	public DestinyAPI enableDebugMode() {
+		DestinyAPI.debugEnabled = true;
+
+		return this;
+	}
+
+	public DestinyAPI disableDebugMode() {
+		DestinyAPI.debugEnabled = false;
+
+		return this;
+	}
+
 	/**
 	 * Set the OAuth management class
 	 * The class passed in this parameter must "extends OAuthManager"
@@ -99,7 +112,7 @@ public class DestinyAPI {
 	}
 
 	private static BungieUser getMemberFromPlatformID(String platformName, String platformID) {
-		JsonObject jsonObject = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/GetMembershipFromHardLinkedCredential/" + platformName + "/" + platformID + "/").getAsJsonObject("Responseg");
+		JsonObject jsonObject = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/GetMembershipFromHardLinkedCredential/" + platformName + "/" + platformID + "/").getAsJsonObject("Response");
 
 		return new BungieUser(jsonObject.get("membershipId").getAsString());
 	}
@@ -161,5 +174,7 @@ public class DestinyAPI {
 	public static String getRefreshToken() {
 		return oam.getRefreshToken();
 	}
+
+	public static boolean isDebugEnabled() { return DestinyAPI.debugEnabled; }
 
 }

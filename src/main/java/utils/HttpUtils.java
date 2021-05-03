@@ -45,6 +45,9 @@ public class HttpUtils {
 		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
 		JsonElement parse = null;
 		try {
+			if(DestinyAPI.isDebugEnabled()) {
+				System.out.println(response.get());
+			}
 			parse = new JsonParser().parse(response.get()); // Parse response to JSON
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
