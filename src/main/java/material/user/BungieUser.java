@@ -12,6 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import material.clan.Clan;
+import material.stats.ActivityInfo;
 import utils.HttpUtils;
 import utils.StringUtils;
 
@@ -23,8 +24,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class BungieUser {
-
-	private boolean isValidUser;
 
 	private String bungieMembershipID;
 	private String displayName;
@@ -181,8 +180,8 @@ public class BungieUser {
 	public Clan getClan() {
 		if (clan != null) { return clan; }
 
-		JsonObject jo = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/User/" + getMembershipType() + "/" + getBungieMembershipID() + "/0/1/?components=200").get("Response").getAsJsonObject();
-		clan = new Clan(jo.get("results").getAsJsonArray().get(0).getAsJsonObject().get("group").getAsJsonObject().get("groupId").getAsLong());
+		JsonObject jo = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/User/" + getMembershipType() + "/" + getBungieMembershipID() + "/0/1/?components=200").getAsJsonObject("Response");
+		clan = new Clan(jo.get("results").getAsJsonArray().get(0).getAsJsonObject().getAsJsonObject("group").get("groupId").getAsLong());
 		return clan;
 	}
 
@@ -193,6 +192,26 @@ public class BungieUser {
 	@Deprecated
 	public void allowClanInvites(boolean allowInvites) {
 
+	}
+
+	/**
+	 * Return a lot of information pertaining to the activity the user is currently in
+	 * E.g. If I am on the tower it will provide information about the ActivityMode and Icons related to it
+	 * @return Null if no information about the current activity is found
+	 */
+	public ActivityInfo getCurrentActivityInfo() {
+		JsonObject data = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + getBungieMembershipID() + "/?components=204").getAsJsonObject("Response").getAsJsonObject("characterActivities").getAsJsonObject("data");
+
+		for(DestinyCharacter character : getCharacters()) {
+			if(data.has(character.getCharacterID())) {
+				String hash = data.getAsJsonObject(character.getCharacterID()).get("currentActivityHash").getAsString();
+				if (!hash.equals("0")) {
+					return new ActivityInfo(hash);
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/**

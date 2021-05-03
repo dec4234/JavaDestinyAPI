@@ -91,4 +91,14 @@ public enum ActivityMode {
 	public int getBungieValue() {
 		return bungieValue;
 	}
+
+	public static ActivityMode fromBungieValue(int bungieValue) {
+		for(ActivityMode activityMode : ActivityMode.values()) {
+			if(activityMode.getBungieValue() == bungieValue) {
+				return activityMode;
+			}
+		}
+
+		return null;
+	}
 }

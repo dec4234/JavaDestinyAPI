@@ -9,6 +9,7 @@
 package utils.framework;
 
 import com.google.gson.JsonObject;
+import material.manifest.ManifestEntityTypes;
 import utils.HttpUtils;
 
 /**
@@ -17,7 +18,8 @@ import utils.HttpUtils;
 public class ContentFramework implements ContentInterface {
 
 	private String url;
-	private JsonObject jo = null;
+	private ManifestEntityTypes manifestType;
+	protected JsonObject jo = null;
 	private JsonObjectModifier jsonObjectModifier;
 
 	public ContentFramework(String url, JsonObjectModifier jsonObjectModifier) {
@@ -25,15 +27,25 @@ public class ContentFramework implements ContentInterface {
 		this.jsonObjectModifier = jsonObjectModifier;
 	}
 
+	public ContentFramework(ManifestEntityTypes manifestType, String url, JsonObjectModifier jsonObjectModifier) {
+		this.manifestType = manifestType;
+		this.url = url;
+		this.jsonObjectModifier = jsonObjectModifier;
+	}
+
 	@Override
 	public void checkJO() {
 		if(jo == null) {
-			jo = jsonObjectModifier.modify(new HttpUtils().urlRequestGET(url));
+			if(manifestType == null) {
+				jo = new HttpUtils().urlRequestGET(url);
+			} else {
+				jo = new HttpUtils().manifestGET(manifestType, url);
+			}
 		}
 	}
 
 	public JsonObject getJO() {
 		checkJO();
-		return jo;
+		return jsonObjectModifier.modify(jo);
 	}
 }

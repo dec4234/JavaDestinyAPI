@@ -91,6 +91,20 @@ public class DestinyAPI {
 	public static BungieUser getUser(String id) { return new BungieUser(id); }
 
 	/**
+	 * Get a BungieUser from a Steam ID
+	 * NOT the same IDs used by Bungie to identify individual users
+	 */
+	public static BungieUser getMemberFromSteamID(String steamID) {
+		return getMemberFromPlatformID("SteamId", steamID);
+	}
+
+	private static BungieUser getMemberFromPlatformID(String platformName, String platformID) {
+		JsonObject jsonObject = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/GetMembershipFromHardLinkedCredential/" + platformName + "/" + platformID + "/").getAsJsonObject("Responseg");
+
+		return new BungieUser(jsonObject.get("membershipId").getAsString());
+	}
+
+	/**
 	 * Gets the users with this name (There can be multiple users with the same name)
 	 */
 	public static List<BungieUser> getUsersWithName(String name) {

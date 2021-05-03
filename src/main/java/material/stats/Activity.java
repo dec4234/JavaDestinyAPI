@@ -21,6 +21,8 @@ import java.util.List;
 /**
  * An activity in this case is a PGCR (Post Game Carnage Report)
  * It contains data about an activity that happened like a raid or crucible match
+ *
+ * Can not retrieve info about Activities that have not ended yet
  */
 public class Activity extends ContentFramework {
 
