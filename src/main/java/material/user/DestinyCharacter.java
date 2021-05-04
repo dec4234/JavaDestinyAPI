@@ -27,9 +27,9 @@ public class DestinyCharacter extends ContentFramework {
 
 	private BungieUser bungieUser;
 
-	private String characterID;
+	private String characterID, minutesPlayedTotal;
 	private Date lastPlayed;
-	private int minutesPlayedThisSession, minutesPlayedTotal, lightLevel = -1;
+	private int minutesPlayedThisSession, lightLevel = -1;
 
 	private Gender gender;
 	private DestinyClass d2class;
@@ -72,9 +72,9 @@ public class DestinyCharacter extends ContentFramework {
 		return minutesPlayedThisSession;
 	}
 
-	public int getMinutesPlayedTotal() {
-		if (minutesPlayedTotal == -1) {
-			minutesPlayedTotal = getJO().get("minutesPlayedTotal").getAsInt();
+	public String getMinutesPlayedTotal() {
+		if (minutesPlayedTotal == null) {
+			minutesPlayedTotal = getJO().get("minutesPlayedTotal").getAsString();
 		}
 		return minutesPlayedTotal;
 	}

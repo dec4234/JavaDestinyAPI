@@ -169,7 +169,7 @@ public class BungieUser {
 	public int getTimePlayed() {
 		if (playTime != -1) { return playTime; }
 		for (DestinyCharacter c : getCharacters()) {
-			playTime += c.getMinutesPlayedTotal();
+			playTime += Integer.parseInt(c.getMinutesPlayedTotal());
 		}
 		return playTime;
 	}
