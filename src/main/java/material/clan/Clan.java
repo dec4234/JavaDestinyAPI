@@ -17,9 +17,7 @@ import material.user.BungieUser;
 import utils.HttpUtils;
 import utils.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -80,6 +78,21 @@ public class Clan {
 
 	}
 
+	/**
+	 * Search for all of the members in this clan that have the string in their name
+	 */
+	public List<BungieUser> searchMembers(String name) {
+		List<BungieUser> list = new LinkedList<>();
+
+		for (BungieUser bungieUser : getMembers()) {
+			if (bungieUser.getDisplayName().contains(name)) {
+				list.add(bungieUser);
+			}
+		}
+
+		return list;
+	}
+
 	public String getClanID() {
 		return clanId + "";
 	}
@@ -136,6 +149,35 @@ public class Clan {
 	}
 
 	/**
+	 * Sort all of the players in the clan by how inactive they are
+	 * Most inactive is 1st, next is 2nd, etc.
+	 */
+	public List<BungieUser> getMostInactiveMembers(int numberOfResults, String... exclude) {
+		List<BungieUser> list = getMembers();
+		List<String> exlcluded = Arrays.asList(exclude);
+		List<BungieUser> sorted = new LinkedList<>();
+		BungieUser temp = null;
+
+		for(int i = 0; i < numberOfResults; i++) {
+			for (BungieUser bungieUser : list) {
+				if (temp != null) {
+					if (temp != bungieUser && !sorted.contains(bungieUser) && !exlcluded.contains(bungieUser.getBungieMembershipID())) {
+						if (bungieUser.getDaysSinceLastPlayed() > temp.getDaysSinceLastPlayed()) {
+							temp = bungieUser;
+						}
+					}
+				} else {
+					temp = bungieUser;
+				}
+			}
+			sorted.add(temp);
+			temp = null;
+		}
+
+		return sorted;
+	}
+
+	/**
 	 * Returns a list of all members of the clan
 	 * Now deprecated in favor of getMembers()
 	 */
@@ -168,7 +210,6 @@ public class Clan {
 
 	/**
 	 * Old getExperimental method
-	 *
 	 * Does not cache valus anymore, now the developer is responsible for that
 	 * Should be faster than before
 	 */
@@ -192,7 +233,7 @@ public class Clan {
 		int[] list = splitIntoParts(stream.size(), 15); // A list of integers used to separate the stream
 		int listIndex = 0; // The index in the integer array we are currently on
 
-		while(index < stream.size()) { // Until we have completely looped through the stream
+		while (index < stream.size()) { // Until we have completely looped through the stream
 			int i = list[listIndex];
 			new MemberThread(source, stream.subList(index, index + i)).start();
 
@@ -221,7 +262,7 @@ public class Clan {
 	 * Returns if this BungieUser is a member of the clan
 	 */
 	public boolean isMember(BungieUser bungieUser) {
-		return  isMember(bungieUser.getBungieMembershipID());
+		return isMember(bungieUser.getBungieMembershipID());
 	}
 
 	public boolean isMember(String bungieID) {
@@ -240,7 +281,7 @@ public class Clan {
 	 */
 	public JsonObject getClanStats(ActivityMode... filter) {
 		String queryString = "/?modes=";
-		for(ActivityMode activityMode : filter) {
+		for (ActivityMode activityMode : filter) {
 			queryString = queryString.concat(activityMode.getBungieValue() + ",");
 		}
 		queryString = queryString.substring(0, queryString.length() - 2); // Remove the last comma

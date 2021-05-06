@@ -228,13 +228,7 @@ public class BungieUser {
 
 	public void checkJO() {
 		if (jo == null) {
-			CompletableFuture<JsonObject> cf = new CompletableFuture<>();
-			cf.completeAsync(() -> hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200"));
-			try {
-				jo = cf.get();
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-			}
+			jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200");
 		}
 	}
 
