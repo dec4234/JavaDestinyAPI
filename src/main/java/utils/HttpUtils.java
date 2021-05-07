@@ -9,6 +9,7 @@
 package utils;
 
 import com.google.gson.*;
+import exceptions.APIOfflineException;
 import exceptions.AccessTokenInvalidException;
 import material.DestinyAPI;
 import material.manifest.ManifestEntityTypes;
@@ -44,16 +45,23 @@ public class HttpUtils {
 										 .build();
 		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
 		JsonElement parse = null;
+		JsonObject jsonObject = null;
 		try {
-			if(DestinyAPI.isDebugEnabled()) {
-				System.out.println(response.get());
+			String responseString = response.get();
+			if (DestinyAPI.isDebugEnabled()) {
+				System.out.println(responseString);
 			}
 			parse = new JsonParser().parse(response.get()); // Parse response to JSON
-		} catch (InterruptedException | ExecutionException e) {
+			jsonObject = parse.getAsJsonObject();
+			if(jsonObject.has("ErrorCode") && jsonObject.get("ErrorCode").getAsInt() == 5) {
+				throw new APIOfflineException(jsonObject.get("Message").getAsString());
+			}
+
+		} catch (InterruptedException | ExecutionException | APIOfflineException e) {
 			e.printStackTrace();
 			return null;
 		}
-		return parse.getAsJsonObject();
+		return jsonObject;
 	}
 
 	public Object urlRequestGETstring(String url) throws ExecutionException, InterruptedException {
@@ -73,12 +81,12 @@ public class HttpUtils {
 
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(url))
-				.timeout(Duration.ofMinutes(1))
-				.setHeader("X-API-KEY", apiKey)
-				.setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
-				.GET()
-				.build();
+										 .uri(URI.create(url))
+										 .timeout(Duration.ofMinutes(1))
+										 .setHeader("X-API-KEY", apiKey)
+										 .setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
+										 .GET()
+										 .build();
 		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
 		JsonElement parse = null;
 		try {
@@ -91,7 +99,7 @@ public class HttpUtils {
 	}
 
 	public String urlRequestPOST(String url, String body) {
-		if(body.isEmpty()) body = "{\"message\": \"\",}";
+		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
 										 .uri(URI.create(url))
@@ -112,7 +120,7 @@ public class HttpUtils {
 	public String urlRequestPOSTOauth(String url, String body) {
 		setTokenViaRefresh();
 
-		if(body.isEmpty()) body = "{\"message\": \"\",}";
+		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder()
 										 .uri(URI.create(url))
@@ -143,6 +151,7 @@ public class HttpUtils {
 
 	/**
 	 * Gets an access token using the refresh token in storage and replaces the old refresh token with the new one
+	 *
 	 * @return Returns the new access token
 	 */
 	public String setTokenViaRefresh() {
@@ -202,7 +211,7 @@ public class HttpUtils {
 	}
 
 	public boolean checkFor401(String input) {
-		if(input.contains("401 - Unauthorized")) {
+		if (input.contains("401 - Unauthorized")) {
 			try {
 				setTokenViaRefresh();
 				throw new AccessTokenInvalidException("The access token used in this OAuth request was not accepted by the server \nI've already taken the liberty of getting a new access token for you :D");
@@ -213,5 +222,20 @@ public class HttpUtils {
 		}
 
 		return false;
+	}
+
+	private String getStringResponse(HttpRequest httpRequest) {
+		HttpClient httpClient = HttpClient.newHttpClient();
+		try {
+			return httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body).get();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	private HttpRequest getRequest(HttpRequestModifier httpRequestModifier) {
+		return httpRequestModifier.modifyRequest(HttpRequest.newBuilder().build());
 	}
 }

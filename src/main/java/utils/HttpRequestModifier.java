@@ -6,14 +6,12 @@
  * GitHub -> https://github.com/dec4234/JavaDestinyAPI
  */
 
-package exceptions;
+package utils;
 
-/**
- * Indicates that the request returned error code 5  (The API has been disabled by Bungie)
- */
-public class APIOfflineException extends Exception {
+import java.net.http.HttpRequest;
 
-	public APIOfflineException(String returnMessage) {
-		super("The Bungie API returned this message: " + returnMessage);
-	}
+@FunctionalInterface
+public interface HttpRequestModifier {
+
+	HttpRequest modifyRequest(HttpRequest starter);
 }
