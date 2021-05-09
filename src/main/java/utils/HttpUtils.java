@@ -36,117 +36,51 @@ public class HttpUtils {
 	 * Send a GET url request to the url provided, returns a JsonObject of the response
 	 */
 	public JsonObject urlRequestGET(String url) {
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-										 .uri(URI.create(url))
-										 .timeout(Duration.ofMinutes(2))
-										 .header("X-API-KEY", apiKey)
-										 .GET()
-										 .build();
-		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
-		JsonElement parse = null;
-		JsonObject jsonObject = null;
-		try {
-			String responseString = response.get();
-			if (DestinyAPI.isDebugEnabled()) {
-				System.out.println(responseString);
-			}
-			parse = new JsonParser().parse(response.get()); // Parse response to JSON
-			jsonObject = parse.getAsJsonObject();
-			if(jsonObject.has("ErrorCode") && jsonObject.get("ErrorCode").getAsInt() == 5) {
-				throw new APIOfflineException(jsonObject.get("Message").getAsString());
-			}
-
-		} catch (InterruptedException | ExecutionException | APIOfflineException e) {
-			e.printStackTrace();
-			return null;
-		}
-		return jsonObject;
-	}
-
-	public Object urlRequestGETstring(String url) throws ExecutionException, InterruptedException {
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-										 .uri(URI.create(url))
-										 .timeout(Duration.ofMinutes(1))
-										 .header("X-API-KEY", apiKey)
-										 .GET()
-										 .build();
-		HttpResponse<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).get();
-		return response;
+		return getJsonObject(getStringResponse(getRequest(true, url, starter -> {
+			starter.GET();
+			return starter;
+		})));
 	}
 
 	public JsonObject urlRequestGETOauth(String url) {
 		setTokenViaRefresh();
-
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-										 .uri(URI.create(url))
-										 .timeout(Duration.ofMinutes(1))
-										 .setHeader("X-API-KEY", apiKey)
-										 .setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
-										 .GET()
-										 .build();
-		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
-		JsonElement parse = null;
-		try {
-			checkFor401(response.get());
-			parse = new JsonParser().parse(response.get());
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		return parse.getAsJsonObject();
+		return getJsonObject(getStringResponse(getRequest(true, url, starter -> {
+			starter.GET()
+				   .setHeader("Authorization", "Bearer " + HttpUtils.bearerToken);
+			return starter;
+		})));
 	}
 
 	public String urlRequestPOST(String url, String body) {
 		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-										 .uri(URI.create(url))
-										 .timeout(Duration.ofMinutes(1))
-										 .setHeader("X-API-KEY", apiKey)
-										 .setHeader("Content-Type", "application/json")
-										 .POST(HttpRequest.BodyPublishers.ofString(body))
-										 .build();
-		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
-		try {
-			return response.get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		return null;
+		String finalBody = body;
+		return getStringResponse(getRequest(true, url, starter -> {
+			starter.setHeader("Content-Type", "application/json")
+				   .POST(HttpRequest.BodyPublishers.ofString(finalBody));
+
+			return starter;
+		}));
 	}
 
 	public String urlRequestPOSTOauth(String url, String body) {
 		setTokenViaRefresh();
-
 		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-										 .uri(URI.create(url))
-										 .timeout(Duration.ofMinutes(1))
-										 .setHeader("X-API-KEY", apiKey)
-										 .setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
-										 .setHeader("Content-Type", "application/json")
-										 .POST(HttpRequest.BodyPublishers.ofString(body))
-										 .build();
-		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
-		try {
-			checkFor401(response.get());
-			return response.get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		return null;
+
+		String finalBody = body;
+		return getStringResponse(getRequest(true, url, starter -> {
+			starter.setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
+				   .setHeader("Content-Type", "application/json")
+				   .POST(HttpRequest.BodyPublishers.ofString(finalBody));
+
+			return starter;
+		}));
 	}
 
+	/**
+	 * Make a request to the Bungie manifest to reveal information about a hash-identified item
+	 */
 	public JsonObject manifestGET(ManifestEntityTypes entityType, String hashIdentifier) {
 		return urlRequestGET("https://www.bungie.net/Platform/Destiny2/Manifest/" + entityType.getBungieEntityValue() + "/" + hashIdentifier + "/");
-	}
-
-	public String generateLineGraph() {
-		String body = "{\"chart\": {\"type\": \"line\", \"data\": {\"labels\": [\"Hello\", \"World\"], \"datasets\": [{\"label\": \"Foo\", \"data\": [1, 2]}]}}}";
-		return urlRequestPOST("https://quickchart.io/chart/create", body);
 	}
 
 	/**
@@ -159,23 +93,16 @@ public class HttpUtils {
 
 		String requestBody = "grant_type=refresh_token&refresh_token=" + DestinyAPI.getRefreshToken();
 
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-										 .uri(URI.create(url))
-										 .timeout(Duration.ofMinutes(1))
-										 .setHeader("Content-Type", "application/x-www-form-urlencoded")
-										 .setHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString((DestinyAPI.getClientId() + ":" + DestinyAPI.getClientSecret()).getBytes()))
-										 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-										 .build();
-		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
-		JsonElement parse = null;
-		try {
-			parse = new JsonParser().parse(response.get());
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		String at = parse.getAsJsonObject().get("access_token").getAsString();
-		String rt = parse.getAsJsonObject().get("refresh_token").getAsString();
+		JsonObject response = getJsonObject(getStringResponse(getRequest(false, url, starter -> {
+			starter.setHeader("Content-Type", "application/x-www-form-urlencoded")
+				   .setHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString((DestinyAPI.getClientId() + ":" + DestinyAPI.getClientSecret()).getBytes()))
+				   .POST(HttpRequest.BodyPublishers.ofString(requestBody));
+
+			return starter;
+		})));
+
+		String at = response.get("access_token").getAsString();
+		String rt = response.get("refresh_token").getAsString();
 		bearerToken = at;
 		new DestinyAPI().setAccessToken(at).setRefreshToken(rt);
 
@@ -183,27 +110,24 @@ public class HttpUtils {
 	}
 
 	public void setTokenViaAuth() {
+		setTokenViaAuth(DestinyAPI.getOauthCode());
+	}
+
+	public void setTokenViaAuth(String oAuthCode) {
 		String url = "https://www.bungie.net/Platform/App/OAuth/Token/";
 
-		String requestBody = "grant_type=authorization_code&code=" + DestinyAPI.getOauthCode();
+		String requestBody = "grant_type=authorization_code&code=" + oAuthCode;
 
-		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-										 .uri(URI.create(url))
-										 .timeout(Duration.ofMinutes(1))
-										 .setHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString((DestinyAPI.getClientId() + ":" + DestinyAPI.getClientSecret()).getBytes()))
-										 .setHeader("Content-Type", "application/x-www-form-urlencoded")
-										 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-										 .build();
-		CompletableFuture<String> response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body);
-		JsonElement parse = null;
-		try {
-			parse = new JsonParser().parse(response.get());
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
-		String accessToken = parse.getAsJsonObject().get("access_token").getAsString();
-		String refreshToken = parse.getAsJsonObject().get("refresh_token").getAsString();
+		JsonObject jsonObject = getJsonObject(getStringResponse(getRequest(false, url, starter -> {
+			starter.setHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString((DestinyAPI.getClientId() + ":" + DestinyAPI.getClientSecret()).getBytes()))
+				   .setHeader("Content-Type", "application/x-www-form-urlencoded")
+				   .POST(HttpRequest.BodyPublishers.ofString(requestBody));
+
+			return starter;
+		})));
+
+		String accessToken = jsonObject.get("access_token").getAsString();
+		String refreshToken = jsonObject.get("refresh_token").getAsString();
 
 		new DestinyAPI().setAccessToken(accessToken).setRefreshToken(refreshToken);
 
@@ -224,10 +148,28 @@ public class HttpUtils {
 		return false;
 	}
 
+	private JsonObject getJsonObject(String stringResponse) {
+		JsonObject jsonObject = new JsonParser().parse(stringResponse).getAsJsonObject();
+
+		if(jsonObject.has("ErrorCode") && jsonObject.get("ErrorCode").getAsInt() == 5) {
+			try {
+				throw new APIOfflineException(jsonObject.get("Message").getAsString());
+			} catch (APIOfflineException exception) {
+				exception.printStackTrace();
+			}
+		}
+		return jsonObject;
+	}
+
 	private String getStringResponse(HttpRequest httpRequest) {
 		HttpClient httpClient = HttpClient.newHttpClient();
 		try {
-			return httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body).get();
+			String responseString = httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body).get();
+
+			if (DestinyAPI.isDebugEnabled()) {
+				System.out.println(responseString);
+			}
+			return responseString;
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
@@ -235,7 +177,15 @@ public class HttpUtils {
 		return null;
 	}
 
-	private HttpRequest getRequest(HttpRequestModifier httpRequestModifier) {
-		return httpRequestModifier.modifyRequest(HttpRequest.newBuilder().build());
+	private HttpRequest getRequest(boolean standardRequest, String url, HttpRequestModifier httpRequestModifier) {
+		HttpRequest.Builder builder = httpRequestModifier.modifyRequest(HttpRequest.newBuilder());
+
+		builder.uri(URI.create(url)).timeout(Duration.ofMinutes(2));
+
+		if(standardRequest) {
+			builder.setHeader("X-API-KEY", apiKey);
+		}
+
+		return builder.build();
 	}
 }

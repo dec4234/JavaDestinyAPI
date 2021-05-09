@@ -13,5 +13,5 @@ import java.net.http.HttpRequest;
 @FunctionalInterface
 public interface HttpRequestModifier {
 
-	HttpRequest modifyRequest(HttpRequest starter);
+	HttpRequest.Builder modifyRequest(HttpRequest.Builder starter);
 }
