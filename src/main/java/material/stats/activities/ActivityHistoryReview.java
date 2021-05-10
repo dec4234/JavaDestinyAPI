@@ -30,7 +30,6 @@ public class ActivityHistoryReview {
 		int count = 0;
 
 		for (DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
-			System.out.println(getCompletions(activityIdentifier, destinyCharacter));
 			count += getCompletions(activityIdentifier, destinyCharacter);
 		}
 

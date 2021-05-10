@@ -98,26 +98,27 @@ public enum ActivityIdentifier {
 	CONCEALED_VOID_LEGEND("CVL", ActivityMode.ALL_STRIKES, "912873277"),
 
 	// RAIDS
-	LEVIATHAN("LEV", ActivityMode.RAID, "2693136600", "2693136601", "2693136602", "2693136603", "2693136604", "2693136605"),
-	LEVIATHAN_PRESTIGE("LEVP", ActivityMode.RAID, "1685065161", "3446541099", "3879860661", "417231112", "2449714930", "757116822"),
-	EATER_OF_WORLDS("EOW", ActivityMode.RAID, "3089205900"),
-	EATER_OF_WORLDS_PRESTIGE("EOWP", ActivityMode.RAID, "809170886"),
-	SPIRE_OF_STARS("SOS", ActivityMode.RAID, "119944200"),
-	SPIRE_OF_STARS_PRESTIGE("SOSP", ActivityMode.RAID, "3213556450"),
+	LEVIATHAN("LEV", "https://www.bungie.net/img/destiny_content/pgcr/raid_gluttony.jpg", ActivityMode.RAID, "2693136600", "2693136601", "2693136602", "2693136603", "2693136604", "2693136605"),
+	LEVIATHAN_PRESTIGE("LEVP", "https://www.bungie.net/img/destiny_content/pgcr/raid_gluttony.jpg", ActivityMode.RAID, "1685065161", "3446541099", "3879860661", "417231112", "2449714930", "757116822"),
+	EATER_OF_WORLDS("EOW", "https://www.bungie.net/img/destiny_content/pgcr/raids_leviathan_eater_of_worlds.jpg", ActivityMode.RAID, "3089205900"),
+	EATER_OF_WORLDS_PRESTIGE("EOWP", "https://www.bungie.net/img/destiny_content/pgcr/raids_leviathan_eater_of_worlds.jpg", ActivityMode.RAID, "809170886"),
+	SPIRE_OF_STARS("SOS", "https://www.bungie.net/img/destiny_content/pgcr/raid_greed.jpg", ActivityMode.RAID, "119944200"),
+	SPIRE_OF_STARS_PRESTIGE("SOSP", "https://www.bungie.net/img/destiny_content/pgcr/raid_greed.jpg", ActivityMode.RAID, "3213556450"),
 
-	LAST_WISH("LW", ActivityMode.RAID, "2122313384"),
-	SCOURGE_OF_THE_PAST("SOTP", ActivityMode.RAID, "548750096"),
-	CROWN_OF_SORROW("COS", ActivityMode.RAID, "3333172150"),
+	LAST_WISH("LW", "https://www.bungie.net/img/destiny_content/pgcr/raid_beanstalk.jpg", ActivityMode.RAID, "2122313384"),
+	SCOURGE_OF_THE_PAST("SOTP", "https://www.bungie.net/img/destiny_content/pgcr/raids.1305rh0093145r13t5hn10tnz.raid_sunset.jpg", ActivityMode.RAID, "548750096"),
+	CROWN_OF_SORROW("COS", "https://www.bungie.net/img/destiny_content/pgcr/raid_eclipse.jpg", ActivityMode.RAID, "3333172150"),
 
-	GARDEN_OF_SALVATION("GOS", ActivityMode.RAID, "2659723068", "3458480158"),
+	GARDEN_OF_SALVATION("GOS", "https://www.bungie.net/img/destiny_content/pgcr/raid_garden_of_salvation.jpg", ActivityMode.RAID, "2659723068", "3458480158"),
 
-	DEEP_STONE_CRYPT("DSC", ActivityMode.RAID, "910380154"),
-	VAULT_OF_GLASS("VOG", ActivityMode.RAID, ""),
-	VAULT_OF_GLASS_MASTER("VOGM", ActivityMode.RAID, "");
+	DEEP_STONE_CRYPT("DSC", "https://www.bungie.net/img/destiny_content/pgcr/europa-raid-deep-stone-crypt.jpg", ActivityMode.RAID, "910380154"),
+	VAULT_OF_GLASS("VOG", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, ""),
+	VAULT_OF_GLASS_MASTER("VOGM", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, "");
 
 	private String identifier;
 	private String[] hashes;
 	private ActivityMode mode;
+	private String pgcrImage;
 
 	ActivityIdentifier(String identifier, ActivityMode mode, String... hashes) {
 		this.identifier = identifier;
@@ -125,9 +126,18 @@ public enum ActivityIdentifier {
 		this.mode = mode;
 	}
 
+	ActivityIdentifier(String identifier, String pgcrImage, ActivityMode mode, String... hashes) {
+		this.identifier = identifier;
+		this.pgcrImage = pgcrImage;
+		this.hashes = hashes;
+		this.mode = mode;
+	}
+
 	public String getIdentifier() {
 		return identifier;
 	}
+
+	public String getPgcrImage() { return pgcrImage; }
 
 	/**
 	 * Get the directorActivityHash of the Activity
