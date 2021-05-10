@@ -12,7 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import material.clan.Clan;
-import material.stats.ActivityInfo;
+import material.stats.activities.ActivityInfo;
 import utils.HttpUtils;
 import utils.StringUtils;
 
@@ -20,8 +20,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 public class BungieUser {
 

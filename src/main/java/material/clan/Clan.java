@@ -12,7 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import material.DestinyAPI;
-import material.stats.ActivityMode;
+import material.stats.activities.ActivityMode;
 import material.user.BungieUser;
 import utils.HttpUtils;
 import utils.StringUtils;

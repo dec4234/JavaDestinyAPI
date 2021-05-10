@@ -13,11 +13,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import material.inventory.DestinyItem;
 import material.manifest.ManifestEntityTypes;
-import material.stats.Activity;
+import material.stats.activities.Activity;
 import utils.HttpUtils;
 import utils.StringUtils;
 import utils.framework.ContentFramework;
-import utils.framework.ContentInterface;
 
 import java.util.ArrayList;
 import java.util.Date;

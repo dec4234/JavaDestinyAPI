@@ -6,7 +6,7 @@
  * GitHub -> https://github.com/dec4234/JavaDestinyAPI
  */
 
-package material.stats;
+package material.stats.activities;
 
 import com.google.gson.JsonObject;
 import material.user.BungieUser;

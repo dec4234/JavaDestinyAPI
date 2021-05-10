@@ -6,7 +6,7 @@
  * GitHub -> https://github.com/dec4234/JavaDestinyAPI
  */
 
-package material.stats;
+package material.stats.activities;
 
 /**
  * A list of activity mode numbers according to bungie.net
