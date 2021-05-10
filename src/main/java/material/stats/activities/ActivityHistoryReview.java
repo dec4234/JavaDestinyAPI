@@ -11,6 +11,7 @@ package material.stats.activities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import material.manifest.ManifestEntityTypes;
 import material.user.BungieUser;
 import material.user.DestinyCharacter;
 import utils.HttpUtils;
@@ -20,21 +21,16 @@ public class ActivityHistoryReview {
 	private HttpUtils httpUtils = new HttpUtils();
 
 	private BungieUser bungieUser;
-	private DestinyCharacter destinyCharacter;
 
 	public ActivityHistoryReview(BungieUser bungieUser) {
 		this.bungieUser = bungieUser;
 	}
 
-	public ActivityHistoryReview(BungieUser bungieUser, DestinyCharacter destinyCharacter) {
-		this.bungieUser = bungieUser;
-		this.destinyCharacter = destinyCharacter;
-	}
-
-	public int getCompltetions(ActivityIdentifier activityIdentifier) {
+	public int getCompletions(ActivityIdentifier activityIdentifier) {
 		int count = 0;
 
-		for(DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
+		for (DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
+			System.out.println(getCompletions(activityIdentifier, destinyCharacter));
 			count += getCompletions(activityIdentifier, destinyCharacter);
 		}
 
@@ -44,24 +40,53 @@ public class ActivityHistoryReview {
 	public int getCompletions(ActivityIdentifier activityIdentifier, DestinyCharacter destinyCharacter) {
 		int count = 0;
 
-		for(int i = 0; i < 25; i++) {
+		for (int i = 0; i < 25; i++) {
 			JsonObject jo = httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getBungieMembershipID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/Activities/?page=" + i + "&count=250&mode=" + activityIdentifier.getMode().getBungieValue());
 
-			if(!jo.getAsJsonObject("Response").has("activities")) {
+			if (!jo.getAsJsonObject("Response").has("activities")) {
 				break;
 			}
 
 			JsonArray ja = jo.getAsJsonObject("Response").getAsJsonArray("activities");
-			for(JsonElement je : ja) {
+			for (JsonElement je : ja) {
 				JsonObject jo1 = je.getAsJsonObject();
-				if(jo1.getAsJsonObject("activityDetails").get("directorActivityHash").getAsString().equals(activityIdentifier.getHash())) {
-					if (jo1.getAsJsonObject("values").getAsJsonObject("completed").getAsJsonObject("basic").get("value").getAsInt() == 1) {
-						count++;
+				for (String s : activityIdentifier.getHashes()) {
+					if (jo1.getAsJsonObject("activityDetails").get("referenceId").getAsString().equals(s)) {
+						if (jo1.getAsJsonObject("values").getAsJsonObject("completed").getAsJsonObject("basic").get("value").getAsDouble() == 1) {
+							count++;
+						}
 					}
 				}
 			}
 		}
 
 		return count;
+	}
+
+	public void getUndiscoveredActivityHashes(ActivityIdentifier activityIdentifier) {
+		for (DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
+			for (int i = 0; i < 25; i++) {
+				JsonObject jo = httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getBungieMembershipID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/Activities/?page=" + i + "&count=250&mode=" + activityIdentifier.getMode().getBungieValue());
+
+				if (!jo.getAsJsonObject("Response").has("activities")) {
+					break;
+				}
+
+				JsonArray ja = jo.getAsJsonObject("Response").getAsJsonArray("activities");
+				for (JsonElement je : ja) {
+					JsonObject jo1 = je.getAsJsonObject();
+					String hash = jo1.getAsJsonObject("activityDetails").get("referenceId").getAsString();
+					if (ActivityIdentifier.fromHash(hash) == null) {
+						JsonObject jo2 = httpUtils.manifestGET(ManifestEntityTypes.ACTIVITY, hash);
+						if(jo2.has("Response") && jo2.getAsJsonObject("Response").has("displayProperties") && jo2.getAsJsonObject("Response").getAsJsonObject("displayProperties").has("name")) {
+							jo2 = jo2.getAsJsonObject("Response").getAsJsonObject("displayProperties");
+							System.out.println(jo2.get("name").getAsString() + " - " + hash);
+						}
+					}
+
+				}
+			}
+
+		}
 	}
 }
