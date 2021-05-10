@@ -47,7 +47,7 @@ public class Clan extends ContentFramework {
 	}
 
 	public Clan(String clanName) {
-		super(("https://www.bungie.net/Platform/GroupV2/Name/" + clanName.replace(" ", "%20")), source -> {
+		super(("https://www.bungie.net/Platform/GroupV2/Name/" + clanName.replace(" ", "%20") + "/1/?components=200"), source -> {
 			return source.getAsJsonObject("Response");
 		});
 		this.clanName = clanName;
@@ -122,7 +122,7 @@ public class Clan extends ContentFramework {
 		if (admins != null) { return admins; }
 
 		List<BungieUser> temp = new ArrayList<>();
-		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/AdminsAndFounder/?components=200").getAsJsonObject("Response").getAsJsonArray("results");
+		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/AdminsAndFounder/?components=200").getAsJsonObject("Response").getAsJsonArray("results");
 
 		for (JsonElement je : ja) {
 			temp.add(new BungieUser(je.getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString()));
@@ -201,7 +201,7 @@ public class Clan extends ContentFramework {
 		List<String> stream = new ArrayList<>();
 
 		if (jj == null) {
-			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
+			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
 		}
 
 		for (JsonElement jsonElement : jj.getAsJsonArray("results")) {
@@ -241,7 +241,7 @@ public class Clan extends ContentFramework {
 		}
 
 		if (jj == null) {
-			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
+			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
 		}
 
 		for (JsonElement je : jj.getAsJsonArray("results")) {
@@ -295,7 +295,7 @@ public class Clan extends ContentFramework {
 	 */
 	public Date getJoinDate(BungieUser member) {
 		if (jj == null) {
-			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + clanId + "/Members/").get("Response").getAsJsonObject();
+			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
 		}
 
 		for (JsonElement je : jj.getAsJsonArray("results")) {
