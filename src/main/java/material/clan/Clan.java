@@ -62,35 +62,35 @@ public class Clan extends ContentFramework {
 	}
 
 	public String getClanID() {
-		if(clanId == -1) {
+		if (clanId == -1) {
 			clanId = getDetail().get("groupId").getAsLong();
 		}
 		return clanId + "";
 	}
 
 	public String getClanName() {
-		if(clanName == null) {
+		if (clanName == null) {
 			getDetail().get("name").getAsString();
 		}
 		return clanName;
 	}
 
 	public String getClanDescription() {
-		if(clanDescription == null) {
+		if (clanDescription == null) {
 			clanDescription = getDetail().get("about").getAsString();
 		}
 		return clanDescription;
 	}
 
 	public Date getCreationDate() {
-		if(creationDate == null) {
+		if (creationDate == null) {
 			creationDate = StringUtils.valueOfZTime(getDetail().get("creationDate").getAsString());
 		}
 		return creationDate;
 	}
 
 	public int getMemberCount() {
-		if(memberCount == -1) {
+		if (memberCount == -1) {
 			memberCount = getDetail().get("memberCount").getAsInt();
 		}
 		return memberCount;
@@ -101,7 +101,7 @@ public class Clan extends ContentFramework {
 	}
 
 	public String getMotto() {
-		if(motto == null) {
+		if (motto == null) {
 			motto = getDetail().get("motto").getAsString();
 		}
 		return motto;
@@ -157,7 +157,7 @@ public class Clan extends ContentFramework {
 		List<BungieUser> sorted = new LinkedList<>();
 		BungieUser temp = null;
 
-		for(int i = 0; i < numberOfResults; i++) {
+		for (int i = 0; i < numberOfResults; i++) {
 			for (BungieUser bungieUser : list) {
 				if (temp != null) {
 					if (temp != bungieUser && !sorted.contains(bungieUser) && !exlcluded.contains(bungieUser.getBungieMembershipID())) {
@@ -200,9 +200,7 @@ public class Clan extends ContentFramework {
 		List<BungieUser> source = new ArrayList<>();
 		List<String> stream = new ArrayList<>();
 
-		if (jj == null) {
-			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
-		}
+		jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
 
 		for (JsonElement jsonElement : jj.getAsJsonArray("results")) {
 			stream.add(jsonElement.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString());
@@ -236,13 +234,7 @@ public class Clan extends ContentFramework {
 	public List<BungieUser> getMembersOld() {
 		List<BungieUser> temp = new ArrayList<>();
 
-		if (members != null) {
-			return members;
-		}
-
-		if (jj == null) {
-			jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
-		}
+		jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
 
 		for (JsonElement je : jj.getAsJsonArray("results")) {
 			CompletableFuture<BungieUser> cf = new CompletableFuture<>();
