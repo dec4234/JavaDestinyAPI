@@ -226,6 +226,16 @@ public class Clan extends ContentFramework {
 		return source;
 	}
 
+	public List<String> getMembersIDs() {
+		List<String> toReturn = new ArrayList<>();
+
+		for(BungieUser bungieUser : getMembers()) {
+			toReturn.add(bungieUser.getBungieMembershipID());
+		}
+
+		return toReturn;
+	}
+
 	/**
 	 * Returns a list of all members of the clan
 	 * Now deprecated in favor of getMembers()

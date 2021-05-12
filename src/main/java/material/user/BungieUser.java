@@ -152,7 +152,12 @@ public class BungieUser {
 	public List<DestinyCharacter> getCharacters() {
 		if (destinyCharacters != null) { return destinyCharacters; }
 		destinyCharacters = new ArrayList<>();
-		JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieMembershipID + "/?components=100").getAsJsonObject("Response").getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
+		JsonArray ja = null;
+		try {
+			ja = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieMembershipID + "/?components=100").getAsJsonObject("Response").getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
+		} catch (NullPointerException e) {
+			return destinyCharacters;
+		}
 		if (ja == null || ja.size() == 0) {
 			return null;
 		}

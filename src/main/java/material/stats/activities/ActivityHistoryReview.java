@@ -11,10 +11,13 @@ package material.stats.activities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import material.clan.Clan;
 import material.manifest.ManifestEntityTypes;
 import material.user.BungieUser;
 import material.user.DestinyCharacter;
 import utils.HttpUtils;
+
+import java.util.List;
 
 public class ActivityHistoryReview {
 
@@ -22,8 +25,27 @@ public class ActivityHistoryReview {
 
 	private BungieUser bungieUser;
 
+	public ActivityHistoryReview() {
+
+	}
+
 	public ActivityHistoryReview(BungieUser bungieUser) {
 		this.bungieUser = bungieUser;
+	}
+
+	/**
+	 * Takes a very long time
+	 */
+	public double getAverageCompletions(Clan clan, ActivityIdentifier activityIdentifier) {
+		List<BungieUser> members = clan.getMembers();
+		double count = 0;
+
+		for(BungieUser bungieUser : members) {
+			this.bungieUser = bungieUser;
+			count += getCompletions(activityIdentifier);
+		}
+
+		return count / members.size();
 	}
 
 	public int getCompletions(ActivityIdentifier activityIdentifier) {
@@ -42,7 +64,8 @@ public class ActivityHistoryReview {
 		for (int i = 0; i < 25; i++) {
 			JsonObject jo = httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getBungieMembershipID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/Activities/?page=" + i + "&count=250&mode=" + activityIdentifier.getMode().getBungieValue());
 
-			if (!jo.getAsJsonObject("Response").has("activities")) {
+			// 1665 = User has chosen for their data to be private :(
+			if (jo.get("ErrorCode").getAsInt() == 1665 || !jo.getAsJsonObject("Response").has("activities")) {
 				break;
 			}
 
