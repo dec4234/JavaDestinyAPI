@@ -157,6 +157,26 @@ public class DestinyCharacter extends ContentFramework {
 		return allActivities;
 	}
 
+	public boolean hasPlayedInActivity(String pgcrId, List<Activity> source) {
+		for(Activity activity : source) {
+			if(pgcrId.equals(activity.getInstanceId())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean hasPlayedInActivity(String pgcrId) {
+		List<String> participantIds = new ArrayList<>();
+
+		new Activity(pgcrId).getParticipants().forEach(activityParticipant -> {
+			participantIds.add(activityParticipant.getCharacterId());
+		});
+
+		return participantIds.contains(getCharacterID());
+	}
+
 	private Gender evaluateGender(String genderHash) {
 		JsonObject jj = hu.manifestGET(ManifestEntityTypes.GENDER, genderHash).getAsJsonObject("Response");
 		switch (jj.get("genderType").getAsString()) {

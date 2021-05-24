@@ -21,7 +21,11 @@ public class ActivityParticipant {
 	JsonObject values;
 
 	public ActivityParticipant(JsonObject entry) {
-		jo = entry.getAsJsonObject("values");
+		jo = entry;
+	}
+
+	private void assignValues() {
+
 	}
 
 	/**
@@ -29,7 +33,7 @@ public class ActivityParticipant {
 	 */
 	public String getMembershipId() {
 		if (membershipId != null) return membershipId;
-		jo.getAsJsonObject("player").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString();
+		membershipId = jo.getAsJsonObject("player").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString();
 		return membershipId;
 	}
 
@@ -166,5 +170,9 @@ public class ActivityParticipant {
 		if(timePlayed != 0) return timePlayed;
 		timePlayed = jo.getAsJsonObject("timePlayedSeconds").getAsJsonObject("basic").get("value").getAsDouble();
 		return timePlayed;
+	}
+
+	public JsonObject getJO() {
+		return jo;
 	}
 }

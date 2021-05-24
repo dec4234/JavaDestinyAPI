@@ -46,9 +46,14 @@ public class ActivityInfo extends ContentFramework {
 		// this.activityModeHash = getJO().get("activityModeHash").getAsString();
 
 		// Numbers
-		this.modeType = getJO().get("directActivityModeType").getAsInt();
-		this.activityMode = ActivityMode.fromBungieValue(modeType);
-		this.activityModeCategory = getJO().get("activityModeCategory").getAsInt();
+		if(getJO().has("directActivityModeType")) {
+			this.modeType = getJO().get("directActivityModeType").getAsInt();
+			this.activityMode = ActivityMode.fromBungieValue(modeType);
+		}
+
+		if(getJO().has("activityModeCategory")) {
+			this.activityModeCategory = getJO().get("activityModeCategory").getAsInt();
+		}
 		this.releaseTime = getJO().get("releaseTime").getAsInt();
 		this.tier = getJO().get("tier").getAsInt();
 		this.activityLightLevel = getJO().get("activityLightLevel").getAsInt();

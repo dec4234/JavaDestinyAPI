@@ -14,6 +14,7 @@ import exceptions.AccessTokenInvalidException;
 import material.DestinyAPI;
 import material.manifest.ManifestEntityTypes;
 
+import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -151,6 +152,7 @@ public class HttpUtils {
 	private JsonObject getJsonObject(String stringResponse) {
 		JsonObject jsonObject = new JsonParser().parse(stringResponse).getAsJsonObject();
 
+		// API Offline Check
 		if(jsonObject.has("ErrorCode") && jsonObject.get("ErrorCode").getAsInt() == 5) {
 			try {
 				throw new APIOfflineException(jsonObject.get("Message").getAsString());
@@ -180,7 +182,7 @@ public class HttpUtils {
 	private HttpRequest getRequest(boolean standardRequest, String url, HttpRequestModifier httpRequestModifier) {
 		HttpRequest.Builder builder = httpRequestModifier.modifyRequest(HttpRequest.newBuilder());
 
-		builder.uri(URI.create(url)).timeout(Duration.ofMinutes(2));
+		builder.uri(URI.create(url)).timeout(Duration.ofMinutes(3));
 
 		if(standardRequest) {
 			builder.setHeader("X-API-KEY", apiKey);

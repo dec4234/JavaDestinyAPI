@@ -21,7 +21,6 @@ import java.util.List;
 /**
  * An activity in this case is a PGCR (Post Game Carnage Report)
  * It contains data about an activity that happened like a raid or crucible match
- *
  * Can not retrieve info about Activities that have not ended yet
  */
 public class Activity extends ContentFramework {
@@ -43,7 +42,7 @@ public class Activity extends ContentFramework {
 	/**
 	 * Initialize an activity with more information which could improve load times
 	 */
-	public Activity(String activityId,  String referenceId, String directoryActivityHash, String rawDate, int mode, int[] modes) {
+	public Activity(String activityId, String referenceId, String directoryActivityHash, String rawDate, int mode, int[] modes) {
 		super("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/" + activityId + "/", source -> {
 			return source.getAsJsonObject("Response");
 		});
@@ -57,6 +56,7 @@ public class Activity extends ContentFramework {
 
 	/**
 	 * Get the date this Activity was played
+	 *
 	 * @return
 	 */
 	public Date getDatePlayed() {
@@ -66,6 +66,7 @@ public class Activity extends ContentFramework {
 
 	/**
 	 * Get the referenceID of this activity
+	 *
 	 * @return
 	 */
 	public String getReferenceId() {
@@ -83,10 +84,11 @@ public class Activity extends ContentFramework {
 
 	/**
 	 * Gets the instance id, which happens to be the same as the activityId :)
-=	 */
+	 * =
+	 */
 	public String getInstanceId() {
 		checkJO();
-		return instanceId == null ? instanceId = getJO().get("instanceId").getAsString() : instanceId;
+		return activityId == null ? activityId = getJO().get("instanceId").getAsString() : activityId;
 	}
 
 	/**
@@ -104,8 +106,8 @@ public class Activity extends ContentFramework {
 	 */
 	public ActivityMode getMode() {
 		checkJO();
-		for(ActivityMode am : ActivityMode.values()) {
-			if(am.getBungieValue() == getModeNumber()) {
+		for (ActivityMode am : ActivityMode.values()) {
+			if (am.getBungieValue() == getModeNumber()) {
 				return am;
 			}
 		}
@@ -114,15 +116,20 @@ public class Activity extends ContentFramework {
 
 	/**
 	 * Get all of the participants of this activity
+	 *
 	 * @return
 	 */
 	public List<ActivityParticipant> getParticipants() {
-		checkJO();
 
 		List<ActivityParticipant> temp = new ArrayList<>();
-		for(JsonElement je : getJO().get("entries").getAsJsonArray()) {
-			temp.add(new ActivityParticipant(je.getAsJsonObject()));
+		try {
+			for (JsonElement je : getJsonObject().get("entries").getAsJsonArray()) {
+				temp.add(new ActivityParticipant(je.getAsJsonObject()));
+			}
+		} catch (NullPointerException e) {
+			System.out.println(getJO());
 		}
+
 		return temp;
 	}
 

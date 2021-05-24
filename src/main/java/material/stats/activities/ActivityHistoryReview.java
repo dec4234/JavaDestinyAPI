@@ -17,21 +17,13 @@ import material.user.BungieUser;
 import material.user.DestinyCharacter;
 import utils.HttpUtils;
 
-import java.util.List;
+import java.net.ConnectException;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class ActivityHistoryReview {
 
 	private HttpUtils httpUtils = new HttpUtils();
-
-	private BungieUser bungieUser;
-
-	public ActivityHistoryReview() {
-
-	}
-
-	public ActivityHistoryReview(BungieUser bungieUser) {
-		this.bungieUser = bungieUser;
-	}
 
 	/**
 	 * Takes a very long time
@@ -40,36 +32,51 @@ public class ActivityHistoryReview {
 		List<BungieUser> members = clan.getMembers();
 		double count = 0;
 
-		for(BungieUser bungieUser : members) {
-			this.bungieUser = bungieUser;
-			count += getCompletions(activityIdentifier);
+		for (BungieUser bungieUser : members) {
+			count += getCompletions(bungieUser, activityIdentifier);
 		}
 
 		return count / members.size();
 	}
 
-	public int getCompletions(ActivityIdentifier activityIdentifier) {
+	public LinkedHashMap<BungieUser, Integer> getTopClearers(Clan clan, ActivityIdentifier activityIdentifier) {
+		HashMap<BungieUser, Integer> map = new HashMap<>();
+		LinkedHashMap<BungieUser, Integer> toReturn = new LinkedHashMap<>();
+
+		for(BungieUser bungieUser : clan.getMembers()) {
+			map.put(bungieUser, getCompletions(bungieUser, activityIdentifier));
+		}
+
+		List<Map.Entry<BungieUser, Integer>> list = new LinkedList<>(map.entrySet());
+
+		Collections.sort(list, new Comparator<>() {
+			public int compare(Map.Entry<BungieUser, Integer> o1,
+							   Map.Entry<BungieUser, Integer> o2) {
+				return (o2.getValue()).compareTo(o1.getValue());
+			}
+		});
+
+		for(Map.Entry<BungieUser, Integer> map2 : list) {
+			toReturn.put(map2.getKey(), map2.getValue());
+		}
+
+		return toReturn;
+	}
+
+	public int getCompletions(BungieUser bungieUser, ActivityIdentifier activityIdentifier) {
 		int count = 0;
 
 		for (DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
-			count += getCompletions(activityIdentifier, destinyCharacter);
+			count += getCompletions(activityIdentifier, bungieUser, destinyCharacter);
 		}
 
 		return count;
 	}
 
-	public int getCompletions(ActivityIdentifier activityIdentifier, DestinyCharacter destinyCharacter) {
+	public int getCompletions(ActivityIdentifier activityIdentifier, BungieUser bungieUser, DestinyCharacter destinyCharacter) {
 		int count = 0;
 
-		for (int i = 0; i < 25; i++) {
-			JsonObject jo = httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getBungieMembershipID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/Activities/?page=" + i + "&count=250&mode=" + activityIdentifier.getMode().getBungieValue());
-
-			// 1665 = User has chosen for their data to be private :(
-			if (jo.get("ErrorCode").getAsInt() == 1665 || !jo.getAsJsonObject("Response").has("activities")) {
-				break;
-			}
-
-			JsonArray ja = jo.getAsJsonObject("Response").getAsJsonArray("activities");
+		for (JsonArray ja : getArrays(activityIdentifier, bungieUser, destinyCharacter)) {
 			for (JsonElement je : ja) {
 				JsonObject jo1 = je.getAsJsonObject();
 				for (String s : activityIdentifier.getHashes()) {
@@ -85,7 +92,18 @@ public class ActivityHistoryReview {
 		return count;
 	}
 
-	public void getUndiscoveredActivityHashes(ActivityIdentifier activityIdentifier) {
+	public boolean hasPlayedInActivity(BungieUser bungieUser, String pgcrId) {
+		Activity activity = new Activity(pgcrId);
+		for (ActivityParticipant activityParticipant : activity.getParticipants()) {
+			if (activityParticipant.getMembershipId().equals(bungieUser.getBungieMembershipID())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void getUndiscoveredActivityHashes(BungieUser bungieUser, ActivityIdentifier activityIdentifier) {
 		for (DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
 			for (int i = 0; i < 25; i++) {
 				JsonObject jo = httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getBungieMembershipID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/Activities/?page=" + i + "&count=250&mode=" + activityIdentifier.getMode().getBungieValue());
@@ -100,7 +118,7 @@ public class ActivityHistoryReview {
 					String hash = jo1.getAsJsonObject("activityDetails").get("referenceId").getAsString();
 					if (ActivityIdentifier.fromHash(hash) == null) {
 						JsonObject jo2 = httpUtils.manifestGET(ManifestEntityTypes.ACTIVITY, hash);
-						if(jo2.has("Response") && jo2.getAsJsonObject("Response").has("displayProperties") && jo2.getAsJsonObject("Response").getAsJsonObject("displayProperties").has("name")) {
+						if (jo2.has("Response") && jo2.getAsJsonObject("Response").has("displayProperties") && jo2.getAsJsonObject("Response").getAsJsonObject("displayProperties").has("name")) {
 							jo2 = jo2.getAsJsonObject("Response").getAsJsonObject("displayProperties");
 							System.out.println(jo2.get("name").getAsString() + " - " + hash);
 						}
@@ -110,5 +128,27 @@ public class ActivityHistoryReview {
 			}
 
 		}
+	}
+
+	private JsonArray[] getArrays(ActivityIdentifier activityIdentifier, BungieUser bungieUser, DestinyCharacter destinyCharacter) {
+		List<JsonArray> jsonArrays = new ArrayList<>();
+
+		for (int i = 0; i < Integer.MAX_VALUE; i++) {
+			try {
+				JsonObject jo = httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getBungieMembershipID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/Activities/?page=" + i + "&count=250&mode=" + activityIdentifier.getMode().getBungieValue());
+
+				// 1665 = User has chosen for their data to be private :(
+				if (jo.get("ErrorCode").getAsInt() == 1665 || !jo.getAsJsonObject("Response").has("activities")) {
+					break;
+				}
+
+				JsonArray ja = jo.getAsJsonObject("Response").getAsJsonArray("activities");
+				jsonArrays.add(ja);
+			} catch (NullPointerException e) {
+				break;
+			}
+		}
+
+		return jsonArrays.toArray(new JsonArray[0]);
 	}
 }
