@@ -25,10 +25,8 @@ import java.util.List;
 
 /**
  * A "BungieUser" is a Destiny 2 Player.
- *
  * It is possible for there to be no information pertaining to a specific BungieUser so
  * call isValidUser() before anything else.
- *
  * Most information for this class is pulled from the /LinkedProfiles/ Endpoint
  */
 public class BungieUser extends ContentFramework {
@@ -64,9 +62,10 @@ public class BungieUser extends ContentFramework {
 	/**
 	 * Used to provide a little more context for what profile the BungieUser class should pull info from
 	 * because a LinkedProfiles request can have multiple platform accounts attached
+	 * You are responsible for checking the getMembershipTypes() to see if that user has a profile on that platform
 	 *
 	 * @param bungieMembershipID The bungie Id of the user you want to get information for
-	 * @param intendedPlatform The platform that you want to pull information for
+	 * @param intendedPlatform   The platform that you want to pull information for
 	 */
 	public BungieUser(String bungieMembershipID, DestinyPlatform intendedPlatform) {
 		super("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200", source -> {
@@ -112,7 +111,7 @@ public class BungieUser extends ContentFramework {
 	 * Prefers returning the name of their account on steam, if they have one
 	 */
 	public String getDisplayName() {
-		if(displayName == null) {
+		if (displayName == null) {
 			displayName = getJE().get("displayName").getAsString();
 		}
 		return displayName;
@@ -166,7 +165,7 @@ public class BungieUser extends ContentFramework {
 	public ArrayList<Integer> getMembershipTypes() {
 		ArrayList<Integer> integers = new ArrayList<>();
 
-		for(JsonElement jsonElement : getJO().get("profiles").getAsJsonArray()) {
+		for (JsonElement jsonElement : getJO().get("profiles").getAsJsonArray()) {
 			integers.add(jsonElement.getAsJsonObject().get("membershipType").getAsInt());
 		}
 
@@ -275,9 +274,9 @@ public class BungieUser extends ContentFramework {
 	 */
 	public JsonObject getJE() {
 		if (je == null) {
-			if(intendedPlatform != -2) {
-				for(JsonElement jsonElement : getJO().get("profiles").getAsJsonArray()) {
-					if(jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
+			if (intendedPlatform != -2) {
+				for (JsonElement jsonElement : getJO().get("profiles").getAsJsonArray()) {
+					if (jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
 						je = jsonElement.getAsJsonObject();
 						break;
 					}
