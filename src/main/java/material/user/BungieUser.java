@@ -282,9 +282,7 @@ public class BungieUser extends ContentFramework {
 					}
 				}
 			} else {
-				if(isValidUser()) {
-					je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
-				}
+				je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
 			}
 		}
 
