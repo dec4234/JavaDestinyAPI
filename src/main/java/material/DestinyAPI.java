@@ -13,10 +13,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import material.clan.Clan;
 import material.user.BungieUser;
+import material.user.UserCredential;
+import material.user.UserCredentialType;
 import utils.HttpUtils;
 import utils.framework.OAuthManager;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DestinyAPI {
@@ -111,10 +114,56 @@ public class DestinyAPI {
 		return getMemberFromPlatformID("SteamId", steamID);
 	}
 
+	/**
+	 * Used to get a BungieUser from a specified platform ID
+	 * Currently only works with Steam IDs (see getMemberFromSteamID())
+	 */
 	private static BungieUser getMemberFromPlatformID(String platformName, String platformID) {
 		JsonObject jsonObject = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/GetMembershipFromHardLinkedCredential/" + platformName + "/" + platformID + "/").getAsJsonObject("Response");
 
 		return new BungieUser(jsonObject.get("membershipId").getAsString());
+	}
+
+	/**
+	 * Bungie.net allows you to connect various other accounts to your own
+	 * Such as social media platforms and game platforms
+	 *
+	 * Only usefulness at the moment would be to determine a Battle.net tag or Steam ID
+	 *
+	 * Requires OAuth
+	 */
+	public static UserCredential[] getUserCredentials(BungieUser bungieUser) {
+		List<UserCredential> list = new LinkedList<>();
+
+		for(JsonElement je : new HttpUtils().urlRequestGETOauth("https://www.bungie.net/Platform/User/GetCredentialTypesForTargetAccount/" + bungieUser.getBungieMembershipID() + "/").getAsJsonArray("Response")) {
+			JsonObject jo = je.getAsJsonObject();
+
+			if(jo.has("credentialDisplayName")) {
+				if(jo.has("credentialAsString")) {
+					list.add(new UserCredential(UserCredentialType.fromPlatformCode(jo.get("credentialType").getAsInt()), jo.get("isPublic").getAsBoolean(), jo.get("credentialDisplayName").getAsString(), jo.get("credentialAsString").getAsString()));
+				} else {
+					list.add(new UserCredential(UserCredentialType.fromPlatformCode(jo.get("credentialType").getAsInt()), jo.get("isPublic").getAsBoolean(), jo.get("credentialDisplayName").getAsString()));
+				}
+			} else {
+				list.add(new UserCredential(UserCredentialType.fromPlatformCode(jo.get("credentialType").getAsInt()), jo.get("isPublic").getAsBoolean()));
+			}
+		}
+
+		return list.toArray(new UserCredential[0]);
+	}
+
+	/**
+	 * Get a "UserCredential" from a BungieUser
+	 *
+	 */
+	public static UserCredential getUserCredential(UserCredentialType type, BungieUser bungieUser) {
+		for(UserCredential userCredential : getUserCredentials(bungieUser)) {
+			if(userCredential.getUserCredentialType() == type) {
+				return userCredential;
+			}
+		}
+
+		return null;
 	}
 
 	/**

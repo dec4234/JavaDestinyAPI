@@ -50,7 +50,7 @@ public class BungieUser extends ContentFramework {
 	 * The simplest starter of a BungieUser
 	 * Just provide the bungie membership id of the user
 	 *
-	 * @param bungieMembershipID
+	 * @param bungieMembershipID The bungie id of the user you want to get information for
 	 */
 	public BungieUser(String bungieMembershipID) {
 		super("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200", source -> {
@@ -282,10 +282,16 @@ public class BungieUser extends ContentFramework {
 					}
 				}
 			} else {
-				je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
+				if(isValidUser()) {
+					je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
+				}
 			}
 		}
 
 		return je;
+	}
+
+	public void setIntendedPlatform(DestinyPlatform destinyPlatform) {
+		intendedPlatform = destinyPlatform.getPlatformCode();
 	}
 }
