@@ -124,6 +124,7 @@ public class BungieUser extends ContentFramework {
 		if (lastPlayed == null) {
 			lastPlayed = StringUtils.valueOfZTime(getJE().get("dateLastPlayed").getAsString());
 		}
+
 		return lastPlayed;
 	}
 
@@ -271,23 +272,20 @@ public class BungieUser extends ContentFramework {
 
 	/**
 	 * Get the profile object to be used to pull most data
-	 * Uses the preffered platform if it has been declared or
-	 * it will select the first in the profiles array
+	 * Uses the preferred platform profile if it has been declared or
+	 * it will select the first profile in the profiles array
 	 */
 	public JsonObject getJE() {
-		if (je == null) {
-			if (intendedPlatform != -2) {
-				for (JsonElement jsonElement : getJO().get("profiles").getAsJsonArray()) {
-					if (jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
-						je = jsonElement.getAsJsonObject();
-						break;
-					}
+		if (intendedPlatform != -2) {
+			for (JsonElement jsonElement : getJO().get("profiles").getAsJsonArray()) {
+				if (jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
+					je = jsonElement.getAsJsonObject();
+					return je;
 				}
-			} else {
-				je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
-				System.out.println("1st one");
 			}
 		}
+		je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
+
 
 		return je;
 	}
