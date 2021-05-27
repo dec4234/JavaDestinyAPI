@@ -210,6 +210,8 @@ public class BungieUser extends ContentFramework {
 
 	/**
 	 * Adds up all of the time played across all characters
+	 *
+	 * @return The time played of this user, in minutes
 	 */
 	public int getTimePlayed() {
 		if (playTime != -1) { return playTime; }

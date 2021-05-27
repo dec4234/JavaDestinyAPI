@@ -47,16 +47,33 @@ public class DestinyCharacter extends ContentFramework {
 		this.bungieUser = bungieUser;
 	}
 
+	/**
+	 * Get the membership ID of the account that owns this character
+	 */
 	public String getMembershipID() {
 		return bungieUser.getBungieMembershipID();
 	}
 
+	/**
+	 * Get the membershipType of the account that owns this character
+	 */
 	public int getMembershipType() {
 		return bungieUser.getMembershipType();
 	}
 
+	/**
+	 * Get the BungieUser that owns this account
+	 */
+	public BungieUser getBungieUser() { return bungieUser; }
+
+	/**
+	 * Get the characterID of this character
+	 */
 	public String getCharacterID() { return characterID; }
 
+	/**
+	 * Get the Date that this character was last played
+	 */
 	public Date getLastPlayed() {
 		if (lastPlayed == null) {
 			lastPlayed = StringUtils.valueOfZTime(getJO().get("dateLastPlayed").getAsString());
@@ -64,6 +81,11 @@ public class DestinyCharacter extends ContentFramework {
 		return lastPlayed;
 	}
 
+	/**
+	 * Get the total amount of time, in minutes, that this character has been played in this session
+	 *
+	 * TO-DO: Define what a "session" is
+	 */
 	public int getMinutesPlayedThisSession() {
 		if (minutesPlayedThisSession == -1) {
 			minutesPlayedThisSession = getJO().get("minutesPlayedThisSession").getAsInt();
@@ -71,6 +93,9 @@ public class DestinyCharacter extends ContentFramework {
 		return minutesPlayedThisSession;
 	}
 
+	/**
+	 * Get the total amount of time, in minutes, that has been played on this character
+	 */
 	public String getMinutesPlayedTotal() {
 		if (minutesPlayedTotal == null) {
 			minutesPlayedTotal = getJO().get("minutesPlayedTotal").getAsString();
@@ -78,6 +103,10 @@ public class DestinyCharacter extends ContentFramework {
 		return minutesPlayedTotal;
 	}
 
+	/**
+	 * Get the light level of this character
+	 * @return The light level of this character, as an integer
+	 */
 	public int getLightLevel() {
 		if (lightLevel == -1) {
 			lightLevel = getJO().get("light").getAsInt();
@@ -85,6 +114,10 @@ public class DestinyCharacter extends ContentFramework {
 		return lightLevel;
 	}
 
+	/**
+	 * Get the race of this character
+	 * Either Human, Exo or Awoken
+	 */
 	public Race getRace() {
 		if (race == null) {
 			race = evaluateRace(getJO().get("raceHash").getAsString());
@@ -92,6 +125,10 @@ public class DestinyCharacter extends ContentFramework {
 		return race;
 	}
 
+	/**
+	 * Get the gender of this character
+	 * @return Male or Female
+	 */
 	public Gender getGender() {
 		if (gender == null) {
 			gender = evaluateGender(getJO().get("genderHash").getAsString());
@@ -99,6 +136,10 @@ public class DestinyCharacter extends ContentFramework {
 		return gender;
 	}
 
+	/**
+	 * Get the Class of this character
+	 * Either Warlock, Titan or Hunter
+	 */
 	public DestinyClass getD2class() {
 		if (d2class == null) {
 			d2class = evaluateClass(getJO().get("classHash").getAsString());
@@ -106,6 +147,11 @@ public class DestinyCharacter extends ContentFramework {
 		return d2class;
 	}
 
+	/**
+	 * Get the currently equipped emblem of this character
+	 * Add this path to the end of "https://bungie.net/"
+	 * @return
+	 */
 	public String getEmblemPath() {
 		if (emblemPath == null) {
 			emblemPath = getJO().get("emblemPath").getAsString();
@@ -113,6 +159,10 @@ public class DestinyCharacter extends ContentFramework {
 		return emblemPath;
 	}
 
+	/**
+	 * Get the background of the currently equipped emblem
+	 * Add this path to the end of "https://bungie.net/"
+	 */
 	public String getEmblemBackgroundPath() {
 		if (emblemBackgroundPath == null) {
 			emblemBackgroundPath = getJO().get("emblemBackgroundPath").getAsString();
@@ -120,6 +170,9 @@ public class DestinyCharacter extends ContentFramework {
 		return emblemBackgroundPath;
 	}
 
+	/**
+	 * Get the hash of the currently equipped emblem to be used in a manifest request
+	 */
 	public String getEmblemHash() {
 		if (emblemHash == null) {
 			emblemHash = getJO().get("emblemHash").getAsString();
@@ -127,8 +180,9 @@ public class DestinyCharacter extends ContentFramework {
 		return emblemHash;
 	}
 
-	public JsonObject getJsonObject() { return getJO(); }
-
+	/**
+	 * Get a list of the currently equipped items of this character
+	 */
 	public List<DestinyItem> getEquippedItems() {
 		JsonArray jsonArray = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getBungieMembershipID() + "/Character/"
 																	+ getCharacterID() + "/?components=205").getAsJsonObject("Response").getAsJsonObject("equipment").getAsJsonObject("data").getAsJsonArray("items");
@@ -157,7 +211,8 @@ public class DestinyCharacter extends ContentFramework {
 		return allActivities;
 	}
 
-	public boolean hasPlayedInActivity(String pgcrId, List<Activity> source) {
+
+	private boolean hasPlayedInActivity(String pgcrId, List<Activity> source) {
 		for(Activity activity : source) {
 			if(pgcrId.equals(activity.getInstanceId())) {
 				return true;
@@ -167,6 +222,11 @@ public class DestinyCharacter extends ContentFramework {
 		return false;
 	}
 
+	/**
+	 * Has this character played in the activity with the specified pgcrID
+	 * @param pgcrId The ID of the activity you would like to be analyzed
+	 * @return True or false depending on if the user played in it
+	 */
 	public boolean hasPlayedInActivity(String pgcrId) {
 		List<String> participantIds = new ArrayList<>();
 
