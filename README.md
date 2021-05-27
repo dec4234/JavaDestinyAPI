@@ -34,6 +34,9 @@ Check out the [wiki](https://github.com/dec4234/JavaDestinyAPI/wiki/Getting-Star
 
 ![Discord Banner 2](https://discordapp.com/api/guilds/847480795232993280/widget.png?style=banner2)
 
+https://discord.gg/dvZmP92d4h
+
+
 ## How's it made?
 There is both official and unofficial documentation for the API available on [destinydevs.github.io](http://destinydevs.github.io/BungieNetPlatform/docs/Endpoints) and on the [offical bungie api documentation](https://bungie-net.github.io/).
 
