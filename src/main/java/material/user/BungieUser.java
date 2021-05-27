@@ -47,7 +47,7 @@ public class BungieUser extends ContentFramework {
 	private Clan clan;
 
 	/**
-	 * The simplest starter of a BungieUser
+	 * The simplest starter of a BungieUser.
 	 * Just provide the bungie membership id of the user
 	 *
 	 * @param bungieMembershipID The bungie id of the user you want to get information for
