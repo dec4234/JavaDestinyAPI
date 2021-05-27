@@ -151,6 +151,8 @@ public class Clan extends ContentFramework {
 	/**
 	 * Sort all of the players in the clan by how inactive they are
 	 * Most inactive is 1st, next is 2nd, etc.
+	 *
+	 * @param intendedPlatform The platform you primarily want to get information for
 	 */
 	public List<BungieUser> getMostInactiveMembers(int numberOfResults, DestinyPlatform intendedPlatform, String... exclude) {
 		List<BungieUser> list = getMembers();
