@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import material.DestinyAPI;
 import material.stats.activities.ActivityMode;
 import material.user.BungieUser;
+import material.user.DestinyPlatform;
 import utils.HttpUtils;
 import utils.StringUtils;
 import utils.framework.ContentFramework;
@@ -151,7 +152,7 @@ public class Clan extends ContentFramework {
 	 * Sort all of the players in the clan by how inactive they are
 	 * Most inactive is 1st, next is 2nd, etc.
 	 */
-	public List<BungieUser> getMostInactiveMembers(int numberOfResults, String... exclude) {
+	public List<BungieUser> getMostInactiveMembers(int numberOfResults, DestinyPlatform intendedPlatform, String... exclude) {
 		List<BungieUser> list = getMembers();
 		List<String> exlcluded = Arrays.asList(exclude);
 		List<BungieUser> sorted = new LinkedList<>();
@@ -160,6 +161,9 @@ public class Clan extends ContentFramework {
 		for (int i = 0; i < numberOfResults; i++) {
 			for (BungieUser bungieUser : list) {
 				if (temp != null) {
+					if(intendedPlatform != null) {
+						bungieUser.setIntendedPlatform(intendedPlatform);
+					}
 					if (temp != bungieUser && !sorted.contains(bungieUser) && !exlcluded.contains(bungieUser.getBungieMembershipID())) {
 						if (bungieUser.getDaysSinceLastPlayed() > temp.getDaysSinceLastPlayed()) {
 							temp = bungieUser;
@@ -174,6 +178,10 @@ public class Clan extends ContentFramework {
 		}
 
 		return sorted;
+	}
+
+	public List<BungieUser> getMostInactiveMembers(int numberOfResults, String... exclude) {
+		return getMostInactiveMembers(numberOfResults, null, exclude);
 	}
 
 	/**
