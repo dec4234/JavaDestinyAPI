@@ -100,7 +100,7 @@ public class BungieUser extends ContentFramework {
 	 */
 	public boolean isValidUser() {
 		try {
-			return getJO().get("Response").getAsJsonObject().get("profiles").getAsJsonArray().size() != 0;
+			return getJO().getAsJsonArray("profiles").size() != 0;
 		} catch (NullPointerException nullPointerException) {
 			return false;
 		}
@@ -283,6 +283,7 @@ public class BungieUser extends ContentFramework {
 				}
 			} else {
 				je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
+				System.out.println("1st one");
 			}
 		}
 

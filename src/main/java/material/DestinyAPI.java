@@ -13,6 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import material.clan.Clan;
 import material.user.BungieUser;
+import material.user.DestinyPlatform;
 import material.user.UserCredential;
 import material.user.UserCredentialType;
 import utils.HttpUtils;
@@ -177,9 +178,10 @@ public class DestinyAPI {
 		try {
 			JsonObject obj = hu.urlRequestGET("https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name.replace(" ", "%20") + "/?components=204");
 			JsonArray ja = obj.getAsJsonArray("Response");
+
 			for (JsonElement je : ja) {
 				JsonObject us = je.getAsJsonObject();
-				BungieUser bu = new BungieUser(us.get("membershipId").getAsString());
+				BungieUser bu = new BungieUser(us.get("membershipId").getAsString(), DestinyPlatform.fromMembershipType(us.get("membershipType").getAsInt()));
 				if (!ids.contains(bu.getBungieMembershipID())) {
 					temp.add(bu);
 					ids.add(bu.getBungieMembershipID());
@@ -188,6 +190,7 @@ public class DestinyAPI {
 		} catch (NullPointerException ignored) {
 
 		}
+
 		return temp;
 	}
 
