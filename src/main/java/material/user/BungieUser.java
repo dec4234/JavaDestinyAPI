@@ -287,8 +287,21 @@ public class BungieUser extends ContentFramework {
 			// Some users may have cross saved a console account to their pc account
 			for (JsonElement jsonElement : getJO().getAsJsonArray("profilesWithErrors")) {
 				if (jsonElement.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == intendedPlatform) {
-					je = jsonElement.getAsJsonObject().getAsJsonObject("infoCard");
-					return je;
+					JsonObject temp = jsonElement.getAsJsonObject().getAsJsonObject("infoCard");
+					displayName = temp.get("displayName").getAsString();
+					isPublic = temp.get("isPublic").getAsBoolean();
+					crossSaveOverride = temp.get("crossSaveOverride").getAsInt();
+
+					// If a user has a profileWithErrors we have to get most info from a profile that is not in error
+					for (JsonElement jsonElement1 : getJO().getAsJsonArray("profiles")) {
+						// Does the main profile have the intended platform in its applicablemembershipTypes?
+						for(JsonElement jsonElement2 : jsonElement1.getAsJsonObject().getAsJsonArray("applicableMembershipTypes")) {
+							if(jsonElement2.getAsInt() == intendedPlatform) {
+								je = jsonElement1.getAsJsonObject();
+								return je;
+							}
+						}
+					}
 				}
 			}
 
