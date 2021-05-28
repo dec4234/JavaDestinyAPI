@@ -111,6 +111,7 @@ public class BungieUser extends ContentFramework {
 	 * Prefers returning the name of their account on steam, if they have one
 	 */
 	public String getDisplayName() {
+		getJE();
 		if (displayName == null) {
 			displayName = getJE().get("displayName").getAsString();
 		}
@@ -276,37 +277,39 @@ public class BungieUser extends ContentFramework {
 	 * it will select the first profile in the profiles array
 	 */
 	public JsonObject getJE() {
-		if (intendedPlatform != -2) {
-			for (JsonElement jsonElement : getJO().getAsJsonArray("profiles")) {
-				if (jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
-					je = jsonElement.getAsJsonObject();
-					return je;
+		if(je == null) {
+			if (intendedPlatform != -2) {
+				for (JsonElement jsonElement : getJO().getAsJsonArray("profiles")) {
+					if (jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
+						je = jsonElement.getAsJsonObject();
+						return je;
+					}
 				}
-			}
 
-			// Some users may have cross saved a console account to their pc account
-			for (JsonElement jsonElement : getJO().getAsJsonArray("profilesWithErrors")) {
-				if (jsonElement.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == intendedPlatform) {
-					JsonObject temp = jsonElement.getAsJsonObject().getAsJsonObject("infoCard");
-					displayName = temp.get("displayName").getAsString();
-					isPublic = temp.get("isPublic").getAsBoolean();
-					crossSaveOverride = temp.get("crossSaveOverride").getAsInt();
+				// Some users may have cross saved a console account to their pc account
+				for (JsonElement jsonElement : getJO().getAsJsonArray("profilesWithErrors")) {
+					if (jsonElement.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == intendedPlatform) {
+						JsonObject temp = jsonElement.getAsJsonObject().getAsJsonObject("infoCard");
+						displayName = temp.get("displayName").getAsString();
+						isPublic = temp.get("isPublic").getAsBoolean();
+						crossSaveOverride = temp.get("crossSaveOverride").getAsInt();
 
-					// If a user has a profileWithErrors we have to get most info from a profile that is not in error
-					for (JsonElement jsonElement1 : getJO().getAsJsonArray("profiles")) {
-						// Does the main profile have the intended platform in its applicablemembershipTypes?
-						for(JsonElement jsonElement2 : jsonElement1.getAsJsonObject().getAsJsonArray("applicableMembershipTypes")) {
-							if(jsonElement2.getAsInt() == intendedPlatform) {
-								je = jsonElement1.getAsJsonObject();
-								return je;
+						// If a user has a profileWithErrors we have to get most info from a profile that is not in error
+						for (JsonElement jsonElement1 : getJO().getAsJsonArray("profiles")) {
+							// Does the main profile have the intended platform in its applicablemembershipTypes?
+							for (JsonElement jsonElement2 : jsonElement1.getAsJsonObject().getAsJsonArray("applicableMembershipTypes")) {
+								if (jsonElement2.getAsInt() == intendedPlatform) {
+									je = jsonElement1.getAsJsonObject();
+									return je;
+								}
 							}
 						}
 					}
 				}
-			}
 
+			}
+			je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
 		}
-		je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
 
 
 		return je;
@@ -314,5 +317,6 @@ public class BungieUser extends ContentFramework {
 
 	public void setIntendedPlatform(DestinyPlatform destinyPlatform) {
 		intendedPlatform = destinyPlatform.getPlatformCode();
+		je = null;
 	}
 }
