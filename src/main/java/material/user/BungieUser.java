@@ -277,12 +277,21 @@ public class BungieUser extends ContentFramework {
 	 */
 	public JsonObject getJE() {
 		if (intendedPlatform != -2) {
-			for (JsonElement jsonElement : getJO().get("profiles").getAsJsonArray()) {
+			for (JsonElement jsonElement : getJO().getAsJsonArray("profiles")) {
 				if (jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
 					je = jsonElement.getAsJsonObject();
 					return je;
 				}
 			}
+
+			// Some users may have cross saved a console account to their pc account
+			for (JsonElement jsonElement : getJO().getAsJsonArray("profilesWithErrors")) {
+				if (jsonElement.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == intendedPlatform) {
+					je = jsonElement.getAsJsonObject().getAsJsonObject("infoCard");
+					return je;
+				}
+			}
+
 		}
 		je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
 
