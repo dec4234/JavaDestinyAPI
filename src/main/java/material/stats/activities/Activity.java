@@ -39,6 +39,14 @@ public class Activity extends ContentFramework {
 		this.activityId = activityId;
 	}
 
+	public Activity(String activityId, Date dateOccured) {
+		super("https://stats.bungie.net/Platform/Destiny2/Stats/PostGameCarnageReport/" + activityId + "/", source -> {
+			return source.getAsJsonObject("Response");
+		});
+		this.activityId = activityId;
+		this.time = dateOccured;
+	}
+
 	/**
 	 * Initialize an activity with more information which could improve load times
 	 */

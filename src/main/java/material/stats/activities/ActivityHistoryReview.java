@@ -16,6 +16,7 @@ import material.manifest.ManifestEntityTypes;
 import material.user.BungieUser;
 import material.user.DestinyCharacter;
 import utils.HttpUtils;
+import utils.StringUtils;
 
 import java.net.ConnectException;
 import java.util.*;
@@ -24,6 +25,56 @@ import java.util.concurrent.ExecutionException;
 public class ActivityHistoryReview {
 
 	private HttpUtils httpUtils = new HttpUtils();
+
+	public LinkedHashMap<String, Activity> getMostUnrecentAttempts(Clan clan, ActivityIdentifier activityIdentifier) {
+		HashMap<String, Activity> map = new HashMap<>();
+		HashMap<String, Double> doubleMap = new HashMap<>();
+		LinkedHashMap<String, Activity> toReturn = new LinkedHashMap<>();
+
+		for(BungieUser bungieUser : clan.getMembers()) {
+			for(DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
+				for (int i = 0; i < 25; i++) {
+						JsonObject jo = httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getBungieMembershipID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/Activities/?page=" + i + "&count=250&mode=" + activityIdentifier.getMode().getBungieValue());
+
+						if (jo == null || !jo.has("Response") || !jo.getAsJsonObject("Response").has("activities")) {
+							break;
+						}
+
+						JsonArray ja = jo.getAsJsonObject("Response").getAsJsonArray("activities");
+						JsonObject jo2 = ja.get(0).getAsJsonObject();
+						Date date = StringUtils.valueOfZTime(jo2.get("period").getAsString());
+
+						if (map.containsKey(bungieUser.getBungieMembershipID())) {
+							if (StringUtils.getDaysSinceTime(date) < StringUtils.getDaysSinceTime(map.get(bungieUser.getBungieMembershipID()).getDatePlayed())) {
+								map.remove(bungieUser.getBungieMembershipID());
+								map.put(bungieUser.getBungieMembershipID(), new Activity(jo2.getAsJsonObject("activityDetails").get("instanceId").getAsString(), date));
+							}
+						} else {
+							map.put(bungieUser.getBungieMembershipID(), new Activity(jo2.getAsJsonObject("activityDetails").get("instanceId").getAsString(), date));
+						}
+				}
+			}
+
+			if(map.containsKey(bungieUser.getBungieMembershipID())) {
+				doubleMap.put(bungieUser.getBungieMembershipID(), StringUtils.getDaysSinceTime(map.get(bungieUser.getBungieMembershipID()).getDatePlayed()));
+			}
+		}
+
+		List<Map.Entry<String, Double>> list = new LinkedList<>(doubleMap.entrySet());
+
+		Collections.sort(list, new Comparator<>() {
+			public int compare(Map.Entry<String, Double> o1,
+							   Map.Entry<String, Double> o2) {
+				return (o2.getValue()).compareTo(o1.getValue());
+			}
+		});
+
+		for(Map.Entry<String, Double> map2 : list) {
+			toReturn.put(map2.getKey(), map.get(map2.getKey()));
+		}
+
+		return toReturn;
+	}
 
 	/**
 	 * Takes a very long time

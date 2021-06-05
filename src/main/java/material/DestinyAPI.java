@@ -105,7 +105,9 @@ public class DestinyAPI {
 	}
 
 
-	public static BungieUser getUser(String id) { return new BungieUser(id); }
+	public static BungieUser getUser(String id) {
+		return new BungieUser(id);
+	}
 
 	/**
 	 * Get a BungieUser from a Steam ID

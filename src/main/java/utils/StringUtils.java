@@ -9,6 +9,7 @@
 package utils;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,5 +36,10 @@ public class StringUtils {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static double getDaysSinceTime(Date date) {
+		DecimalFormat df = new DecimalFormat("0.##");
+		return Double.parseDouble(df.format((new Date().getTime() - date.getTime()) / 1000.0 / 60.0 / 60.0 / 24.0));
 	}
 }
