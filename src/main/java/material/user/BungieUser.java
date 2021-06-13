@@ -12,6 +12,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import material.clan.Clan;
+import material.inventory.CollectionsManager;
+import material.inventory.InventoryManager;
 import material.stats.activities.ActivityInfo;
 import utils.HttpUtils;
 import utils.StringUtils;
@@ -43,6 +45,8 @@ public class BungieUser extends ContentFramework {
 	private int playTime = -1, crossSaveOverride = -1, membershipType = -1;
 	private boolean isPublic, isCrossSavePrimary, isOverridden = false;
 	private int intendedPlatform = -2;
+	private InventoryManager inventoryManager;
+	private CollectionsManager collectionsManager;
 
 	private Clan clan;
 
@@ -272,7 +276,7 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * Get the profile object to be used to pull most data
+	 * Get the Destiny profile object to be used to pull most data
 	 * Uses the preferred platform profile if it has been declared or
 	 * it will select the first profile in the profiles array
 	 */
@@ -318,5 +322,21 @@ public class BungieUser extends ContentFramework {
 	public void setIntendedPlatform(DestinyPlatform destinyPlatform) {
 		intendedPlatform = destinyPlatform.getPlatformCode();
 		je = null;
+	}
+
+	public InventoryManager getInventoryManager() {
+		if(inventoryManager == null) {
+			inventoryManager = new InventoryManager(this);
+		}
+
+		return inventoryManager;
+	}
+
+	public CollectionsManager getCollectionsManager() {
+		if(collectionsManager == null) {
+			collectionsManager = new CollectionsManager(this);
+		}
+
+		return collectionsManager;
 	}
 }

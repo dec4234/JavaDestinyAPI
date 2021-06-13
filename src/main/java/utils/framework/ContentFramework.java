@@ -44,6 +44,17 @@ public class ContentFramework implements ContentInterface {
 		}
 	}
 
+	/**
+	 * Refresh the jsonobject to potentially account for new changes
+	 */
+	public void refreshJO() {
+		if(manifestType == null) {
+			jo = new HttpUtils().urlRequestGET(url);
+		} else {
+			jo = new HttpUtils().manifestGET(manifestType, url);
+		}
+	}
+
 	public JsonObject getJO() {
 		checkJO();
 		return jsonObjectModifier.modify(jo);

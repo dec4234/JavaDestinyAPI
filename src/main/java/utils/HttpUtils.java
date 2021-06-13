@@ -78,8 +78,11 @@ public class HttpUtils {
 	}
 
 	/**
-	 * Make a request to the Bungie manifest to reveal information about a hash-identified item
+	 * Make a request to the Bungie manifest to reveal information about a hash-identified item.
+	 *
+	 * Deprecated in favor of DestinyManifest#manifestGET()
 	 */
+	@Deprecated
 	public JsonObject manifestGET(ManifestEntityTypes entityType, String hashIdentifier) {
 		return urlRequestGET("https://www.bungie.net/Platform/Destiny2/Manifest/" + entityType.getBungieEntityValue() + "/" + hashIdentifier + "/");
 	}
@@ -169,6 +172,7 @@ public class HttpUtils {
 			String responseString = httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body).get();
 
 			if (DestinyAPI.isDebugEnabled()) {
+				System.out.println(httpRequest.method() + " " + httpRequest.uri().toString());
 				System.out.println(responseString);
 			}
 			return responseString;

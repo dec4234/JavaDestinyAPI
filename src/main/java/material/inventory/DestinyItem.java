@@ -92,6 +92,7 @@ public class DestinyItem implements ContentInterface {
 	}
 
 	public String getCollectibleHash() {
+		checkJO();
 		if(jo.has("collectibleHash")) {
 			collectibleHash = jo.get("collectibleHash").getAsString();
 		}
@@ -100,6 +101,7 @@ public class DestinyItem implements ContentInterface {
 	}
 
 	public String getScreenshot() {
+		checkJO();
 		if(jo.has("screenshot") && screenshot == null) {
 			screenshot = jo.get("screenshot").getAsString();
 		}
@@ -159,6 +161,7 @@ public class DestinyItem implements ContentInterface {
 	public static List<DestinyItem> searchForItems(String itemName) {
 		HttpUtils httpUtils = new HttpUtils();
 		List<DestinyItem> destinyItemList = new ArrayList<>();
+		itemName = itemName.replace(" ", "%20");
 
 		for(JsonElement jsonElement : httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/Armory/Search/DestinyInventoryItemDefinition/" + itemName + "/").getAsJsonObject("Response").getAsJsonObject("results").getAsJsonArray("results")) {
 			JsonObject jsonObject = jsonElement.getAsJsonObject();

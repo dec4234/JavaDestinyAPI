@@ -18,9 +18,7 @@ import material.user.DestinyCharacter;
 import utils.HttpUtils;
 import utils.StringUtils;
 
-import java.net.ConnectException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 public class ActivityHistoryReview {
 
@@ -33,7 +31,7 @@ public class ActivityHistoryReview {
 
 		for(BungieUser bungieUser : clan.getMembers()) {
 			for(DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
-				for (int i = 0; i < 25; i++) {
+				for (int i = 0; i < Integer.MAX_VALUE; i++) {
 						JsonObject jo = httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getBungieMembershipID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/Activities/?page=" + i + "&count=250&mode=" + activityIdentifier.getMode().getBungieValue());
 
 						if (jo == null || !jo.has("Response") || !jo.getAsJsonObject("Response").has("activities")) {
