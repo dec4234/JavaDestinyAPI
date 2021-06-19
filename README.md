@@ -39,5 +39,8 @@ There is both official and unofficial documentation for the API available on [de
 
 ### TO-DO
 - Managing inventory / Item transferring
-- ASync pulls of large lists such as members of clans (Split the list into 2 or 3 parts to be ran concurrently)
+- Collections / Triumphs
 - Comprehensive Wiki / Youtube tutorials
+
+### Future Plans
+I have some long-term goals with this API. Firstly, I'd like to complete the wrapping of most of Bungie-net API into the JavaDestinyAPI. Next I'd like to make a 2.0 version of this API completely built from the ground-up using the lessons and principles learned and established within the development period of the 1.0 version.
