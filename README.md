@@ -38,7 +38,6 @@ Check out the [wiki](https://github.com/dec4234/JavaDestinyAPI/wiki/Getting-Star
 There is both official and unofficial documentation for the API available on [destinydevs.github.io](http://destinydevs.github.io/BungieNetPlatform/docs/Endpoints) and on the [offical bungie api documentation](https://bungie-net.github.io/).
 
 ### TO-DO
-- Revamping exisiting project structure
 - Managing inventory / Item transferring
 - Collections / Triumphs
 - Comprehensive Wiki / Youtube tutorials
