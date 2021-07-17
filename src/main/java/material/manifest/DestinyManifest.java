@@ -70,11 +70,7 @@ public class DestinyManifest extends ContentFramework {
 	public JsonObject getDefinitionLibrary(ManifestEntityTypes manifestEntityTypes) {
 		Language language = Language.ENGLISH;
 
-		if(!worldComponents.containsKey(manifestEntityTypes.getBungieEntityValue())) {
-			worldComponents.put(manifestEntityTypes.getBungieEntityValue(), new HttpUtils().urlRequestGET("https://www.bungie.net" + getJO().getAsJsonObject("jsonWorldComponentContentPaths").getAsJsonObject(language.getCode()).get(manifestEntityTypes.getBungieEntityValue()).getAsString()));
-		}
-
-		return worldComponents.get(manifestEntityTypes.getBungieEntityValue());
+		return getDefinitionLibrary(language, manifestEntityTypes);
 	}
 
 	public JsonObject getDefinitionLibrary(Language language, ManifestEntityTypes manifestEntityTypes) {

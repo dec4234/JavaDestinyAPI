@@ -37,7 +37,7 @@ public class Clan extends ContentFramework {
 	private int memberCount = -1;
 
 	private List<BungieUser> admins, members;
-	private ClanManagement clanManagement;
+	private material.clan.ClanManagement clanManagement;
 	private JsonObject jj;
 
 	public Clan(long clanId) {
