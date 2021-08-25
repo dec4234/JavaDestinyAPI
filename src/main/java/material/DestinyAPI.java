@@ -177,8 +177,11 @@ public class DestinyAPI {
 		List<BungieUser> temp = new ArrayList<>();
 		List<String> ids = new ArrayList<>();
 
+		// encode characters              space                      hashtag
+		name = name.replace(" ", "%20").replace("#", "%23");
+
 		try {
-			JsonObject obj = hu.urlRequestGET("https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name.replace(" ", "%20") + "/?components=204");
+			JsonObject obj = hu.urlRequestGET("https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name + "/?components=204");
 			JsonArray ja = obj.getAsJsonArray("Response");
 
 			for (JsonElement je : ja) {

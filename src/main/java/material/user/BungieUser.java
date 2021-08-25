@@ -33,8 +33,7 @@ import java.util.List;
  */
 public class BungieUser extends ContentFramework {
 
-	private String bungieMembershipID;
-	private String displayName;
+	private String bungieMembershipID, displayName, supplementalDisplayName, discriminator;
 	private Date lastPlayed;
 	private JsonObject je; // The JsonObject of the profile used to get most information
 	private HttpUtils hu = new HttpUtils();
@@ -120,6 +119,22 @@ public class BungieUser extends ContentFramework {
 			displayName = getJE().get("displayName").getAsString();
 		}
 		return displayName;
+	}
+
+	public String getSupplementalDisplayName() {
+		if(supplementalDisplayName == null) {
+			supplementalDisplayName = getJO().getAsJsonObject("bnetMembership").get("supplementalDisplayName").getAsString();
+		}
+
+		return supplementalDisplayName;
+	}
+
+	public String getDiscriminator() {
+		if(discriminator == null) {
+			discriminator = getSupplementalDisplayName().split("#")[1];
+		}
+
+		return discriminator;
 	}
 
 	/**
