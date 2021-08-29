@@ -133,11 +133,18 @@ public class BungieUser extends ContentFramework {
 		return displayName;
 	}
 
+	/**
+	 * Returns the Global Display Name of the user across all Destiny Platforms
+	 * Should be used instead of getDisplayName
+	 */
 	public String getGlobalDisplayName() {
 		getJE();
 
 		if(globalDisplayName == null) {
 
+			// LinkedProfiles is not populated with bungieGlobalDisplayName as of 8/29/2021: github issue #1511
+			// As far as I know, getSupplementalDisplayName is also the bungieGlobalDisplayName
+			globalDisplayName = getSupplementalDisplayName().split("#")[0];
 		}
 
 		return globalDisplayName;
