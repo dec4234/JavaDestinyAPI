@@ -170,7 +170,12 @@ public class DestinyAPI {
 	}
 
 	/**
-	 * Gets the users with this name (There can be multiple users with the same name)
+	 * Search for a user
+	 *
+	 * You need to enter both their username and discriminator
+	 *
+	 * e.g. "dec4234#9904"
+	 * If you only know their name, use searchBungieGlobalDisplayNames()
 	 */
 	public static List<BungieUser> getUsersWithName(String name) {
 		HttpUtils hu = new HttpUtils();
@@ -206,6 +211,31 @@ public class DestinyAPI {
 		List<BungieUser> list = getUsersWithName(name);
 		list.removeIf(bungieUser -> !bungieUser.isValidUser());
 		return list;
+	}
+
+	/**
+	 * You use this method to search for a user purely by their username
+	 *
+	 * For getUsersWithName() you would need to search "dec4234#9904"
+	 * while for this you can search with "dec4234"
+	 */
+	public static List<BungieUser> searchGlobalDisplayNames(String prefix) {
+		List<BungieUser> bungieUsers = new ArrayList<>();
+
+		JsonArray jsonArray = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/Search/Prefix/" + prefix + "/0/").getAsJsonObject("Response").getAsJsonArray("searchResults");
+
+		for(JsonElement jsonElement : jsonArray) {
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
+			JsonObject destinyMembership = jsonObject.getAsJsonArray("destinyMemberships").get(0).getAsJsonObject();
+
+			BungieUser bungieUser = new BungieUser(destinyMembership.get("membershipId").getAsString(), destinyMembership.get("displayName").getAsString(),
+					destinyMembership.get("bungieGlobalDisplayName").getAsString(), destinyMembership.get("crossSaveOverride").getAsInt(), destinyMembership.get("membershipType").getAsInt(),
+					destinyMembership.get("isPublic").getAsBoolean());
+
+			bungieUsers.add(bungieUser);
+		}
+
+		return bungieUsers;
 	}
 
 	public static Clan getClan(long id) {

@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class BungieUser extends ContentFramework {
 
-	private String bungieMembershipID, displayName, supplementalDisplayName, discriminator;
+	private String bungieMembershipID, displayName, globalDisplayName, supplementalDisplayName, discriminator;
 	private Date lastPlayed;
 	private JsonObject je; // The JsonObject of the profile used to get most information
 	private HttpUtils hu = new HttpUtils();
@@ -92,6 +92,18 @@ public class BungieUser extends ContentFramework {
 		this.isPublic = isPublic;
 	}
 
+	public BungieUser(String bungieMembershipID, String displayName, String globalDisplayName, int crossSaveOverride, int membershipType, boolean isPublic) {
+		super("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200", source -> {
+			return source.getAsJsonObject("Response");
+		});
+		this.bungieMembershipID = bungieMembershipID;
+		this.displayName = displayName;
+		this.globalDisplayName = globalDisplayName;
+		this.crossSaveOverride = crossSaveOverride;
+		this.membershipType = membershipType;
+		this.isPublic = isPublic;
+	}
+
 	/**
 	 * Gets the bungie membership ID of the user
 	 */
@@ -121,6 +133,21 @@ public class BungieUser extends ContentFramework {
 		return displayName;
 	}
 
+	public String getGlobalDisplayName() {
+		getJE();
+
+		if(globalDisplayName == null) {
+
+		}
+
+		return globalDisplayName;
+	}
+
+	/**
+	 * Returns the combined displayname and user discriminator as used in friend requests and user searches
+	 *
+	 * E.g. dec4234#9904
+	 */
 	public String getSupplementalDisplayName() {
 		if(supplementalDisplayName == null) {
 			supplementalDisplayName = getJO().getAsJsonObject("bnetMembership").get("supplementalDisplayName").getAsString();
@@ -129,6 +156,11 @@ public class BungieUser extends ContentFramework {
 		return supplementalDisplayName;
 	}
 
+	/**
+	 * Get the discriminator of a user's name
+	 *
+	 * E.g. "9904" of dec4234#9904
+	 */
 	public String getDiscriminator() {
 		if(discriminator == null) {
 			discriminator = getSupplementalDisplayName().split("#")[1];
