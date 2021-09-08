@@ -8,6 +8,11 @@
 
 package material.user;
 
+/**
+ * A "UserCredential" is a linked Platform to a Bungie Account
+ *
+ * Such as a twitch account
+ */
 public class UserCredential {
 
 	private UserCredentialType userCredentialType;

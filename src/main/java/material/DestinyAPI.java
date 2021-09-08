@@ -17,6 +17,7 @@ import material.user.DestinyPlatform;
 import material.user.UserCredential;
 import material.user.UserCredentialType;
 import utils.HttpUtils;
+import utils.StringUtils;
 import utils.framework.OAuthManager;
 
 import java.util.ArrayList;
@@ -157,7 +158,6 @@ public class DestinyAPI {
 
 	/**
 	 * Get a "UserCredential" from a BungieUser
-	 *
 	 */
 	public static UserCredential getUserCredential(UserCredentialType type, BungieUser bungieUser) {
 		for(UserCredential userCredential : getUserCredentials(bungieUser)) {
@@ -182,15 +182,15 @@ public class DestinyAPI {
 		List<BungieUser> temp = new ArrayList<>();
 		List<String> ids = new ArrayList<>();
 
-		// encode characters              space                      hashtag
-		name = name.replace(" ", "%20").replace("#", "%23");
+		// encode characters
+		name = StringUtils.httpEncode(name);
 
 		try {
 			JsonObject obj = hu.urlRequestGET("https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name + "/?components=204");
-			JsonArray ja = obj.getAsJsonArray("Response");
+			JsonArray jsonArray = obj.getAsJsonArray("Response");
 
-			for (JsonElement je : ja) {
-				JsonObject us = je.getAsJsonObject();
+			for (JsonElement jsonElement : jsonArray) {
+				JsonObject us = jsonElement.getAsJsonObject();
 				BungieUser bu = new BungieUser(us.get("membershipId").getAsString(), DestinyPlatform.fromMembershipType(us.get("membershipType").getAsInt()));
 				if (!ids.contains(bu.getBungieMembershipID())) {
 					temp.add(bu);
@@ -220,6 +220,8 @@ public class DestinyAPI {
 	 * while for this you can search with "dec4234"
 	 */
 	public static List<BungieUser> searchGlobalDisplayNames(String prefix) {
+		prefix = StringUtils.httpEncode(prefix);
+
 		List<BungieUser> bungieUsers = new ArrayList<>();
 
 		JsonArray jsonArray = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/Search/Prefix/" + prefix + "/0/").getAsJsonObject("Response").getAsJsonArray("searchResults");

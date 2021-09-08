@@ -8,20 +8,19 @@
 
 package utils;
 
-import com.google.gson.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import exceptions.APIOfflineException;
 import exceptions.AccessTokenInvalidException;
 import material.DestinyAPI;
 import material.manifest.ManifestEntityTypes;
 
-import java.net.ConnectException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Base64;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -30,7 +29,7 @@ import java.util.concurrent.ExecutionException;
  */
 public class HttpUtils {
 
-	String apiKey = DestinyAPI.getApiKey();
+	private String apiKey = DestinyAPI.getApiKey();
 	private static String bearerToken;
 
 	/**

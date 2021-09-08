@@ -24,7 +24,7 @@ public class StringUtils {
 	 */
 	public static Date valueOfZTime(String zuluTimeInString) {
 		String temp = zuluTimeInString;
-		if(temp.length() == 24) {
+		if(temp.length() == 24) { // Sometimes the date will be in an extra precise format, which is truncated here
 			temp = temp.substring(0, temp.length() - 5);
 			temp = temp + "Z";
 		}
@@ -38,8 +38,20 @@ public class StringUtils {
 		return null;
 	}
 
+	/**
+	 * Get the number of days since the time date provided
+	 */
 	public static double getDaysSinceTime(Date date) {
 		DecimalFormat df = new DecimalFormat("0.##");
 		return Double.parseDouble(df.format((new Date().getTime() - date.getTime()) / 1000.0 / 60.0 / 60.0 / 24.0));
+	}
+
+	/**
+	 * Encode a string to be suitable for use in a url
+	 *
+	 * Specific characters need to be encoded in order to have a successful request
+	 */
+	public static String httpEncode(String input) {
+		return input.replace(" ", "%20").replace("#", "%23").replace("^", "%5E");
 	}
 }
