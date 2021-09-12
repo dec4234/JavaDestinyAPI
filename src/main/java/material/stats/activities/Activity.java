@@ -10,6 +10,7 @@ package material.stats.activities;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import material.DestinyAPI;
 import utils.HttpUtils;
 import utils.StringUtils;
 import utils.framework.ContentFramework;
@@ -25,7 +26,7 @@ import java.util.List;
  */
 public class Activity extends ContentFramework {
 
-	private HttpUtils hu = new HttpUtils();
+	private HttpUtils hu = DestinyAPI.getHttpUtils();
 
 	private Date time;
 	private String activityId, referenceId, directoryActivityHash, instanceId;

@@ -32,6 +32,14 @@ public class HttpUtils {
 	private String apiKey = DestinyAPI.getApiKey();
 	private static String bearerToken;
 
+	public HttpUtils(String apiKey) {
+		this.apiKey = apiKey;
+	}
+
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
+	}
+
 	/**
 	 * Send a GET url request to the url provided, returns a JsonObject of the response
 	 */

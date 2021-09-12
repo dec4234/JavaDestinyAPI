@@ -9,6 +9,7 @@
 package material.manifest;
 
 import com.google.gson.JsonObject;
+import material.DestinyAPI;
 import utils.HttpUtils;
 import utils.framework.ContentFramework;
 
@@ -61,7 +62,7 @@ public class DestinyManifest extends ContentFramework {
 	}
 
 	public JsonObject getWorldContent(Language language) {
-		return new HttpUtils().urlRequestGET("https://www.bungie.net" + getJsonWorldContentPath(language));
+		return DestinyAPI.getHttpUtils().urlRequestGET("https://www.bungie.net" + getJsonWorldContentPath(language));
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class DestinyManifest extends ContentFramework {
 
 	public JsonObject getDefinitionLibrary(Language language, ManifestEntityTypes manifestEntityTypes) {
 		if(!worldComponents.containsKey(manifestEntityTypes.getBungieEntityValue())) {
-			worldComponents.put(manifestEntityTypes.getBungieEntityValue(), new HttpUtils().urlRequestGET("https://www.bungie.net" + getJO().getAsJsonObject("jsonWorldComponentContentPaths").getAsJsonObject(language.getCode()).get(manifestEntityTypes.getBungieEntityValue()).getAsString()));
+			worldComponents.put(manifestEntityTypes.getBungieEntityValue(), DestinyAPI.getHttpUtils().urlRequestGET("https://www.bungie.net" + getJO().getAsJsonObject("jsonWorldComponentContentPaths").getAsJsonObject(language.getCode()).get(manifestEntityTypes.getBungieEntityValue()).getAsString()));
 		}
 
 		return worldComponents.get(manifestEntityTypes.getBungieEntityValue());

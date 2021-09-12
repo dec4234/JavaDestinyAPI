@@ -11,6 +11,7 @@ package material.stats.activities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import material.DestinyAPI;
 import material.clan.Clan;
 import material.manifest.ManifestEntityTypes;
 import material.user.BungieUser;
@@ -22,7 +23,7 @@ import java.util.*;
 
 public class ActivityHistoryReview {
 
-	private HttpUtils httpUtils = new HttpUtils();
+	private HttpUtils httpUtils = DestinyAPI.getHttpUtils();
 
 	public LinkedHashMap<String, Activity> getMostUnrecentAttempts(Clan clan, ActivityIdentifier activityIdentifier) {
 		HashMap<String, Activity> map = new HashMap<>();

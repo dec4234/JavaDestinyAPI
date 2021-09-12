@@ -11,6 +11,7 @@ package material.user;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import material.DestinyAPI;
 import material.clan.Clan;
 import material.inventory.CollectionsManager;
 import material.inventory.InventoryManager;
@@ -36,7 +37,7 @@ public class BungieUser extends ContentFramework {
 	private String bungieMembershipID, displayName, globalDisplayName, supplementalDisplayName, discriminator;
 	private Date lastPlayed;
 	private JsonObject je; // The JsonObject of the profile used to get most information
-	private HttpUtils hu = new HttpUtils();
+	private HttpUtils hu = DestinyAPI.getHttpUtils();
 
 	private ArrayList<Integer> applicableMembershipTypes = new ArrayList<>();
 
@@ -125,6 +126,7 @@ public class BungieUser extends ContentFramework {
 	 * Gets the display name of the user
 	 * Prefers returning the name of their account on steam, if they have one
 	 */
+	@Deprecated
 	public String getDisplayName() {
 		getJE();
 		if (displayName == null) {
@@ -135,16 +137,17 @@ public class BungieUser extends ContentFramework {
 
 	/**
 	 * Returns the Global Display Name of the user across all Destiny Platforms
-	 * Should be used instead of getDisplayName
+	 * Should be used instead of getDisplayName()
+	 *
+	 * Please note, an empty string will be returned if a user has not logged in since the
+	 * start of Season of The Lost
 	 */
 	public String getGlobalDisplayName() {
-		getJE();
-
 		if(globalDisplayName == null) {
 
 			// LinkedProfiles is not populated with bungieGlobalDisplayName as of 8/29/2021: github issue #1511
 			// As far as I know, getSupplementalDisplayName is also the bungieGlobalDisplayName
-			globalDisplayName = getSupplementalDisplayName().split("#")[0];
+			globalDisplayName = getJE().get("bungieGlobalDisplayName").getAsString();
 		}
 
 		return globalDisplayName;

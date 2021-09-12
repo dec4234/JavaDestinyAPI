@@ -9,6 +9,7 @@
 package material.stats.character;
 
 import com.google.gson.JsonObject;
+import material.DestinyAPI;
 import material.user.BungieUser;
 import material.user.DestinyCharacter;
 import utils.HttpUtils;
@@ -17,7 +18,7 @@ import java.text.DecimalFormat;
 
 public class UserStats {
 
-	HttpUtils hu = new HttpUtils();
+	HttpUtils hu = DestinyAPI.getHttpUtils();
 	BungieUser bungieUser;
 	DestinyCharacter destinyCharacter;
 	JsonObject jo;

@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutionException;
 public class Clan extends ContentFramework {
 
 	private String apiKey = DestinyAPI.getApiKey();
-	private HttpUtils hu = new HttpUtils();
+	private HttpUtils hu = DestinyAPI.getHttpUtils();
 	private JsonObject jo, cjo; // The entire Clan response
 
 	private long clanId = -1;

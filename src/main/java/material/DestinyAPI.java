@@ -32,14 +32,23 @@ public class DestinyAPI {
 	private static String oauthCode = null;
 	private static String accessToken = null;
 	private static String refreshToken = null;
+
 	private static OAuthManager oam = null;
 	private static boolean debugEnabled = false;
 
+	private static HttpUtils httpUtils;
+
+	/**
+	 * Set the api key used by the DestinyAPI
+	 */
 	public DestinyAPI setApiKey(String apiKey) {
 		DestinyAPI.apiKey = apiKey;
 		if(hasOauthManager()) {
 			oam.setAPIToken(apiKey);
 		}
+
+		httpUtils = new HttpUtils(apiKey);
+
 		return this;
 	}
 
@@ -74,12 +83,19 @@ public class DestinyAPI {
 		return this;
 	}
 
+	/**
+	 * Debug mode prints all requests and their responses to the console
+	 * This is very useful for feature development
+	 */
 	public DestinyAPI enableDebugMode() {
 		DestinyAPI.debugEnabled = true;
 
 		return this;
 	}
 
+	/**
+	 * Disable debug mode
+	 */
 	public DestinyAPI disableDebugMode() {
 		DestinyAPI.debugEnabled = false;
 
@@ -123,7 +139,7 @@ public class DestinyAPI {
 	 * Currently only works with Steam IDs (see getMemberFromSteamID())
 	 */
 	private static BungieUser getMemberFromPlatformID(String platformName, String platformID) {
-		JsonObject jsonObject = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/GetMembershipFromHardLinkedCredential/" + platformName + "/" + platformID + "/").getAsJsonObject("Response");
+		JsonObject jsonObject = getHttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/GetMembershipFromHardLinkedCredential/" + platformName + "/" + platformID + "/").getAsJsonObject("Response");
 
 		return new BungieUser(jsonObject.get("membershipId").getAsString());
 	}
@@ -139,7 +155,7 @@ public class DestinyAPI {
 	public static UserCredential[] getUserCredentials(BungieUser bungieUser) {
 		List<UserCredential> list = new LinkedList<>();
 
-		for(JsonElement je : new HttpUtils().urlRequestGETOauth("https://www.bungie.net/Platform/User/GetCredentialTypesForTargetAccount/" + bungieUser.getBungieMembershipID() + "/").getAsJsonArray("Response")) {
+		for(JsonElement je : getHttpUtils().urlRequestGETOauth("https://www.bungie.net/Platform/User/GetCredentialTypesForTargetAccount/" + bungieUser.getBungieMembershipID() + "/").getAsJsonArray("Response")) {
 			JsonObject jo = je.getAsJsonObject();
 
 			if(jo.has("credentialDisplayName")) {
@@ -178,7 +194,7 @@ public class DestinyAPI {
 	 * If you only know their name, use searchBungieGlobalDisplayNames()
 	 */
 	public static List<BungieUser> getUsersWithName(String name) {
-		HttpUtils hu = new HttpUtils();
+		HttpUtils hu = getHttpUtils();
 		List<BungieUser> temp = new ArrayList<>();
 		List<String> ids = new ArrayList<>();
 
@@ -224,7 +240,7 @@ public class DestinyAPI {
 
 		List<BungieUser> bungieUsers = new ArrayList<>();
 
-		JsonArray jsonArray = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/Search/Prefix/" + prefix + "/0/").getAsJsonObject("Response").getAsJsonArray("searchResults");
+		JsonArray jsonArray = getHttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/Search/Prefix/" + prefix + "/0/").getAsJsonObject("Response").getAsJsonArray("searchResults");
 
 		for(JsonElement jsonElement : jsonArray) {
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -265,5 +281,9 @@ public class DestinyAPI {
 	}
 
 	public static boolean isDebugEnabled() { return DestinyAPI.debugEnabled; }
+
+	public static HttpUtils getHttpUtils() {
+		return httpUtils;
+	}
 
 }

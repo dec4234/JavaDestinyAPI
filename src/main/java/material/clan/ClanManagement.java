@@ -10,6 +10,7 @@ package material.clan;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import material.DestinyAPI;
 import material.user.BungieUser;
 import utils.HttpUtils;
 
@@ -23,7 +24,7 @@ import java.util.List;
  */
 public class ClanManagement {
 
-	HttpUtils hu = new HttpUtils();
+	HttpUtils hu = DestinyAPI.getHttpUtils();
 
 	private Clan clan;
 	private List<BungieUser> bannedMembers;

@@ -11,6 +11,7 @@ package material.user;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import material.DestinyAPI;
 import material.inventory.DestinyItem;
 import material.manifest.ManifestEntityTypes;
 import material.stats.activities.Activity;
@@ -38,7 +39,7 @@ public class DestinyCharacter extends ContentFramework {
 
 	private List<Activity> allActivities;
 
-	HttpUtils hu = new HttpUtils();
+	HttpUtils hu = DestinyAPI.getHttpUtils();
 
 	public DestinyCharacter(BungieUser bungieUser, String characterID) {
 		super("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Profile/" + bungieUser.getBungieMembershipID() + "/Character/" + characterID + "/?components=200",
@@ -184,7 +185,7 @@ public class DestinyCharacter extends ContentFramework {
 	 * Get a list of the currently equipped items of this character
 	 */
 	public List<DestinyItem> getEquippedItems() {
-		JsonArray jsonArray = new HttpUtils().urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getBungieMembershipID() + "/Character/"
+		JsonArray jsonArray = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getBungieMembershipID() + "/Character/"
 																	+ getCharacterID() + "/?components=205").getAsJsonObject("Response").getAsJsonObject("equipment").getAsJsonObject("data").getAsJsonArray("items");
 
 		List<DestinyItem> destinyItems = new ArrayList<>();

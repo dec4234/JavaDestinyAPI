@@ -10,6 +10,7 @@ package material.inventory;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import material.DestinyAPI;
 import material.manifest.ManifestEntityTypes;
 import utils.HttpUtils;
 import utils.framework.ContentInterface;
@@ -22,7 +23,7 @@ import java.util.List;
  */
 public class DestinyItem implements ContentInterface {
 
-	HttpUtils hu = new HttpUtils();
+	HttpUtils hu = DestinyAPI.getHttpUtils();
 
 	private String hashID, name, icon, description;
 	private boolean hasIcon;
@@ -159,7 +160,7 @@ public class DestinyItem implements ContentInterface {
 	 * Return a list of all items that contain or match the name provided
 	 */
 	public static List<DestinyItem> searchForItems(String itemName) {
-		HttpUtils httpUtils = new HttpUtils();
+		HttpUtils httpUtils = DestinyAPI.getHttpUtils();
 		List<DestinyItem> destinyItemList = new ArrayList<>();
 		itemName = itemName.replace(" ", "%20");
 

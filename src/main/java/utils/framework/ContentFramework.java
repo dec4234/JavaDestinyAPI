@@ -9,6 +9,7 @@
 package utils.framework;
 
 import com.google.gson.JsonObject;
+import material.DestinyAPI;
 import material.manifest.ManifestEntityTypes;
 import utils.HttpUtils;
 
@@ -37,9 +38,9 @@ public class ContentFramework implements ContentInterface {
 	public void checkJO() {
 		if(jo == null) {
 			if(manifestType == null) {
-				jo = new HttpUtils().urlRequestGET(url);
+				jo = DestinyAPI.getHttpUtils().urlRequestGET(url);
 			} else {
-				jo = new HttpUtils().manifestGET(manifestType, url);
+				jo = DestinyAPI.getHttpUtils().manifestGET(manifestType, url);
 			}
 		}
 	}
@@ -49,9 +50,9 @@ public class ContentFramework implements ContentInterface {
 	 */
 	public void refreshJO() {
 		if(manifestType == null) {
-			jo = new HttpUtils().urlRequestGET(url);
+			jo = DestinyAPI.getHttpUtils().urlRequestGET(url);
 		} else {
-			jo = new HttpUtils().manifestGET(manifestType, url);
+			jo = DestinyAPI.getHttpUtils().manifestGET(manifestType, url);
 		}
 	}
 
