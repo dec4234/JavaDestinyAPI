@@ -8,6 +8,7 @@
 
 package utils;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -53,5 +54,13 @@ public class StringUtils {
 	 */
 	public static String httpEncode(String input) {
 		return input.replace(" ", "%20").replace("#", "%23").replace("^", "%5E");
+	}
+
+	public static void executeCommandLine(String command) {
+		try {
+			Process process = Runtime.getRuntime().exec(command);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

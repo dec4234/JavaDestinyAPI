@@ -120,6 +120,9 @@ public class HttpUtils {
 		return at;
 	}
 
+	/**
+	 * Requries an OAuthCode to be manually set inside of the DestinyAPI.setOAuthCode()
+	 */
 	public void setTokenViaAuth() {
 		setTokenViaAuth(DestinyAPI.getOauthCode());
 	}

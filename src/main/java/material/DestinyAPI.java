@@ -273,11 +273,19 @@ public class DestinyAPI {
 	public static String getOauthCode() { return oauthCode; }
 
 	public static String getAccessToken() {
-		return oam.getAccessToken();
+		if(DestinyAPI.hasOauthManager()) {
+			return oam.getAccessToken();
+		}
+
+		return accessToken;
 	}
 
 	public static String getRefreshToken() {
-		return oam.getRefreshToken();
+		if(DestinyAPI.hasOauthManager()) {
+			return oam.getRefreshToken();
+		}
+
+		return refreshToken;
 	}
 
 	public static boolean isDebugEnabled() { return DestinyAPI.debugEnabled; }
