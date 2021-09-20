@@ -10,6 +10,7 @@ package utils.framework;
 
 import com.sun.net.httpserver.*;
 import material.DestinyAPI;
+import utils.StringUtils;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -27,38 +28,47 @@ import java.util.concurrent.Executors;
 
 public class OAuthFlow {
 
+	// keytool -genkey -dname "cn=dec 4234, ou=github/JavaDestinyAPI, o=ou=github/JavaDestinyAPI, c=US" -keyalg RSA -alias alias -keystore keystore.jks -storepass mypassword -keypass mypassword -validity 360 -keysize 2048
+
 	private String queryParameters = "empty";
 	private volatile boolean hasQueryBeenReturned = false;
 
+	/**
+	 * Initiate the OAuthFlow class which goes through the following steps
+	 *
+	 * 1. Opens the OAuth page on the user's default browser
+	 * 2. Creates and HTTPS localhost server to receive that information
+	 * 3. Extracts the oauth code from the query parameters
+	 * 4.
+	 * @param port
+	 */
 	public void initOAuthFlow(int port) {
 		setTokens(port);
 	}
 
 	public void initOAuthFlowIfNeeded(int port) {
 		if(!DestinyAPI.hasOauthManager() || DestinyAPI.getAccessToken() == null) {
-			initOAuthFlow(8080);
+			initOAuthFlow(port);
 		}
 	}
 
-	public void setTokens(int serverPort) {
+	private void setTokens(int serverPort) {
 		openOAuthPage();
 
 		startSecureServer(serverPort);
 
 		String rawCode = getRawCode(queryParameters);
 
-		System.out.println(rawCode);
-
 		DestinyAPI.getHttpUtils().setTokenViaAuth(rawCode);
 	}
 
-	public String getRawCode(String queryInput) {
+	private String getRawCode(String queryInput) {
 		String codeString = queryInput.split("&")[0];
 
 		return codeString.split("=")[1];
 	}
 
-	public void openOAuthPage() {
+	private void openOAuthPage() {
 		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
 			try {
 				Desktop.getDesktop().browse(new URI("https://www.bungie.net/en/OAuth/Authorize?client_id=" + DestinyAPI.getClientId() + "&response_type=code"));
@@ -68,9 +78,11 @@ public class OAuthFlow {
 		}
 	}
 
-	public void startSecureServer(int port) {
+	private void startSecureServer(int port) {
 		HttpsServer server = null;
 		final String[] queryParams = {""};
+		String filePath = new File(Paths.get("").toAbsolutePath().toString()).getPath() + "\\keystore.jks";
+		File file = new File(filePath);
 
 		SSLContext sslContext = null;
 		try {
@@ -78,7 +90,17 @@ public class OAuthFlow {
 			sslContext = SSLContext.getInstance("TLS");
 			char[] password = "mypassword".toCharArray();
 			KeyStore ks = KeyStore.getInstance("JKS");
-			FileInputStream fis = new FileInputStream(new File(Paths.get("").toAbsolutePath().toString()).getPath() + "\\keystore.jks");
+
+			file.delete();
+
+			// Generate a new key store
+			// StringUtils.executeCommandLine("keytool -delete -alias alias -keystore keystore.jks");
+			StringUtils.executeCommandLine("keytool -genkey -dname \"cn=dec 4234, ou=github/JavaDestinyAPI, o=ou=github/JavaDestinyAPI, c=US\" -ext san=dns:www.dev.dec4234.net -keyalg RSA -alias alias -keystore keystore.jks -storepass mypassword -keypass mypassword -validity 360 -keysize 2048");
+
+			// Sleep to allow for the keystore to be generated
+			Thread.sleep(1000);
+
+			FileInputStream fis = new FileInputStream(filePath);
 			ks.load(fis, password);
 
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
@@ -131,76 +153,13 @@ public class OAuthFlow {
 		}
 
 		server.stop(0);
+		file.delete(); // Delete keystore
 	}
 
-	public String getQueryParameters(HttpsExchange exchange) {
+	private String getQueryParameters(HttpsExchange exchange) {
 		queryParameters = exchange.getRequestURI().getQuery();
 		hasQueryBeenReturned = true;
 
 		return queryParameters;
-	}
-
-	@Deprecated
-	public String startHttpServer(int port) {
-		String response = null;
-
-		try (ServerSocket serverSocket = new ServerSocket(8080)) {
-			boolean hasConnected = false;
-
-			while (true) {
-				Socket socket = serverSocket.accept();
-
-				try {
-					try (InputStream inputStream = socket.getInputStream()) { // ARM
-						if (!hasConnected) {
-							readInputHeaders(inputStream).forEach(s -> {
-								System.out.println(s);
-							});
-
-							// String requestHeader = getHeaderToArray(raw).split("\n")[0].replace("GET ", "").replace(" HTTP/1.1", "");
-
-							// System.out.println(requestHeader);
-
-							String httpResponse = "HTTP/1.1 200 OK\r\n\r\n You can now close this window.";
-							socket.getOutputStream().write(httpResponse.getBytes(StandardCharsets.UTF_8));
-
-							hasConnected = true;
-						}
-					}
-				} catch (MalformedURLException ex) {
-					System.err.println(socket.getLocalAddress() + " is not a parseable URL");
-				} catch (IOException ex) {
-					System.err.println(ex.getMessage());
-				}
-			}
-
-		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
-		}
-
-		return response;
-	}
-
-	private List<String> readInputHeaders(InputStream inputStream) {
-		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-
-		List<String> headers = new ArrayList<>();
-
-		while (true) {
-			String s = null;
-			try {
-				s = br.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-			if (s == null || s.trim().length() == 0) {
-				break;
-			}
-
-			headers.add(s);
-		}
-
-		return headers;
 	}
 }
