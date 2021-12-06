@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="JavaDestinyAPI-1.0" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="bb967bd7-8f05-4b53-85eb-c78f4de67105" name="Default Changelist" comment="DestinyManifest and CollectionsManager">
+      <change beforePath="$PROJECT_DIR$/src/main/java/material/manifest/DestinyManifest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/material/manifest/DestinyManifest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.1\plugins\maven\lib\maven3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1fL3Qt6972EU6GcFpAlvn8CWnrd" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <OptionsSetting value="false" id="Update" />
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Benedict-99-40" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="settings.editor.selected.configurable" value="Console" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="material.stats.character" />
+      <recent name="material.stats.activities" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean" />
+      <command value="mvn clean install" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.Testing">
+    <configuration name="DecsBungieExperimentMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="srcPackage.DecsBungieExperimentMain" />
+      <module name="DecsBungieExperiment" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="srcPackage.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Testing" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="jdaSrc.Testing" />
+      <module name="JavaDestinyAPI" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="jdaSrc.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Testing" />
+        <item itemvalue="Application.DecsBungieExperimentMain" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration>C:\Users\Declan\AppData\Roaming\Subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="bb967bd7-8f05-4b53-85eb-c78f4de67105" name="Default Changelist" comment="" />
+      <created>1595983532641</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1595983532641</updated>
+      <workItem from="1610329697490" duration="855000" />
+      <workItem from="1610371950106" duration="18000" />
+      <workItem from="1610372148659" duration="53000" />
+      <workItem from="1610372318144" duration="370000" />
+      <workItem from="1610468374591" duration="363000" />
+      <workItem from="1610548473684" duration="6484000" />
+      <workItem from="1610572219002" duration="1008000" />
+      <workItem from="1610593107476" duration="214000" />
+      <workItem from="1610628538584" duration="643000" />
+      <workItem from="1611782644536" duration="1661000" />
+      <workItem from="1616975560650" duration="256000" />
+      <workItem from="1617068389772" duration="179000" />
+      <workItem from="1617111640255" duration="2600000" />
+      <workItem from="1617501756806" duration="960000" />
+      <workItem from="1617655336159" duration="6780000" />
+      <workItem from="1617675218115" duration="254000" />
+      <workItem from="1617675517925" duration="2694000" />
+      <workItem from="1617812431443" duration="887000" />
+      <workItem from="1618013809786" duration="124000" />
+      <workItem from="1618839785257" duration="1263000" />
+      <workItem from="1618848896167" duration="537000" />
+      <workItem from="1618849671814" duration="837000" />
+      <workItem from="1619142878822" duration="134000" />
+      <workItem from="1619143101336" duration="166000" />
+      <workItem from="1619182744830" duration="13000" />
+      <workItem from="1619182844358" duration="87000" />
+      <workItem from="1619183670692" duration="4775000" />
+      <workItem from="1619193062079" duration="23000" />
+      <workItem from="1619216335188" duration="135000" />
+      <workItem from="1619270170562" duration="448000" />
+      <workItem from="1619303750564" duration="2521000" />
+      <workItem from="1619318570357" duration="234000" />
+      <workItem from="1619454909097" duration="179000" />
+      <workItem from="1619958691819" duration="10043000" />
+      <workItem from="1619982596931" duration="8491000" />
+      <workItem from="1620056384132" duration="12251000" />
+      <workItem from="1620079522595" duration="67000" />
+      <workItem from="1620080042268" duration="249000" />
+      <workItem from="1620130226774" duration="488000" />
+      <workItem from="1620158424594" duration="781000" />
+      <workItem from="1620241261075" duration="5787000" />
+      <workItem from="1620247845777" duration="1301000" />
+      <workItem from="1620262781337" duration="1172000" />
+      <workItem from="1620263977937" duration="41000" />
+      <workItem from="1620264761697" duration="114000" />
+      <workItem from="1620408314395" duration="4683000" />
+      <workItem from="1620523543713" duration="4397000" />
+      <workItem from="1620564964860" duration="1902000" />
+      <workItem from="1620592949031" duration="194000" />
+      <workItem from="1620606117854" duration="5065000" />
+      <workItem from="1620646562423" duration="12992000" />
+      <workItem from="1620666318297" duration="230000" />
+      <workItem from="1620666582121" duration="82000" />
+      <workItem from="1620673203439" duration="555000" />
+      <workItem from="1620688188439" duration="76000" />
+      <workItem from="1620688668865" duration="1395000" />
+      <workItem from="1620742040935" duration="2567000" />
+      <workItem from="1620835749316" duration="89000" />
+      <workItem from="1620850512930" duration="145000" />
+      <workItem from="1620850920653" duration="132000" />
+      <workItem from="1620909961430" duration="5339000" />
+      <workItem from="1621088767858" duration="8000" />
+      <workItem from="1621188859322" duration="67000" />
+      <workItem from="1621262941437" duration="11000" />
+      <workItem from="1621279827043" duration="7019000" />
+      <workItem from="1621295012925" duration="2298000" />
+      <workItem from="1621345820247" duration="77000" />
+      <workItem from="1621355391195" duration="822000" />
+      <workItem from="1621356379934" duration="13000" />
+      <workItem from="1621377655818" duration="653000" />
+      <workItem from="1621380934681" duration="40000" />
+      <workItem from="1621522873319" duration="638000" />
+      <workItem from="1621601546231" duration="27000" />
+      <workItem from="1621773207194" duration="2579000" />
+      <workItem from="1621809652301" duration="2726000" />
+      <workItem from="1621820087196" duration="1549000" />
+      <workItem from="1621855435736" duration="2617000" />
+      <workItem from="1621864272414" duration="106000" />
+      <workItem from="1621873553299" duration="4148000" />
+      <workItem from="1621894571249" duration="12000" />
+      <workItem from="1621895027274" duration="598000" />
+      <workItem from="1621899547952" duration="1576000" />
+      <workItem from="1621945333406" duration="2728000" />
+      <workItem from="1621962306951" duration="1213000" />
+      <workItem from="1621965414548" duration="285000" />
+      <workItem from="1621966130654" duration="1238000" />
+      <workItem from="1621991939931" duration="89000" />
+      <workItem from="1621992418259" duration="699000" />
+      <workItem from="1621993496291" duration="58000" />
+      <workItem from="1621993567442" duration="694000" />
+      <workItem from="1622028262835" duration="903000" />
+      <workItem from="1622029242691" duration="2285000" />
+      <workItem from="1622043455336" duration="521000" />
+      <workItem from="1622071710998" duration="240000" />
+      <workItem from="1622119104825" duration="1391000" />
+      <workItem from="1622121003141" duration="434000" />
+      <workItem from="1622123040392" duration="2465000" />
+      <workItem from="1622126150707" duration="2043000" />
+      <workItem from="1622136365277" duration="317000" />
+      <workItem from="1622136941332" duration="2240000" />
+      <workItem from="1622204020870" duration="1184000" />
+      <workItem from="1622206261144" duration="728000" />
+      <workItem from="1622209876728" duration="238000" />
+      <workItem from="1622318404039" duration="1480000" />
+      <workItem from="1622339620300" duration="41000" />
+      <workItem from="1622546994895" duration="6660000" />
+      <workItem from="1622635364855" duration="1129000" />
+      <workItem from="1622641744473" duration="3512000" />
+      <workItem from="1622862703414" duration="26000" />
+      <workItem from="1622947953826" duration="476000" />
+      <workItem from="1622983968672" duration="2284000" />
+      <workItem from="1623067881833" duration="8068000" />
+      <workItem from="1623094562188" duration="1783000" />
+      <workItem from="1623116905627" duration="11000" />
+      <workItem from="1623162327358" duration="540000" />
+      <workItem from="1623347610097" duration="1236000" />
+      <workItem from="1623439416961" duration="2198000" />
+      <workItem from="1623459649583" duration="2085000" />
+      <workItem from="1623504741975" duration="6509000" />
+      <workItem from="1623621201410" duration="370000" />
+      <workItem from="1625358508425" duration="604000" />
+      <workItem from="1626039431277" duration="13000" />
+      <workItem from="1626378052532" duration="233000" />
+      <workItem from="1626484295456" duration="49000" />
+      <workItem from="1626484358455" duration="265000" />
+    </task>
+    <task id="LOCAL-00013" summary="Introducing improved OAuth">
+      <created>1610557148271</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1610557148271</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Fix README.md">
+      <created>1616975650684</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1616975650684</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Add getValidUsers in DestinyAPI.java">
+      <created>1617068552361</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1617068552361</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Update README.md">
+      <created>1617111912577</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1617111912577</updated>
+    </task>
+    <task id="LOCAL-00017" summary="isPendingMember(), getMembersExperimental() and Copyright Notice">
+      <created>1617677467716</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1617677467716</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Mark FileUtils.java as Deprecated">
+      <created>1617677508945</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1617677508945</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Preparing for GitHub Auto-Deploy Releases">
+      <created>1618840112870</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1618840112870</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Preparing for GitHub Auto-Deploy Releases">
+      <created>1618840255205</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1618840255206</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Change getMembersNoCache">
+      <created>1619142965720</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1619142965720</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Switch getMembersExperimental() to getMembers()">
+      <created>1619143257161</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1619143257161</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Fix rushed code">
+      <created>1619182921280</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1619182921280</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Final Fix for getMembers()">
+      <created>1619193074783</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1619193074783</updated>
+    </task>
+    <task id="LOCAL-00025" summary="setTokenViaRefresh() in the beginning of OAuth requests">
+      <created>1619216460995</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1619216460995</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Fix for #13">
+      <created>1619270423419</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1619270423419</updated>
+    </task>
+    <task id="LOCAL-00027" summary="ItemTier Bug Fix">
+      <created>1619959886313</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1619959886313</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Update getClanStats()">
+      <created>1619962789626</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1619962789626</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Clean Up DestinyItem and introduce searchForItems()">
+      <created>1619967606797</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1619967606797</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Clean up DestinyCharacter and streamline abstraction">
+      <created>1619988467270</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1619988467270</updated>
+    </task>
+    <task id="LOCAL-00031" summary="getMemberFromSteamID, ContentFramework and beta ActivityInfo">
+      <created>1620079579443</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1620079579443</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Fix Typo and simple debug mode">
+      <created>1620080266989</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1620080266989</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Fix temporary issue with Character playtimes">
+      <created>1620130708227</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1620130708228</updated>
+    </task>
+    <task id="LOCAL-00034" summary="getMostInactiveMembers() and searchMembers()">
+      <created>1620264001447</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1620264001447</updated>
+    </task>
+    <task id="LOCAL-00035" summary="APIOfflineException functionality and beginnings of a streamlined HttpUtils">
+      <created>1620411226208</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1620411226208</updated>
+    </task>
+    <task id="LOCAL-00036" summary="HttpUtils revamp">
+      <created>1620528001025</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1620528001025</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Clan rework">
+      <created>1620566873688</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1620566873688</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Revamp of Activity section">
+      <created>1620610305294</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1620610305294</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Expand of ActivityIdentifier">
+      <created>1620663466963</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1620663466963</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Pgcr image and remove debug message">
+      <created>1620666654406</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1620666654406</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Fix Clan Bug">
+      <created>1620673714961</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1620673714961</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Remove caching of getMembers()">
+      <created>1620688253580</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1620688253580</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Pom Change to allow for project maven building">
+      <created>1620689328047</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1620689328047</updated>
+    </task>
+    <task id="LOCAL-00044" summary="getMembersIDs()">
+      <created>1620850614099</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1620850614099</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Remove duplicate declaration">
+      <created>1620851016105</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1620851016105</updated>
+    </task>
+    <task id="LOCAL-00046" summary="More ActivityHistoryReview and ASyncPuller">
+      <created>1621873860062</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1621873860062</updated>
+    </task>
+    <task id="LOCAL-00047" summary="BungieUser Update">
+      <created>1621953748771</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1621953748771</updated>
+    </task>
+    <task id="LOCAL-00048" summary="BungieUser Small Update">
+      <created>1621965651331</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1621965651331</updated>
+    </task>
+    <task id="LOCAL-00049" summary="UserCredential and UserCredentialType">
+      <created>1622043948169</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1622043948169</updated>
+    </task>
+    <task id="LOCAL-00050" summary="BungieUser getJE() bug fix">
+      <created>1622071941322</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1622071941323</updated>
+    </task>
+    <task id="LOCAL-00051" summary="BungieUser isValidUser() bug fix">
+      <created>1622121290533</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1622121290534</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Java Doc Update">
+      <created>1622124897091</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1622124897091</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Push Test">
+      <created>1622127313698</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1622127313698</updated>
+    </task>
+    <task id="LOCAL-00054" summary="IntendedPlatform in getMostInactiveMembers()">
+      <created>1622136562084</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1622136562084</updated>
+    </task>
+    <task id="LOCAL-00055" summary="IntendedPlatform in getMostInactiveMembers()">
+      <created>1622136620701</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1622136620701</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Another getJE() bug fix">
+      <created>1622140260271</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1622140260271</updated>
+    </task>
+    <task id="LOCAL-00057" summary="Bug fix for getJE()">
+      <created>1622205143718</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1622205143719</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Another getJE() fix">
+      <created>1622206984406</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1622206984406</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Make getDisplayName() trigger getJE()">
+      <created>1622210107365</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1622210107365</updated>
+    </task>
+    <task id="LOCAL-00060" summary="Small Update">
+      <created>1622862719881</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1622862719881</updated>
+    </task>
+    <task id="LOCAL-00061" summary="DestinyManifest and CollectionsManager">
+      <created>1623621396794</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1623621396795</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="HttpUtils revamp" />
+    <MESSAGE value="Clan rework" />
+    <MESSAGE value="Revamp of Activity section" />
+    <MESSAGE value="Expand of ActivityIdentifier" />
+    <MESSAGE value="Pgcr image and remove debug message" />
+    <MESSAGE value="Fix Clan Bug" />
+    <MESSAGE value="Remove caching of getMembers()" />
+    <MESSAGE value="Pom Change to allow for project maven building" />
+    <MESSAGE value="getMembersIDs()" />
+    <MESSAGE value="Remove duplicate declaration" />
+    <MESSAGE value="More ActivityHistoryReview and ASyncPuller" />
+    <MESSAGE value="BungieUser Update" />
+    <MESSAGE value="BungieUser Small Update" />
+    <MESSAGE value="UserCredential and UserCredentialType" />
+    <MESSAGE value="BungieUser getJE() bug fix" />
+    <MESSAGE value="BungieUser isValidUser() bug fix" />
+    <MESSAGE value="Java Doc Update" />
+    <MESSAGE value="Push Test" />
+    <MESSAGE value="IntendedPlatform in getMostInactiveMembers()" />
+    <MESSAGE value="Another getJE() bug fix" />
+    <MESSAGE value="Bug fix for getJE()" />
+    <MESSAGE value="Another getJE() fix" />
+    <MESSAGE value="Make getDisplayName() trigger getJE()" />
+    <MESSAGE value="Small Update" />
+    <MESSAGE value="DestinyManifest and CollectionsManager" />
+    <option name="LAST_COMMIT_MESSAGE" value="DestinyManifest and CollectionsManager" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NullPointerException" package="java.lang" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="com.google.gson.JsonSyntaxException" package="com.google.gson" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.IllegalStateException" package="java.lang" />
+          <option name="timeStamp" value="4" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
