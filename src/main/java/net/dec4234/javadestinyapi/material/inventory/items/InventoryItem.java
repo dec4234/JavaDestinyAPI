@@ -118,32 +118,6 @@ public class InventoryItem extends DestinyItem {
 	}
 
 	/**
-	 * Prepares a POST body for item transferring
-	 */
-	private JsonObject prepareJsonObject(DestinyCharacter destinyCharacter, boolean moveToVault, boolean isEquippable) {
-		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("itemReferenceHash", getHashIDasInt());
-		jsonObject.addProperty("stackSize", isEquippable ? 1 : getQuantity()); // If the item is equippable, set stack size as 1
-		jsonObject.addProperty("transferToVault", moveToVault);
-		jsonObject.addProperty("itemId", getInstanceIDAsLong());
-		jsonObject.addProperty("characterId", destinyCharacter.getCharacterIDAsLong());
-		jsonObject.addProperty("membershipType", destinyCharacter.getMembershipType());
-
-		return jsonObject;
-	}
-
-	/**
-	 * Determines whether or not an item transfer was succesful by Bungie's standards
-	 */
-	private boolean wasTransferSuccesful(JsonObject response) {
-		try {
-			return response.get("Response").getAsInt() == 0 && response.get("ErrorCode").getAsInt() == 1;
-		} catch (NullPointerException ex) {
-			return false;
-		}
-	}
-
-	/**
 	 * "Equip" this item, aka move it to the active slot
 	 * There are specific restrictions on when an item can be equipped
 	 * 1. If it is an exotic, the exotic slot must be free within that vertical category
@@ -272,5 +246,31 @@ public class InventoryItem extends DestinyItem {
 
 	public boolean isWrapper() {
 		return isWrapper;
+	}
+
+	/**
+	 * Prepares a POST body for item transferring
+	 */
+	private JsonObject prepareJsonObject(DestinyCharacter destinyCharacter, boolean moveToVault, boolean isEquippable) {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("itemReferenceHash", getHashIDasInt());
+		jsonObject.addProperty("stackSize", isEquippable ? 1 : getQuantity()); // If the item is equippable, set stack size as 1
+		jsonObject.addProperty("transferToVault", moveToVault);
+		jsonObject.addProperty("itemId", getInstanceIDAsLong());
+		jsonObject.addProperty("characterId", destinyCharacter.getCharacterIDAsLong());
+		jsonObject.addProperty("membershipType", destinyCharacter.getMembershipType());
+
+		return jsonObject;
+	}
+
+	/**
+	 * Determines whether or not an item transfer was succesful by Bungie's standards
+	 */
+	private boolean wasTransferSuccesful(JsonObject response) {
+		try {
+			return response.get("Response").getAsInt() == 0 && response.get("ErrorCode").getAsInt() == 1;
+		} catch (NullPointerException ex) {
+			return false;
+		}
 	}
 }
