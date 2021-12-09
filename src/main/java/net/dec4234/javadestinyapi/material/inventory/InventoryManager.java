@@ -15,7 +15,6 @@ import net.dec4234.javadestinyapi.material.user.DestinyCharacter;
  * Provides useful utility methods for Inventory Management
  *
  * All Inventory Management functions work on the presumption that you have OAuth working
- *
  */
 public class InventoryManager {
 

@@ -205,6 +205,14 @@ public class DestinyCharacter extends ContentFramework {
 		return destinyItems;
 	}
 
+	/*
+	public InventoryItem getItemInSlot(InventoryItem.ItemLocation itemLocation) {
+		for(DestinyItem destinyItem : getEquippedItems()) {
+			return destinyItem;
+		}
+	}
+	 */
+
 	public List<InventoryItem> getAllItemsInInventory() {
 		JsonArray jsonArray = hu.urlRequestGETOauth("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getID() + "/Character/"
 															+ getCharacterID() + "/?components=201").getAsJsonObject("Response").getAsJsonObject("inventory").getAsJsonObject("data").getAsJsonArray("items");
@@ -215,7 +223,7 @@ public class DestinyCharacter extends ContentFramework {
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
 
 			if (jsonObject.has("itemInstanceId")) {
-				list.add(new InventoryItem((new DestinyItem(jsonObject.get("itemHash").getAsString())),
+				list.add(new InventoryItem(jsonObject.get("itemHash").getAsString(),
 										   jsonObject.get("itemInstanceId").getAsString(),
 						 this,
 						 jsonObject.get("quantity").getAsInt(),

@@ -14,21 +14,21 @@ import net.dec4234.javadestinyapi.material.inventory.items.DestinyItem;
 import net.dec4234.javadestinyapi.material.user.DestinyCharacter;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
 
-public class InventoryItem {
+public class InventoryItem extends DestinyItem {
 
 	private HttpUtils httpUtils = DestinyAPI.getHttpUtils();
 
 	private DestinyCharacter characterOwner;
 	private ItemLocation itemLocation = ItemLocation.CHARACTER_INVENTORY;
 
-	private DestinyItem destinyItem;
 	private String instanceId, bucketHash, overrideStyleItemHash;
+	private InventoryBucket inventoryBucket;
 
 	private int quantity, bindStatus, location, transferStatus, state, dismantlePermission;
 	private boolean lockable = false, isWrapper;
 
-	public InventoryItem(DestinyItem destinyItem, String instanceId, DestinyCharacter characterOwner) {
-		this.destinyItem = destinyItem;
+	public InventoryItem(String hashID, String instanceId, DestinyCharacter characterOwner) {
+		super(hashID);
 		this.instanceId = instanceId;
 		this.characterOwner = characterOwner;
 	}
@@ -36,16 +36,16 @@ public class InventoryItem {
 	/**
 	 * Used if an item is in a profile-level inventory such as the "Inventory" or "Mods Page" as well as the vault
 	 */
-	public InventoryItem(DestinyItem destinyItem, String instanceId, DestinyCharacter characterOwner, ItemLocation itemLocation) {
-		this.destinyItem = destinyItem;
+	public InventoryItem(String hashID, String instanceId, DestinyCharacter characterOwner, ItemLocation itemLocation) {
+		super(hashID);
 		this.instanceId = instanceId;
 
 		this.characterOwner = characterOwner;
 		this.itemLocation = itemLocation;
 	}
 
-	public InventoryItem(DestinyItem destinyItem, String instanceId, DestinyCharacter characterOwner, int quantity, int bindStatus, int location, String bucketHash, int transferStatus, boolean lockable, int state, int dismantlePermission, boolean isWrapepr) {
-		this.destinyItem = destinyItem;
+	public InventoryItem(String hashID, String instanceId, DestinyCharacter characterOwner, int quantity, int bindStatus, int location, String bucketHash, int transferStatus, boolean lockable, int state, int dismantlePermission, boolean isWrapepr) {
+		super(hashID);
 		this.characterOwner = characterOwner;
 		this.instanceId = instanceId;
 
@@ -53,6 +53,7 @@ public class InventoryItem {
 		this.bindStatus = bindStatus;
 		this.location = location;
 		this.bucketHash = bucketHash;
+		this.inventoryBucket = InventoryBucket.fromHash(bucketHash);
 		this.transferStatus = transferStatus;
 		this.lockable = lockable;
 		this.state = state;
@@ -60,8 +61,8 @@ public class InventoryItem {
 		this.isWrapper = isWrapepr;
 	}
 
-	public InventoryItem(DestinyItem destinyItem, String instanceId, DestinyCharacter characterOwner, int quantity, int bindStatus, int location, String bucketHash, int transferStatus, boolean lockable, int state, int dismantlePermission, String overrideStyleItemHash, boolean isWrapper) {
-		this.destinyItem = destinyItem;
+	public InventoryItem(String hashID, String instanceId, DestinyCharacter characterOwner, int quantity, int bindStatus, int location, String bucketHash, int transferStatus, boolean lockable, int state, int dismantlePermission, String overrideStyleItemHash, boolean isWrapper) {
+		super(hashID);
 		this.instanceId = instanceId;
 		this.characterOwner = characterOwner;
 
@@ -121,7 +122,7 @@ public class InventoryItem {
 	 */
 	private JsonObject prepareJsonObject(DestinyCharacter destinyCharacter, boolean moveToVault, boolean isEquippable) {
 		JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("itemReferenceHash", getDestinyItem().getHashIDasInt());
+		jsonObject.addProperty("itemReferenceHash", getHashIDasInt());
 		jsonObject.addProperty("stackSize", isEquippable ? 1 : getQuantity()); // If the item is equippable, set stack size as 1
 		jsonObject.addProperty("transferToVault", moveToVault);
 		jsonObject.addProperty("itemId", getInstanceIDAsLong());
@@ -223,10 +224,6 @@ public class InventoryItem {
 
 	public boolean isInVault() {
 		return getItemLocation() == ItemLocation.VAULT;
-	}
-
-	public DestinyItem getDestinyItem() {
-		return destinyItem;
 	}
 
 	public String getInstanceId() {

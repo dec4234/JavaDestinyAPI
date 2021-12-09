@@ -236,6 +236,10 @@ public class DestinyAPI {
         return list;
     }
 
+    public static List<BungieUser> getUsersWithName(String name, String discriminator) {
+        return getUsersWithName(name, discriminator, -1);
+    }
+
     public static List<BungieUser> getUsersWithName(String name, String discriminator, int membershipType) {
         List<BungieUser> list = new ArrayList<>();
 

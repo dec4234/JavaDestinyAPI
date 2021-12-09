@@ -121,7 +121,7 @@ public class DestinyItem implements ContentInterface {
 		return itemTier;
 	}
 
-	public ItemTier assessItemTier() {
+	private ItemTier assessItemTier() {
 		checkJO();
 		switch(jo.getAsJsonObject("inventory").get("tierTypeName").getAsString()) {
 			case "Common":
