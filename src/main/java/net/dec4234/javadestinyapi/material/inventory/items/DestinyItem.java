@@ -11,6 +11,7 @@ package net.dec4234.javadestinyapi.material.inventory.items;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
+import net.dec4234.javadestinyapi.material.manifest.DestinyManifest;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
 import net.dec4234.javadestinyapi.utils.framework.ContentInterface;
@@ -141,7 +142,8 @@ public class DestinyItem implements ContentInterface {
 	@Override
 	public void checkJO() {
 		if(jo == null) {
-			jo = hu.manifestGET(ManifestEntityTypes.INVENTORYITEM, hashID).getAsJsonObject("Response");
+			jo = new DestinyManifest().manifestGET(ManifestEntityTypes.INVENTORYITEM, hashID);
+			// jo = hu.manifestGET(ManifestEntityTypes.INVENTORYITEM, hashID).getAsJsonObject("Response");
 		}
 	}
 
