@@ -19,7 +19,7 @@ public class ItemPlug {
 	private ItemPerk[] itemPerks;
 	// TO-DO: Action Sub-Object Info
 	// Inventory Sub-Object Info
-	private String bucketTypeHash, recoveryBucketTypeHash, tierTypeHash, tierTypeName, expirationTooltip, expiredInActivitymessage, expiredInOrbitMessage;
+	private String bucketTypeHash, recoveryBucketTypeHash, tierTypeHash, tierTypeName, expirationTooltip, expiredInActivityMessage, expiredInOrbitMessage;
 	private int maxStackSize, tierType;
 	private boolean isInstanceItem, nonTransferrableOriginal, suppressExpirationWhenObjectivesComplete;
 	// Plug Sub-Object Info
@@ -49,6 +49,22 @@ public class ItemPlug {
 		this.name = displayProperties.get("name").getAsString();
 		this.icon = displayProperties.get("icon").getAsString();
 		this.hasIcon = displayProperties.get("hasIcon").getAsBoolean();
+
+		// Inventory Properties
+		this.maxStackSize = inventory.get("maxStackSize").getAsInt();
+		this.bucketTypeHash = inventory.get("bucketTypeHash").getAsString();
+		this.recoveryBucketTypeHash = inventory.get("recoveryBucketTypeHash").getAsString();
+		this.tierTypeHash = inventory.get("tierTypeHash").getAsString();
+		this.isInstanceItem = inventory.get("isInstanceItem").getAsBoolean();
+		this.nonTransferrableOriginal = inventory.get("nonTransferrableOriginal").getAsBoolean();
+		this.tierTypeName = inventory.get("tierTypeName").getAsString();
+		this.tierType = inventory.get("tierType").getAsInt();
+		this.expirationTooltip = inventory.get("expirationTooltip").getAsString();
+		this.expiredInActivityMessage = inventory.get("expiredInActivityMessage").getAsString();
+		this.expiredInOrbitMessage = inventory.get("expiredInOrbitMessage").getAsString();
+		this.suppressExpirationWhenObjectivesComplete = inventory.get("suppressExpirationWhenObjectivesComplete").getAsBoolean();
+
+		// Plug Properties
 	}
 
 	public JsonObject getJsonObject() {
@@ -56,6 +72,8 @@ public class ItemPlug {
 	}
 
 	/*
+	Reference taken 12/10/2021
+
 	{
    "displayProperties":{
       "description":"High damage, high recoil.",
