@@ -37,12 +37,16 @@ public class OAuthFlow {
 	 * 2. Creates and HTTPS localhost server to receive that information
 	 * 3. Extracts the oauth code from the query parameters
 	 * 4.
-	 * @param port
+	 * @param port The port to start the server on
 	 */
 	public void initOAuthFlow(int port) {
 		setTokens(port);
 	}
 
+	/**
+	 * Initiate the OAuth Flow only if an exisiting key cannot be found or if it has expired
+	 * @param port The port to start the server on
+	 */
 	public void initOAuthFlowIfNeeded(int port) {
 		if(!DestinyAPI.hasOauthManager() || DestinyAPI.getAccessToken() == null) {
 			initOAuthFlow(port);
@@ -152,6 +156,9 @@ public class OAuthFlow {
 		file.delete(); // Delete keystore
 	}
 
+	/**
+	 * Return the query parameters of a particular incoming request
+	 */
 	private String getQueryParameters(HttpsExchange exchange) {
 		queryParameters = exchange.getRequestURI().getQuery();
 		hasQueryBeenReturned = true;
