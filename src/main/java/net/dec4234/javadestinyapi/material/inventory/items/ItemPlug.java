@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * An ItemPlug refers to something like a mod on a gun or armor piece
+ *
+ * // System.out.println(httpUtils.urlRequestGET(HttpUtils.URL_BASE + "/Destiny2/3/Profile/4611686018468620320/Item/6917529335994005821/?components=305"));
  */
 public class ItemPlug {
 
