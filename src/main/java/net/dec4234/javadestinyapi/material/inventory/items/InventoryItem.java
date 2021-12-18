@@ -8,15 +8,19 @@
 
 package net.dec4234.javadestinyapi.material.inventory.items;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.inventory.items.DestinyItem;
 import net.dec4234.javadestinyapi.material.user.DestinyCharacter;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class InventoryItem extends DestinyItem {
 
-	private HttpUtils httpUtils = DestinyAPI.getHttpUtils();
+	private static HttpUtils httpUtils = DestinyAPI.getHttpUtils();
 
 	private DestinyCharacter characterOwner;
 	private ItemLocation itemLocation = ItemLocation.CHARACTER_INVENTORY;
@@ -26,6 +30,12 @@ public class InventoryItem extends DestinyItem {
 
 	private int quantity, bindStatus, location, transferStatus, state, dismantlePermission;
 	private boolean lockable = false, isWrapper;
+
+	public InventoryItem(String instanceId, DestinyCharacter characterOwner) {
+		this(httpUtils.urlRequestGET(HttpUtils.URL_BASE + "/Destiny2/" + characterOwner.getMembershipType() + "/Profile/" + characterOwner.getMembershipID() + "/Item/" + instanceId + "/?components=305").getAsJsonObject("Response").getAsJsonObject("item").getAsJsonObject("data"));
+
+		this.characterOwner = characterOwner;
+	}
 
 	public InventoryItem(String hashID, String instanceId, DestinyCharacter characterOwner) {
 		super(hashID);
@@ -44,7 +54,7 @@ public class InventoryItem extends DestinyItem {
 		this.itemLocation = itemLocation;
 	}
 
-	public InventoryItem(String hashID, String instanceId, DestinyCharacter characterOwner, int quantity, int bindStatus, int location, String bucketHash, int transferStatus, boolean lockable, int state, int dismantlePermission, boolean isWrapepr) {
+	public InventoryItem(String hashID, String instanceId, DestinyCharacter characterOwner, int quantity, int bindStatus, int location, String bucketHash, int transferStatus, boolean lockable, int state, int dismantlePermission, boolean isWrapper) {
 		super(hashID);
 		this.characterOwner = characterOwner;
 		this.instanceId = instanceId;
@@ -58,7 +68,7 @@ public class InventoryItem extends DestinyItem {
 		this.lockable = lockable;
 		this.state = state;
 		this.dismantlePermission = dismantlePermission;
-		this.isWrapper = isWrapepr;
+		this.isWrapper = isWrapper;
 	}
 
 	public InventoryItem(String hashID, String instanceId, DestinyCharacter characterOwner, int quantity, int bindStatus, int location, String bucketHash, int transferStatus, boolean lockable, int state, int dismantlePermission, String overrideStyleItemHash, boolean isWrapper) {
@@ -76,6 +86,25 @@ public class InventoryItem extends DestinyItem {
 		this.dismantlePermission = dismantlePermission;
 		this.overrideStyleItemHash = overrideStyleItemHash;
 		this.isWrapper = isWrapper;
+	}
+
+	private InventoryItem(JsonObject jsonObject) {
+		super(jsonObject.get("itemHash").getAsString());
+
+
+	}
+
+	public List<ItemPlug> getItemPlugs() {
+		JsonObject jsonObject = httpUtils.urlRequestGET(HttpUtils.URL_BASE + "/Destiny2/" + characterOwner.getMembershipType() + "/Profile/" + characterOwner.getMembershipID() + "/Item/" + instanceId + "/?components=305");
+		List<ItemPlug> itemPlugs = new ArrayList<>();
+		jsonObject = jsonObject.getAsJsonObject("Response").getAsJsonObject("sockets").getAsJsonObject("data");
+
+		for(JsonElement jsonElement : jsonObject.getAsJsonArray("sockets")) {
+			JsonObject object = jsonElement.getAsJsonObject();
+			itemPlugs.add(new ItemPlug(object.get("plugHash").getAsString(), object.get("isEnabled").getAsBoolean(), object.get("isVisible").getAsBoolean()));
+		}
+
+		return itemPlugs;
 	}
 
 	/**

@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ItemPlug {
 
+	// Outer Information
+	private boolean isEnabled, isVisible;
 	// Parent object info
 	private JsonObject jsonObject, displayProperties, inventory, plug;
 	private String hash, name, description, icon, itemTypeDisplayName, flavorText, uiItemDisplayStyle, itemTypeAndTierDisplayName, displaySource, acquireRewardSiteHash, acquireUnlockHash,
@@ -31,6 +33,13 @@ public class ItemPlug {
 
 	public ItemPlug(@NotNull String hash) {
 		this(new DestinyManifest().manifestGET(ManifestEntityTypes.INVENTORYITEM, hash));
+	}
+
+	public ItemPlug(@NotNull String hash, boolean isEnabled, boolean isVisible) {
+		this(hash);
+
+		this.isEnabled = isEnabled;
+		this.isVisible = isVisible;
 	}
 
 	public ItemPlug(@NotNull JsonObject jsonObject) {
