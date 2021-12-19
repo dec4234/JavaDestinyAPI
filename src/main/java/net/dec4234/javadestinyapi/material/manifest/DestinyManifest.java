@@ -14,6 +14,12 @@ import net.dec4234.javadestinyapi.utils.framework.ContentFramework;
 
 import java.util.HashMap;
 
+/**
+ * The Manifest is where you go to translate hashes commonly returned in longer requests to more specific information.
+ * The Manifest is available in the most common languages, English, Spanish, etc.
+ * Hashes are split into multiple categories such as InventoryItem and Perk categories and hashes must be appropriately
+ * matched in order to get the response you want.
+ */
 public class DestinyManifest extends ContentFramework {
 
 	private static HashMap<String, JsonObject> worldComponents = new HashMap<>();
@@ -94,7 +100,7 @@ public class DestinyManifest extends ContentFramework {
 		GERMAN("de"),
 		ITALIAN("it"),
 		JAPANESE("ja"),
-		PORTUGEUSE_BRAZIL("pt-br"),
+		PORTUGUESE_BRAZIL("pt-br"),
 		RUSSIAN("ru"),
 		KOREAN("ko"),
 		ZH_CHT("zh-cht"),
