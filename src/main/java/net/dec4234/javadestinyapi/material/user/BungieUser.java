@@ -252,18 +252,17 @@ public class BungieUser extends ContentFramework {
 	public List<DestinyCharacter> getCharacters() {
 		if (destinyCharacters != null) { return destinyCharacters; }
 		destinyCharacters = new ArrayList<>();
-		JsonArray ja = null;
-		try {
-			ja = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + getID() + "/?components=100").getAsJsonObject("Response").getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
-		} catch (NullPointerException e) {
-			return destinyCharacters;
-		}
+		JsonObject jsonObject = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + getID() + "/?components=Profiles,Characters").getAsJsonObject("Response");
+		JsonArray ja = jsonObject.getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
+
 		if (ja == null || ja.size() == 0) {
 			return null;
 		}
 
 		for (JsonElement je : ja) {
-			destinyCharacters.add(new DestinyCharacter(this, je.getAsString()));
+			String id = je.getAsString();
+			destinyCharacters.add(new DestinyCharacter(jsonObject.getAsJsonObject("characters").getAsJsonObject("data").getAsJsonObject(id), this, id));
+			// destinyCharacters.add(new DestinyCharacter(this, je.getAsString()));
 		}
 
 		return destinyCharacters;

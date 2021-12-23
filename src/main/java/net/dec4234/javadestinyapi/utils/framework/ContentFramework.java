@@ -22,6 +22,11 @@ public class ContentFramework implements ContentInterface {
 	protected JsonObject jo = null;
 	private JsonObjectModifier jsonObjectModifier;
 
+	public ContentFramework(JsonObject jsonObject) {
+		this.jo = jsonObject;
+		this.jsonObjectModifier = source -> source;
+	}
+
 	public ContentFramework(String url, JsonObjectModifier jsonObjectModifier) {
 		this.url = url;
 		this.jsonObjectModifier = jsonObjectModifier;

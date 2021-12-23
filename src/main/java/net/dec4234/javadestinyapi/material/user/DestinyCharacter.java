@@ -49,6 +49,13 @@ public class DestinyCharacter extends ContentFramework {
 		this.bungieUser = bungieUser;
 	}
 
+	protected DestinyCharacter(JsonObject jsonObject, BungieUser bungieUser, String characterID) {
+		super(jsonObject);
+		jo = jsonObject;
+		this.characterID = characterID;
+		this.bungieUser = bungieUser;
+	}
+
 	/**
 	 * Get the membership ID of the account that owns this character
 	 */
