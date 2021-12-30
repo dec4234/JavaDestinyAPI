@@ -268,6 +268,14 @@ public class BungieUser extends ContentFramework {
 		return destinyCharacters;
 	}
 
+	/**
+	 * Returns the character under this Bungie account that matches the Class provided
+	 *
+	 * This works well only if the user has 1 character of each type. If a user has two warlocks
+	 * for example, it will throw an IllegalStateException because it cannot choose between them.
+	 * @param destinyClass
+	 * @return The character if there is one, and is not a duplicate
+	 */
 	public DestinyCharacter getCharacterOfType(DestinyCharacter.DestinyClass destinyClass) {
 		DestinyCharacter toReturn = null;
 
@@ -309,6 +317,10 @@ public class BungieUser extends ContentFramework {
 		return clan;
 	}
 
+	/**
+	 * If the user is currently in a clan
+	 * @return Returns true if the user is a member of a clan
+	 */
 	public boolean isAMemberOfAClan() {
 		return getClan() != null;
 	}
@@ -320,6 +332,20 @@ public class BungieUser extends ContentFramework {
 	@Deprecated
 	public void allowClanInvites(boolean allowInvites) {
 
+	}
+
+	/**
+	 * Determines if the user is online
+	 * @return Returns true if the user is online
+	 */
+	public boolean isOnline() {
+		for(DestinyCharacter destinyCharacter : getCharacters()) {
+			if(destinyCharacter.getLastPlayed().getTime() + ((long) destinyCharacter.getMinutesPlayedThisSession() * 60 * 1000) + (10 * 1000) > System.currentTimeMillis()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

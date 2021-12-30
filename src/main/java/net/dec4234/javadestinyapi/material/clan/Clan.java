@@ -202,9 +202,10 @@ public class Clan extends ContentFramework {
 	}
 
 	/**
-	 * Newly reworked
-	 * Does not cache values anymore, now the developer is responsible for that
-	 * Should be faster than before
+	 * Get the members of this clan
+	 * Does not cache value at any point
+	 *
+	 * @return The users in this clan
 	 */
 	public List<BungieUser> getMembers() {
 		List<BungieUser> source = new ArrayList<>();
@@ -236,6 +237,10 @@ public class Clan extends ContentFramework {
 		return source;
 	}
 
+	/**
+	 * Only get the user ids of the members of this clan instead of BungieUsers
+	 * @return The userIds belonging to the members of this clan
+	 */
 	public List<String> getMembersIDs() {
 		List<String> toReturn = new ArrayList<>();
 
@@ -304,6 +309,8 @@ public class Clan extends ContentFramework {
 
 	/**
 	 * Get the date that this user joined the clan
+	 *
+	 * @return The Date this user joined the clan or null if that user was not found
 	 */
 	public Date getJoinDate(BungieUser member) {
 		if (jj == null) {
