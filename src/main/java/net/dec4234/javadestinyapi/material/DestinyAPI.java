@@ -115,13 +115,17 @@ public class DestinyAPI {
     }
 
     /**
-     * Return if the OauthManager class has been defined
+     * Returns true if the OauthManager class has been defined
      */
     public static boolean hasOauthManager() {
         return oam != null;
     }
 
 
+    /**
+     * Returns a user based on the provided bungie ID
+     * @param id A bungie id such as "4611686018468620320"
+     */
     public static BungieUser getUser(String id) {
         return new BungieUser(id);
     }
@@ -186,84 +190,101 @@ public class DestinyAPI {
     }
 
     /**
-     * Search for a user
-     * <p>
-     * You need to enter both their username and discriminator
-     * <p>
-     * e.g. "dec4234#9904"
-     * If you only know their name, use searchBungieGlobalDisplayNames()
-     * <p>
-     * Deprecated in favor of getUserWithName
-     * will be removed in the future
+     * Searches for a user with the matching name and returns ONE BungieUser.
+     * If a user has cross-saved to multiple platforms then they will have multiple
+     * destiny membership profiles under their name.
+     *
+     * Examines all membership profiles and will return a BungieUser with that destiny
+     * profile if the cross save override is 0 or if it matches the membership type of that
+     * profile.
+     *
+     * @param nameAndDiscrim A full name and discriminator such as "dec4234#9904"
+     * @return A user with the matching name and discriminator
      */
-    @Deprecated
-    public static List<BungieUser> getUsersWithName(String name) {
-        HttpUtils hu = getHttpUtils();
-        List<BungieUser> temp = new ArrayList<>();
-        List<String> ids = new ArrayList<>();
+    public static BungieUser getUserWithName(String nameAndDiscrim) {
+        String[] split = nameAndDiscrim.split("#");
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("displayName", split[0]);
+        jsonObject.addProperty("displayNameCode", split[1]);
 
-        // encode characters
-        name = StringUtils.httpEncode(name);
+        JsonObject response = getHttpUtils().urlRequestPOST(HttpUtils.URL_BASE + "/Destiny2/SearchDestinyPlayerByBungieName/-1/", jsonObject);
 
-        try {
-            JsonObject obj = hu.urlRequestGET("https://www.bungie.net/platform/Destiny2/SearchDestinyPlayer/-1/" + name + "/?components=204");
-            JsonArray jsonArray = obj.getAsJsonArray("Response");
-
-            for (JsonElement jsonElement : jsonArray) {
-                JsonObject us = jsonElement.getAsJsonObject();
-                BungieUser bu = new BungieUser(us.get("membershipId").getAsString(), DestinyPlatform.fromMembershipType(us.get("membershipType").getAsInt()));
-                if (!ids.contains(bu.getID())) {
-                    temp.add(bu);
-                    ids.add(bu.getID());
-                }
-            }
-        } catch (NullPointerException ignored) {
-
-        }
-
-        return temp;
+        return processListOfProfiles(response.getAsJsonArray("Response"));
     }
 
     /**
-     * Return a list of valid bungie users with that name
-     * <p>
-     * TO-DO: Investigate if this is necessary any more
+     * Search users across all platforms for anyone with that name.
+     *
+     * Searching "dec4234" will return an array containing a single
+     * BungieUser. While searching "Gladd" or "Datto" should return
+     * multiple.
      */
-    @Deprecated
-    public static List<BungieUser> getValidUsers(String name) {
-        List<BungieUser> list = getUsersWithName(name);
-        list.removeIf(bungieUser -> !bungieUser.isValidUser());
-        return list;
-    }
+    public static List<BungieUser> searchUsers(String name) {
+        List<BungieUser> users = new ArrayList<>();
 
-    public static List<BungieUser> getUsersWithName(String name, String discriminator) {
-        return getUsersWithName(name, discriminator, -1);
-    }
+        JsonObject body = new JsonObject();
+        body.addProperty("displayNamePrefix", name);
 
-    public static List<BungieUser> getUsersWithName(String name, String discriminator, int membershipType) {
-        List<BungieUser> list = new ArrayList<>();
+        List<JsonObject> jsonObjects = new ArrayList<>();
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("displayName", name);
-        jsonObject.addProperty("displayNameCode", discriminator);
+        for(int i = 0; i < 100; i++) { // Start at page 0 and increment each time until there are no more valid pages
+            JsonObject jsonObject = httpUtils.urlRequestPOST(HttpUtils.URL_BASE + "/User/Search/GlobalName/" + i + "/", body);
 
-        JsonObject response = getHttpUtils().urlRequestPOST(HttpUtils.URL_BASE + "/Destiny2/SearchDestinyPlayerByBungieName/" + membershipType + "/", jsonObject);
+            // Only continue looping if the result has a list of search results
+            if(jsonObject.has("Response") && jsonObject.getAsJsonObject("Response").getAsJsonArray("searchResults").size() != 0) {
+                JsonArray jsonArray = jsonObject.getAsJsonObject("Response").getAsJsonArray("searchResults");
 
-        for (JsonElement jsonElement : response.getAsJsonArray("Response")) {
-            JsonObject profile = jsonElement.getAsJsonObject();
-
-            list.add(new BungieUser("4611686018468620320", name, profile.get("crossSaveOverride").getAsInt(), membershipType, profile.get("isPublic").getAsBoolean()));
+                for(JsonElement jsonElement : jsonArray) { // Add all user info objects into one list
+                    jsonObjects.add(jsonElement.getAsJsonObject());
+                }
+            } else {
+                break;
+            }
         }
 
-        return list;
+        // Process the one big list to convert bungie.net profile info into destiny profile info
+        for(JsonObject jsonObject : jsonObjects) {
+            BungieUser bungieUser = processListOfProfiles(jsonObject.getAsJsonArray("destinyMemberships"));
+
+            if(bungieUser != null) {
+                users.add(bungieUser);
+            }
+        }
+
+        return users;
+    }
+
+    /**
+     * "Process" a list of destiny membership profiles to identify which
+     * should be used for the returned BungieUser
+     * @param jsonArray
+     * @return
+     */
+    private static BungieUser processListOfProfiles(JsonArray jsonArray) {
+        for(JsonElement jsonElement : jsonArray) {
+            JsonObject profile = jsonElement.getAsJsonObject();
+
+            String bungieId = profile.get("membershipId").getAsString();
+            int crossSaveOverride = profile.get("crossSaveOverride").getAsInt();
+            int memberType = profile.get("membershipType").getAsInt();
+
+            BungieUser bungieUser = new BungieUser(bungieId);
+
+            if(bungieUser.getMembershipType() == bungieUser.getCrossSaveOverride() || bungieUser.getCrossSaveOverride() == 0) {
+                return bungieUser;
+            }
+        }
+
+        return null;
     }
 
     /**
      * You use this method to search for a user purely by their username
-     * <p>
-     * For getUsersWithName() you would need to search "dec4234#9904"
-     * while for this you can search with "dec4234"
+     *
+     * This method has been deprecated since 2/6/2022
+     * Use searchUsers() instead
      */
+    @Deprecated
     public static List<BungieUser> searchGlobalDisplayNames(String prefix) {
         prefix = StringUtils.httpEncode(prefix);
 
