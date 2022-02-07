@@ -199,17 +199,21 @@ public class DestinyAPI {
      * profile.
      *
      * @param nameAndDiscrim A full name and discriminator such as "dec4234#9904"
-     * @return A user with the matching name and discriminator
+     * @return A user with the matching name and discriminator, null otherwise
      */
     public static BungieUser getUserWithName(String nameAndDiscrim) {
-        String[] split = nameAndDiscrim.split("#");
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("displayName", split[0]);
-        jsonObject.addProperty("displayNameCode", split[1]);
+        try {
+            String[] split = nameAndDiscrim.split("#");
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("displayName", split[0]);
+            jsonObject.addProperty("displayNameCode", split[1]);
 
-        JsonObject response = getHttpUtils().urlRequestPOST(HttpUtils.URL_BASE + "/Destiny2/SearchDestinyPlayerByBungieName/-1/", jsonObject);
+            JsonObject response = getHttpUtils().urlRequestPOST(HttpUtils.URL_BASE + "/Destiny2/SearchDestinyPlayerByBungieName/-1/", jsonObject);
 
-        return processListOfProfiles(response.getAsJsonArray("Response"));
+            return processListOfProfiles(response.getAsJsonArray("Response"));
+        } catch (IndexOutOfBoundsException e) { // If the name does not contain a # aka it is not properly formatted
+            return null;
+        }
     }
 
     /**
