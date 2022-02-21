@@ -113,7 +113,9 @@ public enum ActivityIdentifier {
 
 	DEEP_STONE_CRYPT("DSC", "https://www.bungie.net/img/destiny_content/pgcr/europa-raid-deep-stone-crypt.jpg", ActivityMode.RAID, "910380154"),
 	VAULT_OF_GLASS("VOG", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, "3881495763"),
-	VAULT_OF_GLASS_MASTER("VOGM", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, "");
+	VAULT_OF_GLASS_MASTER("VOGM", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, ""),
+
+	WITCH_QUEEN_RAID("WQR", "", ActivityMode.RAID, "https://www.gamespot.com/a/uploads/screen_kubrick/1655/16554081/3930202-witch_queen_reveal_presskit_environments_compressed_002.jpg");
 
 	private String identifier;
 	private String[] hashes;

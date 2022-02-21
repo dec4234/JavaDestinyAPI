@@ -34,9 +34,9 @@ public class OAuthFlow {
 	 * Initiate the OAuthFlow class which goes through the following steps
 	 *
 	 * 1. Opens the OAuth page on the user's default browser
-	 * 2. Creates and HTTPS localhost server to receive that information
+	 * 2. Creates an HTTPS localhost server to receive that information
 	 * 3. Extracts the oauth code from the query parameters
-	 * 4.
+	 * 4. Sets the tokens using that information
 	 * @param port The port to start the server on
 	 */
 	public void initOAuthFlow(int port) {
