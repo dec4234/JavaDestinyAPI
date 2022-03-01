@@ -211,7 +211,7 @@ public class DestinyAPI {
             JsonObject response = getHttpUtils().urlRequestPOST(HttpUtils.URL_BASE + "/Destiny2/SearchDestinyPlayerByBungieName/-1/", jsonObject);
 
             return processListOfProfiles(response.getAsJsonArray("Response"));
-        } catch (IndexOutOfBoundsException e) { // If the name does not contain a # aka it is not properly formatted
+        } catch (IndexOutOfBoundsException | NullPointerException e) { // If the name does not contain a # aka it is not properly formatted
             return null;
         }
     }

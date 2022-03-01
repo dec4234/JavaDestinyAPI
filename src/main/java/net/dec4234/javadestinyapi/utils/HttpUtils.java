@@ -68,6 +68,11 @@ public class HttpUtils {
 	public JsonObject urlRequestPOST(String url, String body) {
 		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
 		String finalBody = body;
+
+		if(DestinyAPI.isDebugEnabled()) {
+			System.out.println("Body: " + finalBody);
+		}
+
 		return getJsonObject(getStringResponse(getRequest(true, url, starter -> {
 			starter.setHeader("Content-Type", "application/json")
 				   .POST(HttpRequest.BodyPublishers.ofString(finalBody));
@@ -81,6 +86,11 @@ public class HttpUtils {
 		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
 
 		String finalBody = body;
+
+		if(DestinyAPI.isDebugEnabled()) {
+			System.out.println("Body: " + finalBody);
+		}
+
 		return getStringResponse(getRequest(true, url, starter -> {
 			starter.setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
 				   .setHeader("Content-Type", "application/json")
@@ -98,6 +108,11 @@ public class HttpUtils {
 		}
 
 		final String finalBody = body.toString();
+
+		if(DestinyAPI.isDebugEnabled()) {
+			System.out.println("Body: " + finalBody);
+		}
+
 		return getJsonObject(getStringResponse(getRequest(true, url, starter -> {
 			starter.setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
 				   .setHeader("Content-Type", "application/json")
