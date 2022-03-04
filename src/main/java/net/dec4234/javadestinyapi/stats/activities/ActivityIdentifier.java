@@ -115,7 +115,7 @@ public enum ActivityIdentifier {
 	VAULT_OF_GLASS("VOG", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, "3881495763"),
 	VAULT_OF_GLASS_MASTER("VOGM", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, ""),
 
-	VOW_OF_THE_DISCIPLE("VOTD", "", ActivityMode.RAID, "https://www.bungie.net/pubassets/pkgs/157/157111/FrontPageBanner_1920x590.jpg");
+	VOW_OF_THE_DISCIPLE("VOTD", "https://www.bungie.net/pubassets/pkgs/157/157111/FrontPageBanner_1920x590.jpg", ActivityMode.RAID, "");
 
 	private String identifier;
 	private String[] hashes;
