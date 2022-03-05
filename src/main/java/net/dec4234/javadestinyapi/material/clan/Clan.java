@@ -193,7 +193,7 @@ public class Clan extends ContentFramework {
 		List<BungieUser> list = new LinkedList<>();
 
 		for (BungieUser bungieUser : getMembers()) {
-			if (bungieUser.getDisplayName().contains(name)) {
+			if (bungieUser.getGlobalDisplayName().contains(name)) {
 				list.add(bungieUser);
 			}
 		}
@@ -235,6 +235,28 @@ public class Clan extends ContentFramework {
 		}
 
 		return source;
+	}
+
+	/**
+	 * Gets all presently online members of the clan
+	 * Returns very quickly because it only needs 1 request
+	 * @return A list of all online members of the clan
+	 */
+	public List<BungieUser> getOnlineMembers() {
+		List<BungieUser> toReturn = new ArrayList<>();
+
+		jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
+
+		for (JsonElement jsonElement : jj.getAsJsonArray("results")) {
+			JsonObject jo = jsonElement.getAsJsonObject();
+
+			if(jo.get("isOnline").getAsBoolean()) {
+				JsonObject sub = jo.getAsJsonObject("destinyUserInfo");
+				toReturn.add(new BungieUser(sub.get("membershipId").getAsString(), sub.get("displayName").getAsString(), sub.get("bungieGlobalDisplayName").getAsString(), sub.get("crossSaveOverride").getAsInt(), sub.get("membershipType").getAsInt(), sub.get("isPublic").getAsBoolean()));
+			}
+		}
+
+		return toReturn;
 	}
 
 	/**
@@ -283,6 +305,9 @@ public class Clan extends ContentFramework {
 		return isMember(bungieUser.getID());
 	}
 
+	/**
+	 * Checks if the member with the provided id is a member of the clan
+	 */
 	public boolean isMember(String bungieID) {
 		for (BungieUser bungieUser : getMembers()) {
 			if (bungieUser.getID().equals(bungieID)) {
