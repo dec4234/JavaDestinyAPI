@@ -424,7 +424,15 @@ public class BungieUser extends ContentFramework {
 					}
 				}
 
+			} else { // Make sure that the profile has the id for the bungieuser that you want
+				for (JsonElement jsonElement : getJO().getAsJsonArray("profiles")) {
+					if (jsonElement.getAsJsonObject().get("membershipId").getAsString().equals(getID())) {
+						je = jsonElement.getAsJsonObject();
+						return je;
+					}
+				}
 			}
+			// failsafe
 			je = getJO().get("profiles").getAsJsonArray().get(0).getAsJsonObject();
 		}
 

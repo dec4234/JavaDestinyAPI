@@ -261,6 +261,9 @@ public class DestinyAPI {
     /**
      * "Process" a list of destiny membership profiles to identify which
      * should be used for the returned BungieUser
+     *
+     * IGNORES all profiles associated with the provided credentials except for the most active! (When they are not crossaved)
+     * Needs fixing, probably requires major overhall of the entire user system
      * @param jsonArray
      * @return
      */
@@ -269,10 +272,36 @@ public class DestinyAPI {
             JsonObject profile = jsonElement.getAsJsonObject();
 
             String bungieId = profile.get("membershipId").getAsString();
+            String displayName = profile.get("displayName").getAsString();
             int crossSaveOverride = profile.get("crossSaveOverride").getAsInt();
-            int memberType = profile.get("membershipType").getAsInt();
+            int membershipType = profile.get("membershipType").getAsInt();
+            boolean isPublic = profile.get("isPublic").getAsBoolean();
 
-            BungieUser bungieUser = new BungieUser(bungieId);
+            BungieUser bungieUser = new BungieUser(bungieId, displayName, crossSaveOverride, membershipType, isPublic);
+
+            /*
+            Used when a user has accounts for multiple platforms connected to a Bungie.net account,
+            but they are NOT cross saved. This means that the cross-save override is 0 and it would normally
+            return the first in the list, often leading to issues. This is a temporary fix until the entire thing can be reworked.
+            Returns the profile that has logged on most recently.
+             */
+            if(bungieUser.getCrossSaveOverride() == 0 && jsonArray.size() > 1) {
+                JsonArray jsonArray1 = getHttpUtils().urlRequestGET("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieUser.getID() + "/LinkedProfiles/?components=200").getAsJsonObject("Response").getAsJsonArray("profiles");
+                BungieUser toReturn = null;
+                double days = 0;
+
+                for(JsonElement jsonElement1 : jsonArray1) {
+                    JsonObject jsonObject = jsonElement1.getAsJsonObject();
+
+                    double newDays = StringUtils.getDaysSinceTime(StringUtils.valueOfZTime(jsonObject.get("dateLastPlayed").getAsString()));
+                    if (toReturn == null || days > newDays) {
+                        toReturn = new BungieUser(jsonObject.get("membershipId").getAsString());
+                        days = newDays;
+                    }
+                }
+
+                return toReturn;
+            }
 
             if(bungieUser.getMembershipType() == bungieUser.getCrossSaveOverride() || bungieUser.getCrossSaveOverride() == 0) {
                 return bungieUser;
