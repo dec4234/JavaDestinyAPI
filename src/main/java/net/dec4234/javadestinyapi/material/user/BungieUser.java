@@ -62,6 +62,18 @@ public class BungieUser extends ContentFramework {
 		this.bungieMembershipID = bungieMembershipID;
 	}
 
+	public BungieUser(String bungieMembershipID, JsonObject destinyMembership) {
+		super("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200", source -> {
+			return source.getAsJsonObject("Response");
+		});
+
+		this.bungieMembershipID = bungieMembershipID;
+		this.displayName = destinyMembership.get("displayName").getAsString();
+		this.membershipType = destinyMembership.get("membershipType").getAsInt();
+		this.crossSaveOverride = destinyMembership.get("crossSaveOverride").getAsInt();
+		this.isPublic = destinyMembership.get("isPublic").getAsBoolean();
+	}
+
 	/**
 	 * Used to provide a little more context for what profile the BungieUser class should pull info from
 	 * because a LinkedProfiles request can have multiple platform accounts attached

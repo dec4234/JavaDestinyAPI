@@ -48,7 +48,7 @@ public class OAuthFlow {
 	 * @param port The port to start the server on
 	 */
 	public void initOAuthFlowIfNeeded(int port) {
-		if(!DestinyAPI.hasOauthManager() || DestinyAPI.getAccessToken() == null) {
+		if(!DestinyAPI.hasOauthManager() || DestinyAPI.getAccessToken() == null || DestinyAPI.getHttpUtils().setTokenViaRefresh() == null) {
 			initOAuthFlow(port);
 		}
 	}
@@ -98,7 +98,7 @@ public class OAuthFlow {
 			StringUtils.executeCommandLine("keytool -genkey -dname \"cn=dec 4234, ou=github/JavaDestinyAPI, o=ou=github/JavaDestinyAPI, c=US\" -ext san=dns:www.dev.dec4234.net -keyalg RSA -alias alias -keystore keystore.jks -storepass mypassword -keypass mypassword -validity 360 -keysize 2048");
 
 			// Sleep to allow for the keystore to be generated
-			Thread.sleep(1000);
+			Thread.sleep(2000);
 
 			FileInputStream fis = new FileInputStream(filePath);
 			ks.load(fis, password);

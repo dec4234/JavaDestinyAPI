@@ -150,6 +150,10 @@ public class HttpUtils {
 			return starter;
 		})));
 
+		if(!response.has("access_token")) {
+			return null;
+		}
+
 		String at = response.get("access_token").getAsString();
 		String rt = response.get("refresh_token").getAsString();
 		bearerToken = at;

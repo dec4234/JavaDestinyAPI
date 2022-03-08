@@ -298,6 +298,18 @@ public class Clan extends ContentFramework {
 		return temp;
 	}
 
+	public List<ClanMember> getListOfMembers() {
+		List<ClanMember> clanMembers = new ArrayList<>();
+
+		JsonObject response = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
+
+		for(JsonElement jsonElement : response.getAsJsonArray("results")) {
+			clanMembers.add(new ClanMember(jsonElement.getAsJsonObject()));
+		}
+
+		return clanMembers;
+	}
+
 	/**
 	 * Returns if this BungieUser is a member of the clan
 	 */
