@@ -124,6 +124,7 @@ public class DestinyAPI {
 
     /**
      * Returns a user based on the provided bungie ID
+     *
      * @param id A bungie id such as "4611686018468620320"
      */
     public static BungieUser getUser(String id) {
@@ -193,7 +194,7 @@ public class DestinyAPI {
      * Searches for a user with the matching name and returns ONE BungieUser.
      * If a user has cross-saved to multiple platforms then they will have multiple
      * destiny membership profiles under their name.
-     *
+     * <p>
      * Examines all membership profiles and will return a BungieUser with that destiny
      * profile if the cross save override is 0 or if it matches the membership type of that
      * profile.
@@ -218,7 +219,7 @@ public class DestinyAPI {
 
     /**
      * Search users across all platforms for anyone with that name.
-     *
+     * <p>
      * Searching "dec4234" will return an array containing a single
      * BungieUser. While searching "Gladd" or "Datto" should return
      * multiple.
@@ -231,14 +232,14 @@ public class DestinyAPI {
 
         List<JsonObject> jsonObjects = new ArrayList<>();
 
-        for(int i = 0; i < 100; i++) { // Start at page 0 and increment each time until there are no more valid pages
+        for (int i = 0; i < 100; i++) { // Start at page 0 and increment each time until there are no more valid pages
             JsonObject jsonObject = httpUtils.urlRequestPOST(HttpUtils.URL_BASE + "/User/Search/GlobalName/" + i + "/", body);
 
             // Only continue looping if the result has a list of search results
-            if(jsonObject.has("Response") && jsonObject.getAsJsonObject("Response").getAsJsonArray("searchResults").size() != 0) {
+            if (jsonObject.has("Response") && jsonObject.getAsJsonObject("Response").getAsJsonArray("searchResults").size() != 0) {
                 JsonArray jsonArray = jsonObject.getAsJsonObject("Response").getAsJsonArray("searchResults");
 
-                for(JsonElement jsonElement : jsonArray) { // Add all user info objects into one list
+                for (JsonElement jsonElement : jsonArray) { // Add all user info objects into one list
                     jsonObjects.add(jsonElement.getAsJsonObject());
                 }
             } else {
@@ -247,10 +248,10 @@ public class DestinyAPI {
         }
 
         // Process the one big list to convert bungie.net profile info into destiny profile info
-        for(JsonObject jsonObject : jsonObjects) {
+        for (JsonObject jsonObject : jsonObjects) {
             BungieUser bungieUser = processListOfProfiles(jsonObject.getAsJsonArray("destinyMemberships"));
 
-            if(bungieUser != null) {
+            if (bungieUser != null) {
                 users.add(bungieUser);
             }
         }
@@ -261,14 +262,15 @@ public class DestinyAPI {
     /**
      * "Process" a list of destiny membership profiles to identify which
      * should be used for the returned BungieUser
-     *
+     * <p>
      * IGNORES all profiles associated with the provided credentials except for the most active! (When they are not crossaved)
      * Needs fixing, probably requires major overhall of the entire user system
+     *
      * @param jsonArray
      * @return
      */
     private static BungieUser processListOfProfiles(JsonArray jsonArray) {
-        for(JsonElement jsonElement : jsonArray) {
+        for (JsonElement jsonElement : jsonArray) {
             JsonObject profile = jsonElement.getAsJsonObject();
 
             String bungieId = profile.get("membershipId").getAsString();
@@ -285,12 +287,12 @@ public class DestinyAPI {
             return the first in the list, often leading to issues. This is a temporary fix until the entire thing can be reworked.
             Returns the profile that has logged on most recently.
              */
-            if(bungieUser.getCrossSaveOverride() == 0 && jsonArray.size() > 1) {
+            if (bungieUser.getCrossSaveOverride() == 0 && jsonArray.size() > 1) {
                 JsonArray jsonArray1 = getHttpUtils().urlRequestGET("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieUser.getID() + "/LinkedProfiles/?components=200").getAsJsonObject("Response").getAsJsonArray("profiles");
                 BungieUser toReturn = null;
                 double days = 0;
 
-                for(JsonElement jsonElement1 : jsonArray1) {
+                for (JsonElement jsonElement1 : jsonArray1) {
                     JsonObject jsonObject = jsonElement1.getAsJsonObject();
 
                     double newDays = StringUtils.getDaysSinceTime(StringUtils.valueOfZTime(jsonObject.get("dateLastPlayed").getAsString()));
@@ -303,7 +305,7 @@ public class DestinyAPI {
                 return toReturn;
             }
 
-            if(bungieUser.getMembershipType() == bungieUser.getCrossSaveOverride() || bungieUser.getCrossSaveOverride() == 0) {
+            if (bungieUser.getMembershipType() == bungieUser.getCrossSaveOverride() || bungieUser.getCrossSaveOverride() == 0) {
                 return bungieUser;
             }
         }
@@ -313,7 +315,7 @@ public class DestinyAPI {
 
     /**
      * You use this method to search for a user purely by their username
-     *
+     * <p>
      * This method has been deprecated since 2/6/2022
      * Use searchUsers() instead
      */

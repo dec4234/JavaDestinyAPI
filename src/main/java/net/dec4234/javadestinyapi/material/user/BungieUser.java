@@ -69,6 +69,7 @@ public class BungieUser extends ContentFramework {
 
 		this.bungieMembershipID = bungieMembershipID;
 		this.displayName = destinyMembership.get("displayName").getAsString();
+		this.globalDisplayName = destinyMembership.get("bungieGlobalDisplayName").getAsString();
 		this.membershipType = destinyMembership.get("membershipType").getAsInt();
 		this.crossSaveOverride = destinyMembership.get("crossSaveOverride").getAsInt();
 		this.isPublic = destinyMembership.get("isPublic").getAsBoolean();

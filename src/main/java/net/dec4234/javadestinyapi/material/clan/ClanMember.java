@@ -6,24 +6,19 @@ import net.dec4234.javadestinyapi.utils.StringUtils;
 
 import java.util.Date;
 
-public class ClanMember {
+public class ClanMember extends BungieUser {
 
     private int memberType;
     private boolean isOnline;
     private String lastOnlineStatusChange, groupId;
-    private BungieUser bungieUser;
-    private Date joinDate;
+    private Date joinDate, lastOnline;
 
     public ClanMember(JsonObject jsonObject) {
+        super(jsonObject.getAsJsonObject("destinyUserInfo").get("membershipId").getAsString(), jsonObject.getAsJsonObject("destinyUserInfo"));
         memberType = jsonObject.get("memberType").getAsInt();
         isOnline = jsonObject.get("isOnline").getAsBoolean();
         lastOnlineStatusChange = jsonObject.get("lastOnlineStatusChange").getAsString();
         groupId = jsonObject.get("groupId").getAsString();
-
-        JsonObject destinyUserInfo = jsonObject.getAsJsonObject("destinyUserInfo");
-        if (destinyUserInfo.has("membershipId")) {
-            bungieUser = new BungieUser(destinyUserInfo.get("membershipId").getAsString(), destinyUserInfo);
-        }
 
         joinDate = StringUtils.valueOfZTime(jsonObject.get("joinDate").getAsString());
     }
@@ -37,19 +32,23 @@ public class ClanMember {
     }
 
     public Date getLastOnlineStatusChange() {
-        try {
-            return new Date(Long.parseLong(lastOnlineStatusChange) * 1000);
-        } catch (NumberFormatException e) {
-            return null;
+        if(lastOnline == null) {
+            try {
+                lastOnline = new Date(Long.parseLong(lastOnlineStatusChange) * 1000);
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
+
+        return lastOnline;
+    }
+
+    public double getDaysSinceLastPlayed() {
+        return StringUtils.getDaysSinceTime(getLastOnlineStatusChange());
     }
 
     public String getGroupId() {
         return groupId;
-    }
-
-    public BungieUser getBungieUser() {
-        return bungieUser;
     }
 
     public Date getJoinDate() {
