@@ -83,6 +83,7 @@ public class BungieUser extends ContentFramework {
 	 * @param bungieMembershipID The bungie Id of the user you want to get information for
 	 * @param intendedPlatform   The platform that you want to pull information for
 	 */
+	@Deprecated
 	public BungieUser(String bungieMembershipID, DestinyPlatform intendedPlatform) {
 		super("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200", source -> {
 			return source.getAsJsonObject("Response");
