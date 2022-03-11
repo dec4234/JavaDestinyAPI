@@ -38,5 +38,5 @@ There is both official and unofficial documentation for the API available on [de
 - Collections / Triumphs
 - Comprehensive Wiki / Youtube tutorials
 
-### Future Plans
-I have some long-term goals with this API. Firstly, I'd like to complete the wrapping of most of Bungie-net API into the JavaDestinyAPI. Next I'd like to make a 2.0 version of this API completely built from the ground-up using the lessons and principles learned and established within the development period of the 1.0 version.
+### Contributing
+All development since 3/10/2022 on new features occurs within the [dev](https://github.com/dec4234/JavaDestinyAPI/tree/dev) branch. Clone that and submit a pull request with your changes.
