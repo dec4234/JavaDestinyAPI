@@ -28,6 +28,27 @@ And then this dependency:
 
 If you happen to need a JAR version, check out [releases](https://github.com/dec4234/JavaDestinyAPI/releases).
 
+****
+
+**Getting the API Set Up**
+
+You need to get an API key from [bungie.net/developer](https://bungie.net/developer)
+
+```java
+DestinyAPI api = new DestinyAPI().setApiKet("YOUR API KEY HERE");
+```
+*Must be intialized before any parts of the API are used!*
+
+**Getting the time played in hours, of the user named dec4234#9904**
+```java
+System.out.println(DestinyAPI.getUserWithName("dec4234#9904").getTimePlayed() / 60.0);
+```
+
+**Get the name of the founder of a clan**
+```java
+System.out.println(new Clan("Heavenly Mayhem").getFounder().getSupplementalDisplayName());
+```
+
 Check out the [wiki](https://github.com/dec4234/JavaDestinyAPI/wiki/Getting-Started) for more specific examples and information.
 
 ## How's it made?
