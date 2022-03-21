@@ -13,6 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.clan.Clan;
+import net.dec4234.javadestinyapi.material.clan.ClanMember;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 import net.dec4234.javadestinyapi.material.user.BungieUser;
 import net.dec4234.javadestinyapi.material.user.DestinyCharacter;
@@ -79,7 +80,7 @@ public class ActivityHistoryReview {
 	 * Takes a very long time
 	 */
 	public double getAverageCompletions(Clan clan, ActivityIdentifier activityIdentifier) {
-		List<BungieUser> members = clan.getMembers();
+		List<ClanMember> members = clan.getMembers();
 		double count = 0;
 
 		for (BungieUser bungieUser : members) {

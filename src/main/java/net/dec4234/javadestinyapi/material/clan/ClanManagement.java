@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Managing clans like kicking/accepting players and accessing sensitive information
- * Requires OAuth to be set up
- * Requires the user who authenticated the app to be an administrator of the clan they are trying to manage
+ * Managing clans like kicking/accepting players and accessing sensitive information.
+ * Requires OAuth to be set up!
+ * Requires the user who authenticated the app to be an administrator of the clan they are trying to manage!
  */
 public class ClanManagement {
 

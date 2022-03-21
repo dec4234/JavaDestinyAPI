@@ -108,10 +108,16 @@ public class Clan extends ContentFramework {
         return motto;
     }
 
+    /**
+     * Get if this clan allows chat. I think this refers to the Bungie.net clan chat page
+     */
     public boolean isAllowChat() {
         return getDetail().get("allowChat").getAsBoolean();
     }
 
+    /**
+     * Get the founder of the clan
+     */
     public BungieUser getFounder() {
         return new BungieUser(getJO().getAsJsonObject("founder").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString());
     }
@@ -138,13 +144,15 @@ public class Clan extends ContentFramework {
     }
 
     /**
-     * Returns the average number of days since all members last played
+     * Returns the average number of days since all members last played.
+     *
+     * Thanks to the ClanMember system, requires very little calls and should be pretty fast.
      */
     public double getAverageInactivityAmongMembers() {
         ArrayList<Double> averages = new ArrayList<>();
         int a = 0;
-        for (BungieUser bu : this.getMembers()) {
-            averages.add(bu.getDaysSinceLastPlayed());
+        for (ClanMember clanMember : this.getMembers()) {
+            averages.add(clanMember.getDaysSinceLastPlayed());
         }
         for (Double d : averages) {
             a += d;
@@ -153,51 +161,10 @@ public class Clan extends ContentFramework {
     }
 
     /**
-     * Sort all of the players in the clan by how inactive they are
-     * Most inactive is 1st, next is 2nd, etc.
-     *
-     * @param intendedPlatform The platform you primarily want to get information for
+     * Get the most inactive members of a clan, using the getMembers() endpoint and the ClanMember class
      */
-    public List<BungieUser> getMostInactiveMembers(int numberOfResults, DestinyPlatform intendedPlatform, String... exclude) {
-        List<BungieUser> list = getMembers();
-        List<String> exlcluded = Arrays.asList(exclude);
-        List<BungieUser> sorted = new LinkedList<>();
-        BungieUser temp = null;
-
-        for (int i = 0; i < numberOfResults; i++) {
-            for (BungieUser bungieUser : list) {
-                if (temp != null) {
-                    if (intendedPlatform != null) {
-                        bungieUser.setIntendedPlatform(intendedPlatform);
-                    }
-                    if (temp != bungieUser && !sorted.contains(bungieUser) && !exlcluded.contains(bungieUser.getID())) {
-                        if (bungieUser.getDaysSinceLastPlayed() > temp.getDaysSinceLastPlayed()) {
-                            temp = bungieUser;
-                        }
-                    }
-                } else {
-                    temp = bungieUser;
-                }
-            }
-            sorted.add(temp);
-            temp = null;
-        }
-
-        return sorted;
-    }
-
-    public List<BungieUser> getMostInactiveMembers(int numberOfResults, String... exclude) {
-        return getMostInactiveMembers(numberOfResults, null, exclude);
-    }
-
-    /**
-     * An experimental system of pulling the most inactive members of a clan
-     * using the /Members/ endpoint instead of making 100 calls to collect all of the info.
-     *
-     * Eventually will be made the primary system, use with caution for now
-     */
-    public List<ClanMember> getMostInactiveMembersFast(int numberOfResults, String... exclude) {
-        List<ClanMember> list = getListOfMembers();
+    public List<ClanMember> getMostInactiveMembers(int numberOfResults, String... exclude) {
+        List<ClanMember> list = getMembers();
         List<String> excluded = Arrays.asList(exclude);
         List<ClanMember> toReturn = new LinkedList<>();
 
@@ -220,6 +187,8 @@ public class Clan extends ContentFramework {
 
     /**
      * Search for all of the members in this clan that have the string in their name
+     *
+     * TO-DO: Maybe switch this to the search part of the /Members/ endpoint?
      */
     public List<BungieUser> searchMembers(String name) {
         List<BungieUser> list = new LinkedList<>();
@@ -234,58 +203,17 @@ public class Clan extends ContentFramework {
     }
 
     /**
-     * Get the members of this clan
-     * Does not cache value at any point
-     *
-     * @return The users in this clan
-     */
-    public List<BungieUser> getMembers() {
-        List<BungieUser> source = new ArrayList<>();
-        List<String> stream = new ArrayList<>();
-
-        jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
-
-        for (JsonElement jsonElement : jj.getAsJsonArray("results")) {
-            stream.add(jsonElement.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString());
-        }
-
-        if (stream.size() < 20) { // If the amount of people to be scanned is too small to benefit from
-            return getMembersOld();
-        }
-
-        int index = 0; // The index of the stream to start from
-        int[] list = splitIntoParts(stream.size(), 15); // A list of integers used to separate the stream
-        int listIndex = 0; // The index in the integer array we are currently on
-
-        while (index < stream.size()) { // Until we have completely looped through the stream
-            int i = list[listIndex];
-            new MemberThread(source, stream.subList(index, index + i)).start();
-
-            index += i;
-
-            listIndex++;
-        }
-
-        return source;
-    }
-
-    /**
      * Gets all presently online members of the clan
      * Returns very quickly because it only needs 1 request
      *
      * @return A list of all online members of the clan
      */
-    public List<BungieUser> getOnlineMembers() {
-        List<BungieUser> toReturn = new ArrayList<>();
+    public List<ClanMember> getOnlineMembers() {
+        List<ClanMember> toReturn = new ArrayList<>();
 
-        jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
-
-        for (JsonElement jsonElement : jj.getAsJsonArray("results")) {
-            JsonObject jo = jsonElement.getAsJsonObject();
-
-            if (jo.get("isOnline").getAsBoolean()) {
-                JsonObject sub = jo.getAsJsonObject("destinyUserInfo");
-                toReturn.add(new BungieUser(sub.get("membershipId").getAsString(), sub.get("displayName").getAsString(), sub.get("bungieGlobalDisplayName").getAsString(), sub.get("crossSaveOverride").getAsInt(), sub.get("membershipType").getAsInt(), sub.get("isPublic").getAsBoolean()));
+        for(ClanMember clanMember : getMembers()) {
+            if(clanMember.isOnline()) {
+                toReturn.add(clanMember);
             }
         }
 
@@ -308,31 +236,10 @@ public class Clan extends ContentFramework {
     }
 
     /**
-     * Returns a list of all members of the clan
-     * Now deprecated in favor of getMembers()
+     * Get the members of this clan
+     * @return A List of ClanMember
      */
-    @Deprecated
-    public List<BungieUser> getMembersOld() {
-        List<BungieUser> temp = new ArrayList<>();
-
-        jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
-
-        for (JsonElement je : jj.getAsJsonArray("results")) {
-            CompletableFuture<BungieUser> cf = new CompletableFuture<>();
-
-            cf.completeAsync(() -> new BungieUser(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()));
-            try {
-                temp.add(cf.get());
-            } catch (InterruptedException | ExecutionException e) {
-                System.out.println("Returned a null list of users for the clan in Clan.getMembers()");
-                return null;
-            }
-        }
-        members = temp;
-        return temp;
-    }
-
-    public List<ClanMember> getListOfMembers() {
+    public List<ClanMember> getMembers() {
         List<ClanMember> clanMembers = new ArrayList<>();
 
         JsonObject response = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
@@ -342,6 +249,37 @@ public class Clan extends ContentFramework {
         }
 
         return clanMembers;
+    }
+
+    /**
+     * Get the oldest members of this clan, sorted from the first person to join to most recently joined
+     * @param amount The amount of members to return
+     * @return A sorted list of the oldest members of this clan
+     */
+    public List<ClanMember> getOldestMembers(int amount) {
+        List<ClanMember> members = getMembers();
+        List<ClanMember> sorted = new LinkedList<>();
+
+        ClanMember oldest = null;
+
+        for(int i = 0; i < amount; i++) {
+            if(i > members.size()) {
+                break;
+            }
+
+            for(ClanMember inner : members) {
+                if(inner != oldest && !sorted.contains(inner)) {
+                    if(oldest == null || inner.getJoinDate().getTime() < oldest.getJoinDate().getTime()) {
+                        oldest = inner;
+                    }
+                }
+            }
+
+            sorted.add(oldest);
+            oldest = null;
+        }
+
+        return sorted;
     }
 
     /**
@@ -398,7 +336,7 @@ public class Clan extends ContentFramework {
     }
 
     /**
-     * Get the management class for this clan
+     * Get the management class for this clan.
      */
     public ClanManagement getClanManagement() {
         if (clanManagement != null) {
@@ -406,34 +344,6 @@ public class Clan extends ContentFramework {
         }
         clanManagement = new ClanManagement(this);
         return clanManagement;
-    }
-
-    // Util Methods / Classes used elsewhere
-
-    private class MemberThread extends Thread {
-
-        public MemberThread(List<BungieUser> source, List<String> list) {
-            for (String string : list) {
-                source.add(new BungieUser(string));
-            }
-        }
-
-        public void run() {
-
-        }
-    }
-
-    private int[] splitIntoParts(int whole, int parts) {
-        int[] arr = new int[parts];
-        int remain = whole;
-        int partsLeft = parts;
-        for (int i = 0; partsLeft > 0; i++) {
-            int size = (remain + partsLeft - 1) / partsLeft; // rounded up, aka ceiling
-            arr[i] = size;
-            remain -= size;
-            partsLeft--;
-        }
-        return arr;
     }
 
     private JsonObject getDetail() {
