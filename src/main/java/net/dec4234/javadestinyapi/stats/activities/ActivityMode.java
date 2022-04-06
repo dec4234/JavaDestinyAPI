@@ -12,6 +12,8 @@ package net.dec4234.javadestinyapi.stats.activities;
  * A list of activity mode numbers according to bungie.net
  * Some numbers are randomly skipped or "reserved", thus they are not listed here
  * https://bungie-net.github.io/multi/schema_Destiny-Definitions-DestinyActivityDefinition.html
+ *
+ * https://bungie-net.github.io/multi/schema_Destiny-HistoricalStats-Definitions-DestinyActivityModeType.html#schema_Destiny-HistoricalStats-Definitions-DestinyActivityModeType
  */
 public enum ActivityMode {
 
@@ -79,7 +81,9 @@ public enum ActivityMode {
 	MOMENTUM(81),
 	DUNGEON(82),
 	SUNDIAL(83),
-	TRIALS_OF_OSIRIS(84);
+	TRIALS_OF_OSIRIS(84),
+	DARES(85),
+	OFFENSIVE(86);
 
 
 	private int bungieValue;
