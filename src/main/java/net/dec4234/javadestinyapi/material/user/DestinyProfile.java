@@ -90,6 +90,9 @@ public class DestinyProfile {
         return membershipType;
     }
 
+    /**
+     * The cross save override of this profile, and account as a whole
+     */
     public int getCrossSaveOverride() {
         return crossSaveOverride;
     }
@@ -120,5 +123,16 @@ public class DestinyProfile {
 
     public Optional<Integer> getLastSeenDisplayNameType() {
         return lastSeenDisplayNameType;
+    }
+
+    /**
+     * States whether or not this profile is valid.
+     *
+     * A profile is valid if:
+     * - It's membership type matches the cross save override
+     * - The cross save override is 0
+     */
+    public boolean isValid() {
+        return getCrossSaveOverride() == getMembershipType() || getCrossSaveOverride() == 0;
     }
 }

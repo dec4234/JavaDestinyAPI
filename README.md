@@ -5,19 +5,19 @@
 [![Discord Banner 2](https://discordapp.com/api/guilds/847480795232993280/widget.png?style=banner2)](https://discord.gg/dvZmP92d4h)
 
 # JavaDestinyAPI 
-This is a java wrapper for the API provided by bungie to control things on Bungie.net and inside the game Destiny 2. It handles all of the neccessary HTTP requests async and parses the Json response for you.
+This library is used as an interface to the API for the game Destiny 2, created by Bungie.
 
 The API is a work in-progress, contributions are welcome. Please note that development is on-going and the latest versions may be prone to bugs. If you find any please create an issue to report it.
 ## Getting Started
 This project can be currently accessed through the jitpack repository, which allows any github repo to be used as a dependency
-```
+```xml
 <repository>
     <id>jitpack.io</id>
     <url>https://jitpack.io</url>
 </repository>
 ```
 And then this dependency:
-```
+```xml
 <dependency>
     <groupId>com.github.dec4234</groupId>
     <artifactId>JavaDestinyAPI</artifactId>
@@ -57,7 +57,7 @@ There is both official and unofficial documentation for the API available on [de
 ### TO-DO
 - Managing inventory / Item transferring
 - Collections / Triumphs
-- Comprehensive Wiki / Youtube tutorials
+- Revamping the wiki
 
 ### Contributing
 All development since 3/10/2022 on new features occurs within the [dev](https://github.com/dec4234/JavaDestinyAPI/tree/dev) branch. Clone that and submit a pull request with your changes.
