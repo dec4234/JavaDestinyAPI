@@ -22,6 +22,7 @@ public enum DestinyPlatform {
 	STEAM(3, "Steam"),
 	BLIZZARD(4, "Blizzard"),
 	STADIA(5, "Stadia"),
+	EPIC(6, "Epic Games Store"),
 	DEMON(10, "Demon"),
 
 	// Used for searching
