@@ -16,6 +16,7 @@ import net.dec4234.javadestinyapi.material.user.BungieUser;
 import net.dec4234.javadestinyapi.material.user.DestinyPlatform;
 import net.dec4234.javadestinyapi.material.user.UserCredential;
 import net.dec4234.javadestinyapi.material.user.UserCredentialType;
+import net.dec4234.javadestinyapi.responses.user.SanitizedUsernamesResponse;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
 import net.dec4234.javadestinyapi.utils.StringUtils;
 import net.dec4234.javadestinyapi.utils.framework.OAuthManager;
@@ -129,6 +130,10 @@ public class DestinyAPI {
      */
     public static BungieUser getUser(String id) {
         return new BungieUser(id);
+    }
+
+    public static SanitizedUsernamesResponse getSanitizedUsernames(String id) {
+        return new SanitizedUsernamesResponse(httpUtils.urlRequestGET(HttpUtils.URL_BASE + "/User/GetSanitizedPlatformDisplayNames/" + id + "/").getAsJsonObject("Response"));
     }
 
     /**
