@@ -116,8 +116,12 @@ public enum ActivityIdentifier {
 	VAULT_OF_GLASS_MASTER("VOGM", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, ""),
 
 	VOW_OF_THE_DISCIPLE("VOTD", "https://www.bungie.net/pubassets/pkgs/157/157111/FrontPageBanner_1920x590.jpg", ActivityMode.RAID, ""),
+	VOW_OF_THE_DISCIPLE_MASTER("VOTDM", "https://www.bungie.net/pubassets/pkgs/157/157111/FrontPageBanner_1920x590.jpg", ActivityMode.RAID, ""),
 
-	KF("KF", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, ""); // TODO: Hashes for KF and VOTD
+	KF("KF", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, ""), // TODO: Hashes for VoG Master - Present
+	KF_MASTER("KFM", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, ""),
+	RON("RON", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt745cb94aef1d49fd/640a30abe16bc77f58332cc4/FrontPageBanner_PC_1920x590.jpg", ActivityMode.RAID, ""),
+	RON_MASTER("RONM", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt745cb94aef1d49fd/640a30abe16bc77f58332cc4/FrontPageBanner_PC_1920x590.jpg", ActivityMode.RAID, "");
 
 	private String identifier;
 	private String[] hashes;
