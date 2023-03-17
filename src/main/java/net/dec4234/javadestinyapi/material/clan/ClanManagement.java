@@ -10,6 +10,7 @@ package net.dec4234.javadestinyapi.material.clan;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.user.BungieUser;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
@@ -100,6 +101,37 @@ public class ClanManagement {
 	}
 
 	/**
+	 * Adds a new optional conversation to the clan
+	 *
+	 * @param chatName The name of the chat
+	 * @param clanChatSecuritySetting The security setting of the chat
+	 */
+	public void addOptionalConversation(String chatName, ClanChatSecuritySetting clanChatSecuritySetting) {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("chatName", chatName);
+		jsonObject.addProperty("chatSecurity", clanChatSecuritySetting.getSetting());
+
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/OptionalConversations/Add/", jsonObject.toString());
+	}
+
+	/**
+	 * Edits an optional conversation
+	 *
+	 * @param conversationID The ID of the conversation
+	 * @param chatEnabled Whether or not the chat is enabled
+	 * @param chatName The name of the chat
+	 * @param clanChatSecuritySetting The security setting of the chat
+	 */
+	public void editOptionalConversation(String conversationID, boolean chatEnabled, String chatName, ClanChatSecuritySetting clanChatSecuritySetting) {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("chatName", chatName);
+		jsonObject.addProperty("chatSecurity", clanChatSecuritySetting.getSetting());
+		jsonObject.addProperty("chatEnabled", chatEnabled);
+
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/OptionalConversations/" + conversationID + "/Edit/", jsonObject.toString());
+	}
+
+	/**
 	 * Gets a list of members who have been banned from the clan
 	 *
 	 * @return The list of banned users
@@ -124,6 +156,25 @@ public class ClanManagement {
 		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Pending/?components=200").get("Response").getAsJsonObject().get("results").getAsJsonArray();
 
 		for (JsonElement je : ja) {
+			temp.add(new BungieUser(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()));
+		}
+
+		return temp;
+	}
+
+	/**
+	 * Returns a list of members who have been invited to the clan
+	 *
+	 * Has pagination feature that is not implemented because what clan would have more than 50 invited users?
+	 *
+	 * @return The list of invited users
+	 */
+	public List<BungieUser> getInvitedMembers() {
+		List<BungieUser> temp = new ArrayList<>();
+
+		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Invited/?components=200").getAsJsonObject("Response").getAsJsonArray("results");
+
+		for(JsonElement je : ja) {
 			temp.add(new BungieUser(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()));
 		}
 
