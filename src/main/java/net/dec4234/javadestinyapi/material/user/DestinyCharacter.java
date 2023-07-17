@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.inventory.items.DestinyItem;
 import net.dec4234.javadestinyapi.material.inventory.items.InventoryItem;
+import net.dec4234.javadestinyapi.material.inventory.loadouts.Loadout;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 import net.dec4234.javadestinyapi.stats.activities.Activity;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
@@ -246,6 +247,16 @@ public class DestinyCharacter extends ContentFramework {
 		}
 
 		return list;
+	}
+
+	public List<Loadout> getLoadouts() {
+		hu.urlRequestGETOauth(HttpUtils.URL_BASE + "/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getID() + "/Character/" + getCharacterID() + "/?components=206,201");
+
+		List<Loadout> loadouts = new ArrayList<>();
+
+
+
+		return loadouts;
 	}
 
 	/**

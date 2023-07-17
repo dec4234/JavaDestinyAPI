@@ -94,6 +94,11 @@ public class InventoryItem extends DestinyItem {
 
 	}
 
+	/**
+	 * Gets the plugs on the item such as selected perks and mods
+	 *
+	 * @return Returns a list of ItemPlugs
+	 */
 	public List<ItemPlug> getItemPlugs() {
 		JsonObject jsonObject = httpUtils.urlRequestGET(HttpUtils.URL_BASE + "/Destiny2/" + characterOwner.getMembershipType() + "/Profile/" + characterOwner.getMembershipID() + "/Item/" + instanceId + "/?components=305");
 		List<ItemPlug> itemPlugs = new ArrayList<>();
