@@ -50,10 +50,14 @@ public class BungieUser extends ContentFramework {
 	private Clan clan = null;
 
 	/**
-	 * The simplest starter of a BungieUser.
-	 * Just provide the bungie membership id of the user
+	 * The simplest constructor for starting a BungieUser, only requires the BungieID of the user
+	 * <br>
+	 * A BungieID is a static, unique id representing a bungie account.
+	 * <br>
+	 * Multiple destiny accounts (on separate platforms) can be associated with the same BungieID. Use
+	 * membership type to specify which profile you want to examine.
 	 *
-	 * @param bungieMembershipID The bungie id of the user you want to get information for
+	 * @param bungieMembershipID The BungieID of the user you want to examine
 	 */
 	public BungieUser(String bungieMembershipID) {
 		super("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200", source -> {
@@ -62,6 +66,14 @@ public class BungieUser extends ContentFramework {
 		this.bungieMembershipID = bungieMembershipID;
 	}
 
+	/**
+	 * Uses a BungieID and a JsonObject of data about the user to construct the object more effeciently.
+	 * <br>
+	 * Useful for certain endpoints (mostly from the Clan section) where you may need to load data about a lot of users.
+	 *
+	 * @param bungieMembershipID The BungieID of the user you want to examine
+	 * @param destinyMembership  A JsonObject containing data about the user, usually from a Bungie endpoint
+	 */
 	public BungieUser(String bungieMembershipID, JsonObject destinyMembership) {
 		super("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200", source -> {
 			return source.getAsJsonObject("Response");
@@ -77,8 +89,11 @@ public class BungieUser extends ContentFramework {
 
 	/**
 	 * Used to provide a little more context for what profile the BungieUser class should pull info from
-	 * because a LinkedProfiles request can have multiple platform accounts attached
-	 * You are responsible for checking the getMembershipTypes() to see if that user has a profile on that platform
+	 * because a LinkedProfiles request can have multiple platform accounts attached to it.
+	 * <br>
+	 * You are responsible for checking the getMembershipTypes() to see if that user has a profile on that platform.
+	 * <br>
+	 * Deprecated since cross save became a thing, likely no longer useful.
 	 *
 	 * @param bungieMembershipID The bungie Id of the user you want to get information for
 	 * @param intendedPlatform   The platform that you want to pull information for
@@ -93,7 +108,14 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * A constructor contianing more information which may decrease load times in certain circumstances
+	 * Construct the object will muliple fields from the get-go, thus improving efficiency.
+	 *
+	 * @param bungieMembershipID The bungie Id of the user you want to get information for
+	 * @param displayName        The display name of the user in-game
+	 * @param crossSaveOverride  The cross save override of the user's Bungie Account
+	 * @param membershipType     The membership type of the profile you would like to examine
+	 * @param isPublic           Marks if the Bungie Account is public or not
+	 * @see net.dec4234.javadestinyapi.material.user.BungieUser#BungieUser(String, JsonObject)
 	 */
 	public BungieUser(String bungieMembershipID, String displayName, int crossSaveOverride, int membershipType, boolean isPublic) {
 		super("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200", source -> {
@@ -106,6 +128,17 @@ public class BungieUser extends ContentFramework {
 		this.isPublic = isPublic;
 	}
 
+	/**
+	 * Construct the object will muliple fields from the get-go, thus improving efficiency.
+	 *
+	 * @param bungieMembershipID The bungie Id of the user you want to get information for
+	 * @param displayName        The display name of the user in-game
+	 * @param globalDisplayName  The global display name of the user, overrides all platform specific names
+	 * @param crossSaveOverride  The cross save override of the user's Bungie Account
+	 * @param membershipType     The membership type of the profile you would like to examine
+	 * @param isPublic           Marks if the Bungie Account is public or not
+	 * @see net.dec4234.javadestinyapi.material.user.BungieUser#BungieUser(String, JsonObject)
+	 */
 	public BungieUser(String bungieMembershipID, String displayName, String globalDisplayName, int crossSaveOverride, int membershipType, boolean isPublic) {
 		super("https://www.bungie.net/Platform/Destiny2/-1/Profile/" + bungieMembershipID + "/LinkedProfiles/?components=200", source -> {
 			return source.getAsJsonObject("Response");
@@ -119,45 +152,59 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * Gets the bungie membership ID of the user
+	 * Gets the static, unqiue BungieID of the user
+	 *
+	 * @return The BungieID of the user
 	 */
-	public String getID() { return bungieMembershipID; }
+	public String getID() {
+		return bungieMembershipID;
+	}
 
 	/**
-	 * Determines if the user has any profiles on their account
-	 * Useful to see if a user's account has any data on it
+	 * Determines whether or not the Bungie account has any Destiny profiles associated with it.
+	 * <br>
+	 * An account can be empty AKA "invalid" if it exists but does not have any Destiny profiles
+	 *
+	 * @return A boolean representing whether or not the Bungie User is valid
 	 */
+	@Deprecated
 	public boolean isValidUser() {
 		try {
 			return getJO().getAsJsonArray("profiles").size() != 0;
-		} catch (NullPointerException nullPointerException) {
+		} catch(NullPointerException nullPointerException) {
 			return false;
 		}
 	}
 
 	/**
-	 * Gets the display name of the user
-	 * Prefers returning the name of their account on steam, if they have one
-	 *
+	 * Gets the platform specific display name of the user.
+	 * <br>
+	 * Not too useful after the introduction of global display names.
+	 * <br>
 	 * Deprecated in favor of getGlobalDisplayName()
+	 *
+	 * @return The platform specifc display name for the current profile
+	 * @see BungieUser#getGlobalDisplayName()
 	 */
 	@Deprecated
 	public String getDisplayName() {
 		getJE();
-		if (displayName == null) {
+		if(displayName == null) {
 			displayName = getJE().get("displayName").getAsString();
 		}
 		return displayName;
 	}
 
 	/**
-	 * Returns the Global Display Name of the user across all Destiny Platforms
-	 * Should be used instead of getDisplayName()
+	 * Returns the Global Display Name of the user across all Destiny Platforms.
+	 * <br>
 	 * Please note, an empty string will be returned if a user has not logged in since the
-	 * start of Season of The Lost
+	 * start of Season of The Lost.
+	 *
+	 * @return The global display name for this user, which is the same for all connected profiles
 	 */
 	public String getGlobalDisplayName() {
-		if (globalDisplayName == null) {
+		if(globalDisplayName == null) {
 
 			// LinkedProfiles is not populated with bungieGlobalDisplayName as of 8/29/2021: github issue #1511
 			// As far as I know, getSupplementalDisplayName is also the bungieGlobalDisplayName
@@ -168,11 +215,15 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * Returns the combined displayname and user discriminator as used in friend requests and user searches
-	 * E.g. dec4234#9904
+	 * Returns the combined displayname and user discriminator as used in friend requests and user searches.
+	 * <br>
+	 *
+	 * @return The full global display name and discriminator for the current user: "dec4234#9904"
+	 * @see BungieUser#getGlobalDisplayName()
+	 * @see BungieUser#getDiscriminator()
 	 */
 	public String getSupplementalDisplayName() {
-		if (supplementalDisplayName == null) {
+		if(supplementalDisplayName == null) {
 			supplementalDisplayName = getJO().getAsJsonObject("bnetMembership").get("supplementalDisplayName").getAsString();
 		}
 
@@ -181,10 +232,12 @@ public class BungieUser extends ContentFramework {
 
 	/**
 	 * Get the discriminator of a user's name
-	 * E.g. "9904" of dec4234#9904
+	 * <br>
+	 *
+	 * @return The discriminator of the user: E.g. "9904" of dec4234#9904
 	 */
 	public String getDiscriminator() {
-		if (discriminator == null) {
+		if(discriminator == null) {
 			discriminator = getSupplementalDisplayName().split("#")[1];
 		}
 
@@ -192,10 +245,13 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * Gets the last day this user was seen online
+	 * Gets the last day this user was seen online.
+	 *
+	 * @return The date the last user was seen online
+	 * @see BungieUser#getDaysSinceLastPlayed()
 	 */
 	public Date getLastPlayed() {
-		if (lastPlayed == null) {
+		if(lastPlayed == null) {
 			lastPlayed = StringUtils.valueOfZTime(getJE().get("dateLastPlayed").getAsString());
 		}
 
@@ -203,31 +259,49 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * Gets a double representing the number of days since the user last played
+	 * Gets a double representing the number of days since the user last played.
+	 *
+	 * @return A double, representing the number of days from the current day to when this user was last seen online
+	 * @see BungieUser#getLastPlayed()
 	 */
 	public double getDaysSinceLastPlayed() {
 		DecimalFormat df = new DecimalFormat("0.##");
 		return Double.parseDouble(df.format((new Date().getTime() - getLastPlayed().getTime()) / 1000.0 / 60.0 / 60.0 / 24.0));
 	}
 
+	/**
+	 * Determines whether the current profile was overriden by cross save
+	 *
+	 * @return A boolean saying if the profile was overriden by cross save
+	 */
 	public boolean isOverridden() {
 		return !isOverridden ? isOverridden = getJE().get("isOverridden").getAsBoolean() : isOverridden;
 	}
 
+	/**
+	 * Determines whether the current profile is the primary profile on an account with cross save active
+	 *
+	 * @return A boolean representing whether or not the current profile is a cross save primary
+	 */
 	public boolean isCrossSavePrimary() {
 		return !isCrossSavePrimary ? isCrossSavePrimary = getJE().get("isCrossSavePrimary").getAsBoolean() : isCrossSavePrimary;
 	}
 
+	/**
+	 * @return An integer representing the membership type of the profile that overrode this profile from cross save
+	 */
 	public int getCrossSaveOverride() {
 		return crossSaveOverride == -1 ? crossSaveOverride = getJE().get("crossSaveOverride").getAsInt() : crossSaveOverride;
 	}
 
 	/**
-	 * Get the applicable membership types declared in the response
+	 * Returns all applicable membership types for the current account, due to cross save
+	 *
+	 * @return A list of integers representing the membership types for applicable active profiles
 	 */
 	public ArrayList<Integer> getApplicableMembershipTypes() {
-		if (applicableMembershipTypes.isEmpty()) {
-			for (JsonElement jj : getJE().get("applicableMembershipTypes").getAsJsonArray()) {
+		if(applicableMembershipTypes.isEmpty()) {
+			for(JsonElement jj : getJE().get("applicableMembershipTypes").getAsJsonArray()) {
 				applicableMembershipTypes.add(jj.getAsInt());
 			}
 		}
@@ -240,7 +314,7 @@ public class BungieUser extends ContentFramework {
 	public ArrayList<Integer> getMembershipTypes() {
 		ArrayList<Integer> integers = new ArrayList<>();
 
-		for (JsonElement jsonElement : getJO().get("profiles").getAsJsonArray()) {
+		for(JsonElement jsonElement : getJO().get("profiles").getAsJsonArray()) {
 			integers.add(jsonElement.getAsJsonObject().get("membershipType").getAsInt());
 		}
 
@@ -264,16 +338,18 @@ public class BungieUser extends ContentFramework {
 	 * @return The list of characters associated with this account, or null if none are found
 	 */
 	public List<DestinyCharacter> getCharacters() {
-		if (destinyCharacters != null) { return destinyCharacters; }
+		if(destinyCharacters != null) {
+			return destinyCharacters;
+		}
 		destinyCharacters = new ArrayList<>();
 		JsonObject jsonObject = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + getID() + "/?components=Profiles,Characters").getAsJsonObject("Response");
 		JsonArray ja = jsonObject.getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
 
-		if (ja == null || ja.size() == 0) {
+		if(ja == null || ja.size() == 0) {
 			return null;
 		}
 
-		for (JsonElement je : ja) {
+		for(JsonElement je : ja) {
 			String id = je.getAsString();
 			destinyCharacters.add(new DestinyCharacter(jsonObject.getAsJsonObject("characters").getAsJsonObject("data").getAsJsonObject(id), this, id));
 			// destinyCharacters.add(new DestinyCharacter(this, je.getAsString()));
@@ -283,19 +359,20 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * Returns the character under this Bungie account that matches the Class provided
-	 *
+	 * Returns the character under this Bungie account that matches the Class provided.
+	 * <br>
 	 * This works well only if the user has 1 character of each type. If a user has two warlocks
 	 * for example, it will throw an IllegalStateException because it cannot choose between them.
-	 * @param destinyClass
+	 *
+	 * @param destinyClass The Destiny class that you want to search for.
 	 * @return The character if there is one, and is not a duplicate
 	 */
 	public DestinyCharacter getCharacterOfType(DestinyCharacter.DestinyClass destinyClass) {
 		DestinyCharacter toReturn = null;
 
-		for (DestinyCharacter destinyCharacter : this.getCharacters()) {
-			if (destinyCharacter.getD2class() == destinyClass) {
-				if (toReturn != null) {
+		for(DestinyCharacter destinyCharacter : this.getCharacters()) {
+			if(destinyCharacter.getD2class() == destinyClass) {
+				if(toReturn != null) {
 					throw new IllegalStateException("There is more than one active character on this account with the same Class type. You will not be able to use this method.");
 				}
 
@@ -307,23 +384,27 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * Adds up all of the time played across all characters
+	 * Adds up all of the time played across all characters in minutes
 	 *
 	 * @return The time played of this user, in minutes
 	 */
 	public int getTimePlayed() {
-		if (playTime != -1) { return playTime; }
-		for (DestinyCharacter c : getCharacters()) {
+		if(playTime != -1) {
+			return playTime;
+		}
+		for(DestinyCharacter c : getCharacters()) {
 			playTime += Integer.parseInt(c.getMinutesPlayedTotal());
 		}
 		return playTime;
 	}
 
 	/**
-	 * Gets the clan that this user is a member of
+	 * Gets the clan that this user is a member of.
 	 */
 	public Clan getClan() {
-		if (clan != null) { return clan; }
+		if(clan != null) {
+			return clan;
+		}
 
 		JsonObject jo2 = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/User/" + getMembershipType() + "/" + getID() + "/0/1/?components=200").getAsJsonObject("Response");
 		clan = new Clan(jo2.get("results").getAsJsonArray().get(0).getAsJsonObject().getAsJsonObject("group").get("groupId").getAsLong());
@@ -333,6 +414,7 @@ public class BungieUser extends ContentFramework {
 
 	/**
 	 * If the user is currently in a clan
+	 *
 	 * @return Returns true if the user is a member of a clan
 	 */
 	public boolean isAMemberOfAClan() {
@@ -349,7 +431,8 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * Determines if the user is online
+	 * Determines if the user is online by comparing the last time they logged off and the number of minutes in their current game session
+	 *
 	 * @return Returns true if the user is online
 	 */
 	public boolean isOnline() {
@@ -371,10 +454,10 @@ public class BungieUser extends ContentFramework {
 	public ActivityInfo getCurrentActivityInfo() {
 		JsonObject data = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + getID() + "/?components=204").getAsJsonObject("Response").getAsJsonObject("characterActivities").getAsJsonObject("data");
 
-		for (DestinyCharacter character : getCharacters()) {
-			if (data.has(character.getCharacterID())) {
+		for(DestinyCharacter character : getCharacters()) {
+			if(data.has(character.getCharacterID())) {
 				String hash = data.getAsJsonObject(character.getCharacterID()).get("currentActivityHash").getAsString();
-				if (!hash.equals("0")) {
+				if(!hash.equals("0")) {
 					return new ActivityInfo(hash);
 				}
 			}
@@ -384,40 +467,40 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * Request to join the specified clan
+	 * Request to join the specified clan, requires OAuth enabled for current user
 	 */
 	public void requestToJoinClan(Clan clan) {
 		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Apply/" + getMembershipType() + "/", "");
 	}
 
 	/**
-	 * Get the Destiny profile object to be used to pull most data
+	 * Get the Destiny profile object to be used to pull most data.
 	 * Uses the preferred platform profile if it has been declared or
-	 * it will select the first profile in the profiles array
+	 * it will select the first profile in the profiles array.
 	 */
 	public JsonObject getJE() {
-		if (je == null) {
-			if (intendedPlatform != -2) {
-				for (JsonElement jsonElement : getJO().getAsJsonArray("profiles")) {
-					if (jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
+		if(je == null) {
+			if(intendedPlatform != -2) {
+				for(JsonElement jsonElement : getJO().getAsJsonArray("profiles")) {
+					if(jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
 						je = jsonElement.getAsJsonObject();
 						return je;
 					}
 				}
 
 				// Some users may have cross saved a console account to their pc account
-				for (JsonElement jsonElement : getJO().getAsJsonArray("profilesWithErrors")) {
-					if (jsonElement.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == intendedPlatform) {
+				for(JsonElement jsonElement : getJO().getAsJsonArray("profilesWithErrors")) {
+					if(jsonElement.getAsJsonObject().getAsJsonObject("infoCard").get("membershipType").getAsInt() == intendedPlatform) {
 						JsonObject temp = jsonElement.getAsJsonObject().getAsJsonObject("infoCard");
 						displayName = temp.get("displayName").getAsString();
 						isPublic = temp.get("isPublic").getAsBoolean();
 						crossSaveOverride = temp.get("crossSaveOverride").getAsInt();
 
 						// If a user has a profileWithErrors we have to get most info from a profile that is not in error
-						for (JsonElement jsonElement1 : getJO().getAsJsonArray("profiles")) {
+						for(JsonElement jsonElement1 : getJO().getAsJsonArray("profiles")) {
 							// Does the main profile have the intended platform in its applicablemembershipTypes?
-							for (JsonElement jsonElement2 : jsonElement1.getAsJsonObject().getAsJsonArray("applicableMembershipTypes")) {
-								if (jsonElement2.getAsInt() == intendedPlatform) {
+							for(JsonElement jsonElement2 : jsonElement1.getAsJsonObject().getAsJsonArray("applicableMembershipTypes")) {
+								if(jsonElement2.getAsInt() == intendedPlatform) {
 									je = jsonElement1.getAsJsonObject();
 									return je;
 								}
@@ -427,8 +510,8 @@ public class BungieUser extends ContentFramework {
 				}
 
 			} else { // Make sure that the profile has the id for the bungieuser that you want
-				for (JsonElement jsonElement : getJO().getAsJsonArray("profiles")) {
-					if (jsonElement.getAsJsonObject().get("membershipId").getAsString().equals(getID())) {
+				for(JsonElement jsonElement : getJO().getAsJsonArray("profiles")) {
+					if(jsonElement.getAsJsonObject().get("membershipId").getAsString().equals(getID())) {
 						je = jsonElement.getAsJsonObject();
 						return je;
 					}
@@ -442,13 +525,19 @@ public class BungieUser extends ContentFramework {
 		return je;
 	}
 
+	/**
+	 * Set the platform that you intend to pull information for, in case the user has multiple profiles.
+	 * Deprecated due to a lack of use after the introduction of cross save
+	 * @param destinyPlatform The specific platform you want user info for
+	 */
+	@Deprecated
 	public void setIntendedPlatform(DestinyPlatform destinyPlatform) {
 		intendedPlatform = destinyPlatform.getPlatformCode();
 		je = null;
 	}
 
 	public InventoryManager getInventoryManager() {
-		if (inventoryManager == null) {
+		if(inventoryManager == null) {
 			inventoryManager = new InventoryManager(this);
 		}
 
@@ -456,7 +545,7 @@ public class BungieUser extends ContentFramework {
 	}
 
 	public CollectionsManager getCollectionsManager() {
-		if (collectionsManager == null) {
+		if(collectionsManager == null) {
 			collectionsManager = new CollectionsManager(this);
 		}
 
