@@ -19,6 +19,7 @@ import net.dec4234.javadestinyapi.stats.activities.ActivityInfo;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
 import net.dec4234.javadestinyapi.utils.StringUtils;
 import net.dec4234.javadestinyapi.utils.framework.ContentFramework;
+import org.junit.jupiter.api.Test;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

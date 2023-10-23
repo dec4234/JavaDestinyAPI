@@ -85,75 +85,78 @@ public class OAuthFlow {
 		String filePath = new File(Paths.get("").toAbsolutePath().toString()).getPath() + "\\keystore.jks";
 		File file = new File(filePath);
 
-		SSLContext sslContext = null;
 		try {
-			server = HttpsServer.create(new InetSocketAddress(port), 0);
-			sslContext = SSLContext.getInstance("TLS");
-			char[] password = "mypassword".toCharArray();
-			KeyStore ks = KeyStore.getInstance("JKS");
+			SSLContext sslContext = null;
+			try {
+				server = HttpsServer.create(new InetSocketAddress(port), 0);
+				sslContext = SSLContext.getInstance("TLS");
+				char[] password = "mypassword".toCharArray();
+				KeyStore ks = KeyStore.getInstance("JKS");
 
-			file.delete();
+				file.delete();
 
-			// Generate a new key store
-			StringUtils.executeCommandLine("keytool -genkey -dname \"cn=dec 4234, ou=github/JavaDestinyAPI, o=ou=github/JavaDestinyAPI, c=US\" -ext san=dns:www.dev.dec4234.net -keyalg RSA -alias alias -keystore keystore.jks -storepass mypassword -keypass mypassword -validity 360 -keysize 2048");
+				// Generate a new key store
+				StringUtils.executeCommandLine("keytool -genkey -dname \"cn=dec 4234, ou=github/JavaDestinyAPI, o=ou=github/JavaDestinyAPI, c=US\" -ext san=dns:www.dev.dec4234.net -keyalg RSA -alias alias -keystore keystore.jks -storepass mypassword -keypass mypassword -validity 360 -keysize 2048");
 
-			// Sleep to allow for the keystore to be generated
-			Thread.sleep(2000);
+				// Sleep to allow for the keystore to be generated
+				Thread.sleep(2000);
 
-			FileInputStream fis = new FileInputStream(filePath);
-			ks.load(fis, password);
+				FileInputStream fis = new FileInputStream(filePath);
+				ks.load(fis, password);
 
-			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-			kmf.init(ks, password);
+				KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+				kmf.init(ks, password);
 
-			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-			tmf.init(ks);
+				TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+				tmf.init(ks);
 
-			sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+				sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-
-		HttpsConfigurator httpsConfigurator = new HttpsConfigurator(sslContext) {
-			@Override
-			public void configure(HttpsParameters httpsParameters) {
-				SSLContext sslContext = getSSLContext();
-				SSLParameters defaultSSLParameters = sslContext.getDefaultSSLParameters();
-				httpsParameters.setSSLParameters(defaultSSLParameters);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(-1);
 			}
-		};
 
-		server.createContext("/", t -> {
-			HttpsExchange s = (HttpsExchange) t;
-			s.getSSLSession();
+			HttpsConfigurator httpsConfigurator = new HttpsConfigurator(sslContext) {
+				@Override
+				public void configure(HttpsParameters httpsParameters) {
+					SSLContext sslContext = getSSLContext();
+					SSLParameters defaultSSLParameters = sslContext.getDefaultSSLParameters();
+					httpsParameters.setSSLParameters(defaultSSLParameters);
+				}
+			};
 
-			String response = "<html><body>You can now close this page.</body></html>";
-			t.sendResponseHeaders(200, response.length());
-			OutputStream os = t.getResponseBody();
-			os.write(response.getBytes());
+			server.createContext("/", t -> {
+				HttpsExchange s = (HttpsExchange) t;
+				s.getSSLSession();
 
-			getQueryParameters(s);
+				String response = "<html><body>You can now close this page.</body></html>";
+				t.sendResponseHeaders(200, response.length());
+				OutputStream os = t.getResponseBody();
+				os.write(response.getBytes());
 
-			os.close();
+				getQueryParameters(s);
 
-			s.close();
-		});
+				os.close();
 
-		long time = System.currentTimeMillis() + (30 * 1000);
+				s.close();
+			});
 
-		server.setExecutor(Executors.newCachedThreadPool());
-		server.setHttpsConfigurator(httpsConfigurator);
-		server.start();
+			long time = System.currentTimeMillis() + (30 * 1000);
 
-		// A crude attempt at a time-out
-		while(!hasQueryBeenReturned && time > System.currentTimeMillis()) {
+			server.setExecutor(Executors.newCachedThreadPool());
+			server.setHttpsConfigurator(httpsConfigurator);
+			server.start();
 
+			// A crude attempt at a time-out
+			while (!hasQueryBeenReturned && time > System.currentTimeMillis()) {
+
+			}
+
+			server.stop(0);
+		} finally {
+			file.delete(); // Delete keystore
 		}
-
-		server.stop(0);
-		file.delete(); // Delete keystore
 	}
 
 	/**
