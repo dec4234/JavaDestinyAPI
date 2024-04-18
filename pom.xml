@@ -18,7 +18,7 @@
     <packaging>jar</packaging>
 
     <name>JavaDestinyAPI</name>
-    <description>A Java wrapper for bungie.net platform api, allowing users to get data about the video games Destiny and Destiny 2</description>
+    <description>A Java wrapper for bungie.net platform API, allowing users to get data about the video games Destiny and Destiny 2</description>
     <url>https://github.com/dec4234/JavaDestinyAPI</url>
 
     <licenses>

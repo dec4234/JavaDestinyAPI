@@ -205,7 +205,7 @@ public class HttpUtils {
 	}
 
 	private JsonObject getJsonObject(String stringResponse) {
-		JsonObject jsonObject = new JsonParser().parse(stringResponse).getAsJsonObject();
+		JsonObject jsonObject = new JsonParser().parse(stringResponse).getAsJsonObject(); // TODO: JsonSyntaxException here
 
 		// API Offline Check
 		if(jsonObject.has("ErrorCode") && jsonObject.get("ErrorCode").getAsInt() == 5) {

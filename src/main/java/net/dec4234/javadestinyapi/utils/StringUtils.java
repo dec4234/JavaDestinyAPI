@@ -9,6 +9,8 @@
 package net.dec4234.javadestinyapi.utils;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -53,7 +55,7 @@ public class StringUtils {
 	 * Specific characters need to be encoded in order to have a successful request
 	 */
 	public static String httpEncode(String input) {
-		return input.replace(" ", "%20").replace("#", "%23").replace("^", "%5E");
+		return URLEncoder.encode(input, StandardCharsets.UTF_8);
 	}
 
 	public static void executeCommandLine(String command) {
