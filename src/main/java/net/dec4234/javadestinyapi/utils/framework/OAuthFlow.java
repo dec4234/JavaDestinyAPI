@@ -9,6 +9,7 @@
 package net.dec4234.javadestinyapi.utils.framework;
 
 import com.sun.net.httpserver.*;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.utils.StringUtils;
 
@@ -39,7 +40,7 @@ public class OAuthFlow {
 	 * 4. Sets the tokens using that information
 	 * @param port The port to start the server on
 	 */
-	public void initOAuthFlow(int port) {
+	public void initOAuthFlow(int port) throws APIException {
 		setTokens(port);
 	}
 
@@ -47,13 +48,13 @@ public class OAuthFlow {
 	 * Initiate the OAuth Flow only if an exisiting key cannot be found or if it has expired
 	 * @param port The port to start the server on
 	 */
-	public void initOAuthFlowIfNeeded(int port) {
+	public void initOAuthFlowIfNeeded(int port) throws APIException {
 		if(!DestinyAPI.hasOauthManager() || DestinyAPI.getAccessToken() == null || DestinyAPI.getHttpUtils().setTokenViaRefresh() == null) {
 			initOAuthFlow(port);
 		}
 	}
 
-	private void setTokens(int serverPort) {
+	private void setTokens(int serverPort) throws APIException {
 		openOAuthPage();
 
 		startSecureServer(serverPort);

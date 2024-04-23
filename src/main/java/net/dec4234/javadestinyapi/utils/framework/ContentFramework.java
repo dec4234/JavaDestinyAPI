@@ -9,6 +9,7 @@
 package net.dec4234.javadestinyapi.utils.framework;
 
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 
@@ -39,7 +40,7 @@ public class ContentFramework implements ContentInterface {
 	}
 
 	@Override
-	public void checkJO() {
+	public void checkJO() throws APIException {
 		if(jo == null) {
 			if(manifestType == null) {
 				jo = DestinyAPI.getHttpUtils().urlRequestGET(url);
@@ -52,7 +53,7 @@ public class ContentFramework implements ContentInterface {
 	/**
 	 * Refresh the jsonobject to potentially account for new changes
 	 */
-	public void refreshJO() {
+	public void refreshJO() throws APIException {
 		if(manifestType == null) {
 			jo = DestinyAPI.getHttpUtils().urlRequestGET(url);
 		} else {
@@ -60,7 +61,7 @@ public class ContentFramework implements ContentInterface {
 		}
 	}
 
-	public JsonObject getJO() {
+	public JsonObject getJO() throws APIException {
 		checkJO();
 		return jsonObjectModifier.modify(jo);
 	}

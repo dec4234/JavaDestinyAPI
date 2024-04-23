@@ -10,6 +10,7 @@ package net.dec4234.javadestinyapi.stats.activities;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
 import net.dec4234.javadestinyapi.utils.StringUtils;
@@ -68,7 +69,7 @@ public class Activity extends ContentFramework {
 	 *
 	 * @return
 	 */
-	public Date getDatePlayed() {
+	public Date getDatePlayed() throws APIException {
 		checkJO();
 		return time == null ? time = StringUtils.valueOfZTime(getJO().get("period").getAsString()) : time;
 	}
@@ -78,7 +79,7 @@ public class Activity extends ContentFramework {
 	 *
 	 * @return
 	 */
-	public String getReferenceId() {
+	public String getReferenceId() throws APIException {
 		checkJO();
 		return referenceId == null ? referenceId = getJO().getAsJsonObject("activityDetails").get("referenceId").getAsString() : referenceId;
 	}
@@ -86,7 +87,7 @@ public class Activity extends ContentFramework {
 	/**
 	 * Get the director activity hash (the type of activity played?)
 	 */
-	public String getDirectoryActivityHash() {
+	public String getDirectoryActivityHash() throws APIException {
 		checkJO();
 		return directoryActivityHash == null ? directoryActivityHash = getJO().getAsJsonObject("activityDetails").get("directorActivityHash").getAsString() : directoryActivityHash;
 	}
@@ -95,7 +96,7 @@ public class Activity extends ContentFramework {
 	 * Gets the instance id, which happens to be the same as the activityId :)
 	 * =
 	 */
-	public String getInstanceId() {
+	public String getInstanceId() throws APIException {
 		checkJO();
 		return activityId == null ? activityId = getJO().get("instanceId").getAsString() : activityId;
 	}
@@ -103,7 +104,7 @@ public class Activity extends ContentFramework {
 	/**
 	 * Get the mode number of the Activity
 	 */
-	private int getModeNumber() {
+	private int getModeNumber() throws APIException {
 		checkJO();
 		return mode == -1 ? mode = getJO().getAsJsonObject("activityDetails").get("mode").getAsInt() : mode;
 	}
@@ -113,7 +114,7 @@ public class Activity extends ContentFramework {
 	 * Mode list on this page
 	 * https://bungie-net.github.io/multi/schema_Destiny-Definitions-DestinyActivityDefinition.html
 	 */
-	public ActivityMode getMode() {
+	public ActivityMode getMode() throws APIException {
 		checkJO();
 		for (ActivityMode am : ActivityMode.values()) {
 			if (am.getBungieValue() == getModeNumber()) {
@@ -128,7 +129,7 @@ public class Activity extends ContentFramework {
 	 *
 	 * @return
 	 */
-	public List<ActivityParticipant> getParticipants() {
+	public List<ActivityParticipant> getParticipants() throws APIException {
 
 		List<ActivityParticipant> temp = new ArrayList<>();
 		try {
@@ -145,7 +146,7 @@ public class Activity extends ContentFramework {
 	/**
 	 * If you need to get data not inside of this class
 	 */
-	public JsonObject getJsonObject() {
+	public JsonObject getJsonObject() throws APIException {
 		checkJO();
 		return getJO();
 	}

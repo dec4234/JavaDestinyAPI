@@ -8,6 +8,7 @@
 
 package net.dec4234.javadestinyapi.material.inventory;
 
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.user.BungieUser;
 import net.dec4234.javadestinyapi.material.user.DestinyCharacter;
 
@@ -25,7 +26,7 @@ public class InventoryManager {
 		this.bungieUser = bungieUser;
 	}
 
-	public DestinyCharacter getCharacterOfType(DestinyCharacter.DestinyClass destinyClass) {
+	public DestinyCharacter getCharacterOfType(DestinyCharacter.DestinyClass destinyClass) throws APIException {
 		return bungieUser.getCharacterOfType(destinyClass);
 	}
 

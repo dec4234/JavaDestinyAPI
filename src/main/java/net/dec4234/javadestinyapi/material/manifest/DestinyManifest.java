@@ -9,6 +9,7 @@
 package net.dec4234.javadestinyapi.material.manifest;
 
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.utils.framework.ContentFramework;
 
@@ -36,7 +37,7 @@ public class DestinyManifest extends ContentFramework {
 	 *
 	 * It'll download the entire definition library the first time and it'll cache it
 	 */
-	public JsonObject manifestGET(ManifestEntityTypes manifestEntityTypes, String hash) {
+	public JsonObject manifestGET(ManifestEntityTypes manifestEntityTypes, String hash) throws APIException {
 		JsonObject jsonObject = getDefinitionLibrary(manifestEntityTypes);
 
 		if(jsonObject.has(hash)) {
@@ -50,36 +51,36 @@ public class DestinyManifest extends ContentFramework {
 	 * Get the current version of the manifest
 	 * Useful for checking for updates
 	 */
-	public String getVersion() {
+	public String getVersion() throws APIException {
 		return getJO().get("version").getAsString();
 	}
 
-	public String getMobileAssetContentPath() {
+	public String getMobileAssetContentPath() throws APIException {
 		return getJO().get("mobileAssetContentPath").getAsString();
 	}
 
-	public String getMobileWorldContentPath(Language language) {
+	public String getMobileWorldContentPath(Language language) throws APIException {
 		return getJO().getAsJsonObject("mobileWorldContentPaths").get(language.getCode()).getAsString();
 	}
 
-	public String getJsonWorldContentPath(Language language) {
+	public String getJsonWorldContentPath(Language language) throws APIException {
 		return getJO().getAsJsonObject("jsonWorldContentPaths").get(language.getCode()).getAsString();
 	}
 
-	public JsonObject getWorldContent(Language language) {
+	public JsonObject getWorldContent(Language language) throws APIException {
 		return DestinyAPI.getHttpUtils().urlRequestGET("https://www.bungie.net" + getJsonWorldContentPath(language));
 	}
 
 	/**
 	 * Get the entirety of the specified definition library
 	 */
-	public JsonObject getDefinitionLibrary(ManifestEntityTypes manifestEntityTypes) {
+	public JsonObject getDefinitionLibrary(ManifestEntityTypes manifestEntityTypes) throws APIException {
 		Language language = Language.ENGLISH;
 
 		return getDefinitionLibrary(language, manifestEntityTypes);
 	}
 
-	public JsonObject getDefinitionLibrary(Language language, ManifestEntityTypes manifestEntityTypes) {
+	public JsonObject getDefinitionLibrary(Language language, ManifestEntityTypes manifestEntityTypes) throws APIException {
 		if(!worldComponents.containsKey(manifestEntityTypes.getBungieEntityValue())) {
 			worldComponents.put(manifestEntityTypes.getBungieEntityValue(), DestinyAPI.getHttpUtils().urlRequestGET("https://www.bungie.net" + getJO().getAsJsonObject("jsonWorldComponentContentPaths").getAsJsonObject(language.getCode()).get(manifestEntityTypes.getBungieEntityValue()).getAsString()));
 		}
@@ -87,7 +88,7 @@ public class DestinyManifest extends ContentFramework {
 		return worldComponents.get(manifestEntityTypes.getBungieEntityValue());
 	}
 
-	public String getMobileClanBannerDatabasePath() {
+	public String getMobileClanBannerDatabasePath() throws APIException {
 		return getJO().get("mobileClanBannerDatabasePath").getAsString();
 	}
 

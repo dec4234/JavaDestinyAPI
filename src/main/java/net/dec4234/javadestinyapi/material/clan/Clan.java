@@ -11,17 +11,19 @@ package net.dec4234.javadestinyapi.material.clan;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
-import net.dec4234.javadestinyapi.stats.activities.ActivityMode;
 import net.dec4234.javadestinyapi.material.user.BungieUser;
-import net.dec4234.javadestinyapi.material.user.DestinyPlatform;
+import net.dec4234.javadestinyapi.stats.activities.ActivityMode;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
 import net.dec4234.javadestinyapi.utils.StringUtils;
 import net.dec4234.javadestinyapi.utils.framework.ContentFramework;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Clan extends ContentFramework {
 
@@ -62,46 +64,46 @@ public class Clan extends ContentFramework {
         this.clanName = clanName;
     }
 
-    public String getClanID() {
+    public String getClanID() throws APIException {
         if (clanId == -1) {
             clanId = getDetail().get("groupId").getAsLong();
         }
         return clanId + "";
     }
 
-    public String getClanName() {
+    public String getClanName() throws APIException {
         if (clanName == null) {
             clanName = getJO().getAsJsonObject("detail").get("name").getAsString();
         }
         return clanName;
     }
 
-    public String getClanDescription() {
+    public String getClanDescription() throws APIException {
         if (clanDescription == null) {
             clanDescription = getDetail().get("about").getAsString();
         }
         return clanDescription;
     }
 
-    public Date getCreationDate() {
+    public Date getCreationDate() throws APIException {
         if (creationDate == null) {
             creationDate = StringUtils.valueOfZTime(getDetail().get("creationDate").getAsString());
         }
         return creationDate;
     }
 
-    public int getMemberCount() {
+    public int getMemberCount() throws APIException {
         if (memberCount == -1) {
             memberCount = getDetail().get("memberCount").getAsInt();
         }
         return memberCount;
     }
 
-    public boolean isPublic() {
+    public boolean isPublic() throws APIException {
         return getDetail().get("isPublic").getAsBoolean();
     }
 
-    public String getMotto() {
+    public String getMotto() throws APIException {
         if (motto == null) {
             motto = getDetail().get("motto").getAsString();
         }
@@ -111,14 +113,14 @@ public class Clan extends ContentFramework {
     /**
      * Get if this clan allows chat. I think this refers to the Bungie.net clan chat page
      */
-    public boolean isAllowChat() {
+    public boolean isAllowChat() throws APIException {
         return getDetail().get("allowChat").getAsBoolean();
     }
 
     /**
      * Get the founder of the clan
      */
-    public BungieUser getFounder() {
+    public BungieUser getFounder() throws APIException {
         return new BungieUser(getJO().getAsJsonObject("founder").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString());
     }
 
@@ -127,7 +129,7 @@ public class Clan extends ContentFramework {
      * The founder is always the first in this list?
      * Followed by the admins in the order they were promoted
      */
-    public List<BungieUser> getAdmins() {
+    public List<BungieUser> getAdmins() throws APIException {
         if (admins != null) {
             return admins;
         }
@@ -148,7 +150,7 @@ public class Clan extends ContentFramework {
      *
      * Thanks to the ClanMember system, requires very little calls and should be pretty fast.
      */
-    public double getAverageInactivityAmongMembers() {
+    public double getAverageInactivityAmongMembers() throws APIException {
         ArrayList<Double> averages = new ArrayList<>();
         int a = 0;
         for (ClanMember clanMember : this.getMembers()) {
@@ -163,7 +165,7 @@ public class Clan extends ContentFramework {
     /**
      * Get the most inactive members of a clan, using the getMembers() endpoint and the ClanMember class
      */
-    public List<ClanMember> getMostInactiveMembers(int numberOfResults, String... exclude) {
+    public List<ClanMember> getMostInactiveMembers(int numberOfResults, String... exclude) throws APIException {
         List<ClanMember> list = getMembers();
         List<String> excluded = Arrays.asList(exclude);
         List<ClanMember> toReturn = new LinkedList<>();
@@ -190,7 +192,7 @@ public class Clan extends ContentFramework {
      *
      * TO-DO: Maybe switch this to the search part of the /Members/ endpoint?
      */
-    public List<BungieUser> searchMembers(String name) {
+    public List<BungieUser> searchMembers(String name) throws APIException {
         List<BungieUser> list = new LinkedList<>();
 
         for (BungieUser bungieUser : getMembers()) {
@@ -208,7 +210,7 @@ public class Clan extends ContentFramework {
      *
      * @return A list of all online members of the clan
      */
-    public List<ClanMember> getOnlineMembers() {
+    public List<ClanMember> getOnlineMembers() throws APIException {
         List<ClanMember> toReturn = new ArrayList<>();
 
         for(ClanMember clanMember : getMembers()) {
@@ -225,7 +227,7 @@ public class Clan extends ContentFramework {
      *
      * @return The userIds belonging to the members of this clan
      */
-    public List<String> getMembersIDs() {
+    public List<String> getMembersIDs() throws APIException {
         List<String> toReturn = new ArrayList<>();
 
         for (BungieUser bungieUser : getMembers()) {
@@ -239,7 +241,7 @@ public class Clan extends ContentFramework {
      * Get the members of this clan
      * @return A List of ClanMember
      */
-    public List<ClanMember> getMembers() {
+    public List<ClanMember> getMembers() throws APIException {
         List<ClanMember> clanMembers = new ArrayList<>();
 
         JsonObject response = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
@@ -256,7 +258,7 @@ public class Clan extends ContentFramework {
      * @param amount The amount of members to return
      * @return A sorted list of the oldest members of this clan
      */
-    public List<ClanMember> getOldestMembers(int amount) {
+    public List<ClanMember> getOldestMembers(int amount) throws APIException {
         List<ClanMember> members = getMembers();
         List<ClanMember> sorted = new LinkedList<>();
 
@@ -285,14 +287,14 @@ public class Clan extends ContentFramework {
     /**
      * Returns if this BungieUser is a member of the clan
      */
-    public boolean isMember(BungieUser bungieUser) {
+    public boolean isMember(BungieUser bungieUser) throws APIException {
         return isMember(bungieUser.getID());
     }
 
     /**
      * Checks if the member with the provided id is a member of the clan
      */
-    public boolean isMember(String bungieID) {
+    public boolean isMember(String bungieID) throws APIException {
         for (BungieUser bungieUser : getMembers()) {
             if (bungieUser.getID().equals(bungieID)) {
                 return true;
@@ -306,7 +308,7 @@ public class Clan extends ContentFramework {
      * Retrieve a JsonObject depicting the top stats of the clan
      * Unfortunately does not say who has those top stats
      */
-    public JsonObject getClanStats(ActivityMode... filter) {
+    public JsonObject getClanStats(ActivityMode... filter) throws APIException {
         String queryString = "/?modes=";
         for (ActivityMode activityMode : filter) {
             queryString = queryString.concat(activityMode.getBungieValue() + ",");
@@ -321,7 +323,7 @@ public class Clan extends ContentFramework {
      *
      * @return The Date this user joined the clan or null if that user was not found
      */
-    public Date getJoinDate(BungieUser member) {
+    public Date getJoinDate(BungieUser member) throws APIException {
         if (jj == null) {
             jj = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/Members/").get("Response").getAsJsonObject();
         }
@@ -346,7 +348,7 @@ public class Clan extends ContentFramework {
         return clanManagement;
     }
 
-    private JsonObject getDetail() {
+    private JsonObject getDetail() throws APIException {
         return getJO().getAsJsonObject("detail");
     }
 }

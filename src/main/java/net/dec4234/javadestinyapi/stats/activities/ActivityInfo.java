@@ -9,6 +9,7 @@
 package net.dec4234.javadestinyapi.stats.activities;
 
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 import net.dec4234.javadestinyapi.utils.framework.ContentFramework;
 
@@ -19,7 +20,7 @@ public class ActivityInfo extends ContentFramework {
 	private ActivityMode activityMode;
 	private boolean hasIcon, isPlaylist, inheritFromFreeRoam, suppressOtherRewards, isMatchmade, requiresGuardianOath, isPvP;
 
-	public ActivityInfo(String hash) {
+	public ActivityInfo(String hash) throws APIException {
 		super(ManifestEntityTypes.ACTIVITY, hash, source -> {
 			return source.getAsJsonObject("Response");
 		});
@@ -72,11 +73,11 @@ public class ActivityInfo extends ContentFramework {
 		this.requiresGuardianOath = getMatchmaking().get("requiresGuardianOath").getAsBoolean();
 	}
 
-	public JsonObject getDisplayProperties() {
+	public JsonObject getDisplayProperties() throws APIException {
 		return getJO().getAsJsonObject("displayProperties");
 	}
 
-	public JsonObject getMatchmaking() {
+	public JsonObject getMatchmaking() throws APIException {
 		return getJO().getAsJsonObject("matchmaking");
 	}
 

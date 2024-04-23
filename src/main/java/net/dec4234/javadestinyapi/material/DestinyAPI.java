@@ -11,9 +11,9 @@ package net.dec4234.javadestinyapi.material;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.clan.Clan;
 import net.dec4234.javadestinyapi.material.user.BungieUser;
-import net.dec4234.javadestinyapi.material.user.DestinyPlatform;
 import net.dec4234.javadestinyapi.material.user.UserCredential;
 import net.dec4234.javadestinyapi.material.user.UserCredentialType;
 import net.dec4234.javadestinyapi.responses.user.SanitizedUsernamesResponse;
@@ -132,7 +132,7 @@ public class DestinyAPI {
         return new BungieUser(id);
     }
 
-    public static SanitizedUsernamesResponse getSanitizedUsernames(String id) {
+    public static SanitizedUsernamesResponse getSanitizedUsernames(String id) throws APIException {
         return new SanitizedUsernamesResponse(httpUtils.urlRequestGET(HttpUtils.URL_BASE + "/User/GetSanitizedPlatformDisplayNames/" + id + "/").getAsJsonObject("Response"));
     }
 
@@ -140,7 +140,7 @@ public class DestinyAPI {
      * Get a BungieUser from a Steam ID
      * NOT the same IDs used by Bungie to identify individual users
      */
-    public static BungieUser getMemberFromSteamID(String steamID) {
+    public static BungieUser getMemberFromSteamID(String steamID) throws APIException {
         return getMemberFromPlatformID("SteamId", steamID);
     }
 
@@ -148,7 +148,7 @@ public class DestinyAPI {
      * Used to get a BungieUser from a specified platform ID
      * Currently only works with Steam IDs (see getMemberFromSteamID())
      */
-    private static BungieUser getMemberFromPlatformID(String platformName, String platformID) {
+    private static BungieUser getMemberFromPlatformID(String platformName, String platformID) throws APIException {
         JsonObject jsonObject = getHttpUtils().urlRequestGET("https://www.bungie.net/Platform/User/GetMembershipFromHardLinkedCredential/" + platformName + "/" + platformID + "/").getAsJsonObject("Response");
 
         return new BungieUser(jsonObject.get("membershipId").getAsString());
@@ -162,7 +162,7 @@ public class DestinyAPI {
      * <p>
      * Requires OAuth
      */
-    public static UserCredential[] getUserCredentials(BungieUser bungieUser) {
+    public static UserCredential[] getUserCredentials(BungieUser bungieUser) throws APIException {
         List<UserCredential> list = new LinkedList<>();
 
         for (JsonElement je : getHttpUtils().urlRequestGETOauth("https://www.bungie.net/Platform/User/GetCredentialTypesForTargetAccount/" + bungieUser.getID() + "/").getAsJsonArray("Response")) {
@@ -185,7 +185,7 @@ public class DestinyAPI {
     /**
      * Get a "UserCredential" from a BungieUser
      */
-    public static UserCredential getUserCredential(UserCredentialType type, BungieUser bungieUser) {
+    public static UserCredential getUserCredential(UserCredentialType type, BungieUser bungieUser) throws APIException {
         for (UserCredential userCredential : getUserCredentials(bungieUser)) {
             if (userCredential.getUserCredentialType() == type) {
                 return userCredential;
@@ -207,7 +207,7 @@ public class DestinyAPI {
      * @param nameAndDiscrim A full name and discriminator such as "dec4234#9904"
      * @return A user with the matching name and discriminator, null otherwise
      */
-    public static BungieUser getUserWithName(String nameAndDiscrim) {
+    public static BungieUser getUserWithName(String nameAndDiscrim) throws APIException {
         try {
             String[] split = nameAndDiscrim.split("#");
             JsonObject jsonObject = new JsonObject();
@@ -229,7 +229,7 @@ public class DestinyAPI {
      * BungieUser. While searching "Gladd" or "Datto" should return
      * multiple.
      */
-    public static List<BungieUser> searchUsers(String name) {
+    public static List<BungieUser> searchUsers(String name) throws APIException {
         List<BungieUser> users = new ArrayList<>();
 
         JsonObject body = new JsonObject();
@@ -274,7 +274,7 @@ public class DestinyAPI {
      * @param jsonArray
      * @return
      */
-    private static BungieUser processListOfProfiles(JsonArray jsonArray) {
+    private static BungieUser processListOfProfiles(JsonArray jsonArray) throws APIException {
         for (JsonElement jsonElement : jsonArray) {
             JsonObject profile = jsonElement.getAsJsonObject();
 
@@ -325,7 +325,7 @@ public class DestinyAPI {
      * Use searchUsers() instead
      */
     @Deprecated
-    public static List<BungieUser> searchGlobalDisplayNames(String prefix) {
+    public static List<BungieUser> searchGlobalDisplayNames(String prefix) throws APIException {
         prefix = StringUtils.httpEncode(prefix);
 
         List<BungieUser> bungieUsers = new ArrayList<>();

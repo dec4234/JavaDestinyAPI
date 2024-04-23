@@ -1,6 +1,7 @@
 package net.dec4234.javadestinyapi.material.inventory.items;
 
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.manifest.DestinyManifest;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 
@@ -11,7 +12,7 @@ public class ItemPerk {
 	private int perkVisibility;
 	private boolean isActive, visible;
 
-	public ItemPerk(String perkHash) {
+	public ItemPerk(String perkHash) throws APIException {
 		this(new DestinyManifest().manifestGET(ManifestEntityTypes.INVENTORYITEM, perkHash));
 	}
 

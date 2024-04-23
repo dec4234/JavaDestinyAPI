@@ -10,8 +10,12 @@ package net.dec4234.javadestinyapi.utils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.exceptions.APIOfflineException;
 import net.dec4234.javadestinyapi.exceptions.AccessTokenInvalidException;
+import net.dec4234.javadestinyapi.exceptions.ConnectionException;
+import net.dec4234.javadestinyapi.exceptions.JsonParsingError;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 
@@ -45,14 +49,14 @@ public class HttpUtils {
 	/**
 	 * Send a GET url request to the url provided, returns a JsonObject of the response
 	 */
-	public JsonObject urlRequestGET(String url) {
+	public JsonObject urlRequestGET(String url) throws APIException {
 		return getJsonObject(getStringResponse(getRequest(true, url, starter -> {
 			starter.GET();
 			return starter;
 		})));
 	}
 
-	public JsonObject urlRequestGETOauth(String url) {
+	public JsonObject urlRequestGETOauth(String url) throws APIException {
 		setTokenViaRefresh();
 		return getJsonObject(getStringResponse(getRequest(true, url, starter -> {
 			starter.GET()
@@ -61,11 +65,11 @@ public class HttpUtils {
 		})));
 	}
 
-	public JsonObject urlRequestPOST(String url, JsonObject body) {
+	public JsonObject urlRequestPOST(String url, JsonObject body) throws APIException {
 		return urlRequestPOST(url, body.toString());
 	}
 
-	public JsonObject urlRequestPOST(String url, String body) {
+	public JsonObject urlRequestPOST(String url, String body) throws APIException {
 		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
 		String finalBody = body;
 
@@ -81,7 +85,7 @@ public class HttpUtils {
 		})));
 	}
 
-	public String urlRequestPOSTOauth(String url, String body) {
+	public String urlRequestPOSTOauth(String url, String body) throws APIException {
 		setTokenViaRefresh();
 		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
 
@@ -100,7 +104,7 @@ public class HttpUtils {
 		}));
 	}
 
-	public JsonObject urlRequestPOSTOauth(String url, JsonObject body) {
+	public JsonObject urlRequestPOSTOauth(String url, JsonObject body) throws APIException {
 		setTokenViaRefresh();
 		if (body.toString().isEmpty()) {
 			body = new JsonObject();
@@ -128,7 +132,7 @@ public class HttpUtils {
 	 * Deprecated in favor of DestinyManifest#manifestGET()
 	 */
 	@Deprecated
-	public JsonObject manifestGET(ManifestEntityTypes entityType, String hashIdentifier) {
+	public JsonObject manifestGET(ManifestEntityTypes entityType, String hashIdentifier) throws APIException {
 		return urlRequestGET("https://www.bungie.net/Platform/Destiny2/Manifest/" + entityType.getBungieEntityValue() + "/" + hashIdentifier + "/");
 	}
 
@@ -137,7 +141,7 @@ public class HttpUtils {
 	 *
 	 * @return Returns the new access token
 	 */
-	public String setTokenViaRefresh() {
+	public String setTokenViaRefresh() throws APIException {
 		String url = "https://www.bungie.net/Platform/App/OAuth/Token/";
 
 		String requestBody = "grant_type=refresh_token&refresh_token=" + DestinyAPI.getRefreshToken();
@@ -165,11 +169,11 @@ public class HttpUtils {
 	/**
 	 * Requries an OAuthCode to be manually set inside of the DestinyAPI.setOAuthCode()
 	 */
-	public void setTokenViaAuth() {
+	public void setTokenViaAuth() throws APIException {
 		setTokenViaAuth(DestinyAPI.getOauthCode());
 	}
 
-	public void setTokenViaAuth(String oAuthCode) {
+	public void setTokenViaAuth(String oAuthCode) throws APIException {
 		String url = "https://www.bungie.net/Platform/App/OAuth/Token/";
 
 		String requestBody = "grant_type=authorization_code&code=" + oAuthCode;
@@ -190,7 +194,7 @@ public class HttpUtils {
 		HttpUtils.bearerToken = accessToken;
 	}
 
-	public boolean checkFor401(String input) {
+	public boolean checkFor401(String input) throws APIException {
 		if (input.contains("401 - Unauthorized")) {
 			try {
 				setTokenViaRefresh();
@@ -204,21 +208,23 @@ public class HttpUtils {
 		return false;
 	}
 
-	private JsonObject getJsonObject(String stringResponse) {
-		JsonObject jsonObject = new JsonParser().parse(stringResponse).getAsJsonObject(); // TODO: JsonSyntaxException here
+	private JsonObject getJsonObject(String stringResponse) throws APIException {
+		JsonObject jsonObject;
+
+		try {
+			jsonObject = new JsonParser().parse(stringResponse).getAsJsonObject();
+		} catch (JsonSyntaxException e) {
+			throw new JsonParsingError(e);
+		}
 
 		// API Offline Check
 		if(jsonObject.has("ErrorCode") && jsonObject.get("ErrorCode").getAsInt() == 5) {
-			try {
-				throw new APIOfflineException(jsonObject.get("Message").getAsString());
-			} catch (APIOfflineException exception) {
-				exception.printStackTrace();
-			}
+			throw new APIOfflineException(jsonObject.get("Message").getAsString());
 		}
 		return jsonObject;
 	}
 
-	private String getStringResponse(HttpRequest httpRequest) {
+	private String getStringResponse(HttpRequest httpRequest) throws ConnectionException {
 		HttpClient httpClient = HttpClient.newHttpClient();
 		try {
 			String responseString = httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body).get();
@@ -229,10 +235,8 @@ public class HttpUtils {
 			}
 			return responseString;
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			throw new ConnectionException(e);
 		}
-
-		return null;
 	}
 
 	private HttpRequest getRequest(boolean standardRequest, String url, HttpRequestModifier httpRequestModifier) {

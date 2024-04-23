@@ -9,6 +9,7 @@
 package net.dec4234.javadestinyapi.stats.character;
 
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.user.BungieUser;
 import net.dec4234.javadestinyapi.material.user.DestinyCharacter;
@@ -32,7 +33,7 @@ public class UserStats {
 	/**
 	 * Gets stats for this user's entire account
 	 */
-	public UserStats(BungieUser bungieUser) {
+	public UserStats(BungieUser bungieUser) throws APIException {
 		this.bungieUser = bungieUser;
 		jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getID() + "/Stats/").getAsJsonObject("Response").getAsJsonObject("mergedAllCharacters").getAsJsonObject("results");
 		allPve = jo.getAsJsonObject("allPvE").getAsJsonObject("allTime");
@@ -41,7 +42,7 @@ public class UserStats {
 	/**
 	 * Gets stats for this user's specific character
 	 */
-	public UserStats(BungieUser bungieUser, DestinyCharacter destinyCharacter) {
+	public UserStats(BungieUser bungieUser, DestinyCharacter destinyCharacter) throws APIException {
 		this.bungieUser = bungieUser;
 		jo = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/").getAsJsonObject("Response");
 		allPve = jo.getAsJsonObject("allPvE").getAsJsonObject("allTime");

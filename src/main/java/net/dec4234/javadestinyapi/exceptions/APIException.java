@@ -13,4 +13,8 @@ public abstract class APIException extends Exception {
     public APIException(String errorMessage) {
         super(errorMessage);
     }
+
+    public APIException(Exception e) {
+        super(e);
+    }
 }

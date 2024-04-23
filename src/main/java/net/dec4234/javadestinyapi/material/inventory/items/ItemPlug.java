@@ -1,6 +1,7 @@
 package net.dec4234.javadestinyapi.material.inventory.items;
 
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.manifest.DestinyManifest;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 import org.jetbrains.annotations.NotNull;
@@ -31,11 +32,11 @@ public class ItemPlug {
 	private boolean onActionRecreateSelf, isDummyPlug, applyStatsToSocketOwnerItem;
 	private int plugStyle, plugAvailibility, alternatePlugStyle;
 
-	public ItemPlug(@NotNull String hash) {
+	public ItemPlug(@NotNull String hash) throws APIException {
 		this(new DestinyManifest().manifestGET(ManifestEntityTypes.INVENTORYITEM, hash));
 	}
 
-	public ItemPlug(@NotNull String hash, boolean isEnabled, boolean isVisible) {
+	public ItemPlug(@NotNull String hash, boolean isEnabled, boolean isVisible) throws APIException {
 		this(hash);
 
 		this.isEnabled = isEnabled;

@@ -23,7 +23,6 @@ public class StringUtils {
 	/**
 	 * @param zuluTimeInString The Zulu time, in the form of a String, you wish to convert
 	 * @return Returns a date object representing the Zulu time provided
-	 * @throws ParseException
 	 */
 	public static Date valueOfZTime(String zuluTimeInString) {
 		String temp = zuluTimeInString;
@@ -35,10 +34,9 @@ public class StringUtils {
 		df.setTimeZone(TimeZone.getTimeZone("Zulu"));
 		try {
 			return df.parse(temp);
-		} catch (ParseException e) {
-			e.printStackTrace();
+		} catch (ParseException e) { // TODO: log error here
+			return null;
 		}
-		return null;
 	}
 
 	/**
