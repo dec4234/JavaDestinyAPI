@@ -13,8 +13,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.exceptions.APIOfflineException;
-import net.dec4234.javadestinyapi.exceptions.AccessTokenInvalidException;
 import net.dec4234.javadestinyapi.exceptions.ConnectionException;
+import net.dec4234.javadestinyapi.exceptions.InvalidConditionException;
 import net.dec4234.javadestinyapi.exceptions.JsonParsingError;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
@@ -154,6 +154,10 @@ public class HttpUtils {
 			return starter;
 		})));
 
+		if(response.has("error_description") && response.get("error_description").getAsString().equals("ApplicationTokenKeyIdDoesNotExist")) {
+			throw new InvalidConditionException("The refresh token is invalid, you likely need to generate new tokens");
+		}
+
 		if(!response.has("access_token")) {
 			return null;
 		}
@@ -194,20 +198,6 @@ public class HttpUtils {
 		HttpUtils.bearerToken = accessToken;
 	}
 
-	public boolean checkFor401(String input) throws APIException {
-		if (input.contains("401 - Unauthorized")) {
-			try {
-				setTokenViaRefresh();
-				throw new AccessTokenInvalidException("The access token used in this OAuth request was not accepted by the server \nI've already taken the liberty of getting a new access token for you :D");
-			} catch (AccessTokenInvalidException e) {
-				e.printStackTrace();
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	private JsonObject getJsonObject(String stringResponse) throws APIException {
 		JsonObject jsonObject;
 
@@ -221,6 +211,7 @@ public class HttpUtils {
 		if(jsonObject.has("ErrorCode") && jsonObject.get("ErrorCode").getAsInt() == 5) {
 			throw new APIOfflineException(jsonObject.get("Message").getAsString());
 		}
+
 		return jsonObject;
 	}
 

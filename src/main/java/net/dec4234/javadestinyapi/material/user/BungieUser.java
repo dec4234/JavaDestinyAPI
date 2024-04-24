@@ -44,6 +44,7 @@ public class BungieUser extends ContentFramework {
 	private List<DestinyCharacter> destinyCharacters = null;
 	private int playTime = -1, crossSaveOverride = -1, membershipType = -1;
 	private boolean isPublic, isCrossSavePrimary, isOverridden = false;
+	@Deprecated
 	private int intendedPlatform = -2;
 	private InventoryManager inventoryManager;
 	private CollectionsManager collectionsManager;
@@ -443,6 +444,7 @@ public class BungieUser extends ContentFramework {
 		return je;
 	}
 
+	@Deprecated
 	public void setIntendedPlatform(DestinyPlatform destinyPlatform) {
 		intendedPlatform = destinyPlatform.getPlatformCode();
 		je = null;

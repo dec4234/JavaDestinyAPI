@@ -10,6 +10,7 @@ package net.dec4234.javadestinyapi.utils.framework;
 
 import com.sun.net.httpserver.*;
 import net.dec4234.javadestinyapi.exceptions.APIException;
+import net.dec4234.javadestinyapi.exceptions.InvalidConditionException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.utils.StringUtils;
 
@@ -49,7 +50,11 @@ public class OAuthFlow {
 	 * @param port The port to start the server on
 	 */
 	public void initOAuthFlowIfNeeded(int port) throws APIException {
-		if(!DestinyAPI.hasOauthManager() || DestinyAPI.getAccessToken() == null || DestinyAPI.getHttpUtils().setTokenViaRefresh() == null) {
+		try {
+			if(!DestinyAPI.hasOauthManager() || DestinyAPI.getAccessToken() == null || DestinyAPI.getHttpUtils().setTokenViaRefresh() == null) {
+				initOAuthFlow(port);
+			}
+		} catch (InvalidConditionException e) {
 			initOAuthFlow(port);
 		}
 	}
