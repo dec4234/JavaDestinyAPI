@@ -40,56 +40,56 @@ public class ClanManagement {
 	 * Kicks this user from the clan
 	 */
 	public void kickPlayer(BungieUser bungieUser) throws APIException {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Kick/", "");
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Kick/");
 	}
 
 	/**
 	 * Bans the user from the clan
 	 */
 	public void banUser(BungieUser bungieUser) throws APIException {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Ban/", "");
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Ban/");
 	}
 
 	/**
 	 * Unbans this user from the clan, as long as they are banned, of course
 	 */
 	public void unbanUser(BungieUser bungieUser) throws APIException {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Unban/", "");
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Unban/");
 	}
 
 	/**
 	 * Invites the specified user to join the clan
 	 */
 	public void inviteUser(BungieUser bungieUser) throws APIException {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/IndividualInvite/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/", "");
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/IndividualInvite/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/");
 	}
 
 	/**
 	 * Cancels the invite for this user to join the clan
 	 */
 	public void cancelInvite(BungieUser bungieUser) throws APIException {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/IndividualInviteCancel/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/", "");
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/IndividualInviteCancel/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/");
 	}
 
 	/**
 	 * Approves this user's request to join the clan if and only if they have requested to join
 	 */
 	public void approvePendingMember(BungieUser bungieUser) throws APIException {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Approve/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/", "");
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Approve/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/");
 	}
 
 	/**
 	 * Approves all requests to join the clan
 	 */
 	public void approveAllPendingMembers() throws APIException {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/ApproveAll/", "");
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/ApproveAll/");
 	}
 
 	/**
 	 * Denies all pending requests to join the clan :)
 	 */
 	public void denyAllPendingMembers() throws APIException {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/DenyAll/?components=200", "");
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/DenyAll/?components=200");
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class ClanManagement {
 	 * @param bungieUser The user who will be the new founder (leader) of the clan
 	 */
 	public void abdicateFoundership(BungieUser bungieUser) throws APIException {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/AbdicateFoundership/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/", "");
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/AbdicateFoundership/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/");
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class ClanManagement {
 		jsonObject.addProperty("chatName", chatName);
 		jsonObject.addProperty("chatSecurity", clanChatSecuritySetting.getSetting());
 
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/OptionalConversations/Add/", jsonObject.toString());
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/OptionalConversations/Add/", jsonObject);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class ClanManagement {
 		jsonObject.addProperty("chatSecurity", clanChatSecuritySetting.getSetting());
 		jsonObject.addProperty("chatEnabled", chatEnabled);
 
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/OptionalConversations/" + conversationID + "/Edit/", jsonObject.toString());
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/OptionalConversations/" + conversationID + "/Edit/", jsonObject);
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class ClanManagement {
 	public List<BungieUser> getInvitedMembers() throws APIException {
 		List<BungieUser> temp = new ArrayList<>();
 
-		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Invited/?components=200").getAsJsonObject("Response").getAsJsonArray("results");
+		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/InvitedIndividuals/?components=200").getAsJsonObject("Response").getAsJsonArray("results");
 
 		for(JsonElement je : ja) {
 			temp.add(new BungieUser(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()));

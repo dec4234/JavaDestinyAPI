@@ -203,7 +203,7 @@ public class InventoryItem extends DestinyItem {
 		jsonObject.addProperty("membershipType", getCharacterOwner().getMembershipType());
 
 
-		httpUtils.urlRequestPOSTOauth(HttpUtils.URL_BASE + "/Destiny2/Actions/Items/SetLockState/", jsonObject.toString());
+		httpUtils.urlRequestPOSTOauth(HttpUtils.URL_BASE + "/Destiny2/Actions/Items/SetLockState/", jsonObject);
 	}
 
 	/**

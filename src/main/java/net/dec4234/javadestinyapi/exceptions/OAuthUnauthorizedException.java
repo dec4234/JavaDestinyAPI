@@ -9,6 +9,7 @@ package net.dec4234.javadestinyapi.exceptions;
 
 /**
  * You either have insufficient permission to attempt this OAuth action, or you forgot to authorize yourself.
+ * Alternatively, the access and/or refresh token has expired
  * See {@link net.dec4234.javadestinyapi.utils.framework.OAuthFlow}
  */
 public class OAuthUnauthorizedException extends APIException {

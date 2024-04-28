@@ -25,6 +25,29 @@ import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.util.concurrent.Executors;
 
+/**
+ * The OAuthFlow class allows a user to easily generate oauth tokens for a small project that is not distributed to
+ * external users. This class could be replicated by an experienced user to allow for handling multiple oauth tokens.
+ * <p>
+ * Note: OAuth could allow potenially dangerous actions such as full control over your clan (if you are an admin) as
+ * well as your inventory. Use at your own risk, and use good data management and protection practices.
+ * <p>
+ * Here is the process: <br>
+ * 1. Go to your app on <a href="https://www.bungie.net/en/Application">https://www.bungie.net/en/Application</a><br>
+ * 2. Under "App authentication" set the client type to confidential and set the redirect to something like
+ * "https://localhost:8080". Note that is MUST be HTTPS not HTTP<br>
+ * 3. Adjust the permissions for the app using the checkboxes right below it.<br>
+ * 4. Use the following code to init your oauth tokens.
+ * <pre>{@code
+ * OAuthFlow oAuthFlow = new OAuthFlow();
+ * oAuthFlow.initOAuthFlowIfNeeded(8080);
+ * }</pre>
+ * This will open the browser on your local machine where it will direct you to do oauth. It might say that the site is
+ * unsafe since it doesn't have a valid certificate. On chrome, click the "advanced" button and then "continue". You
+ * should now be able to perform OAuth requests and all the interesting things you can build with it.<br>
+ * 5.(Optionally) When initializing the DestinyAPI you can use {@link DestinyAPI#setOauthManager(OAuthManager)} to save
+ * the tokens however you want, so you don't have to oauth frequently.
+ */
 public class OAuthFlow {
 
 	// keytool -genkey -dname "cn=dec 4234, ou=github/JavaDestinyAPI, o=ou=github/JavaDestinyAPI, c=US" -keyalg RSA -alias alias -keystore keystore.jks -storepass mypassword -keypass mypassword -validity 360 -keysize 2048

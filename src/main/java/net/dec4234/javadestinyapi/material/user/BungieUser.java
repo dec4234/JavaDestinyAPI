@@ -389,7 +389,7 @@ public class BungieUser extends ContentFramework {
 	 * Request to join the specified clan
 	 */
 	public void requestToJoinClan(Clan clan) throws APIException {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Apply/" + getMembershipType() + "/", "");
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Apply/" + getMembershipType() + "/");
 	}
 
 	/**
