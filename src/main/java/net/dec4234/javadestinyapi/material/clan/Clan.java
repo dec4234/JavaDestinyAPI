@@ -1,9 +1,8 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
- * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
- * ownership of this software without the explicit permission of the author.
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
  *
- * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
 package net.dec4234.javadestinyapi.material.clan;
@@ -39,7 +38,7 @@ public class Clan extends ContentFramework {
     private int memberCount = -1;
 
     private List<BungieUser> admins, members;
-    private net.dec4234.javadestinyapi.material.clan.ClanManagement clanManagement;
+    private ClanManagement clanManagement;
     private JsonObject jj;
 
     public Clan(long clanId) {

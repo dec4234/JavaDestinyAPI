@@ -1,9 +1,8 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
- * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
- * ownership of this software without the explicit permission of the author.
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
  *
- * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
 package net.dec4234.javadestinyapi.utils;
@@ -15,7 +14,6 @@ import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.exceptions.APIOfflineException;
 import net.dec4234.javadestinyapi.exceptions.AccessTokenExpiredException;
 import net.dec4234.javadestinyapi.exceptions.ConnectionException;
-import net.dec4234.javadestinyapi.exceptions.InvalidConditionException;
 import net.dec4234.javadestinyapi.exceptions.JsonParsingError;
 import net.dec4234.javadestinyapi.exceptions.OAuthUnauthorizedException;
 import net.dec4234.javadestinyapi.exceptions.RefreshTokenExpiredException;
@@ -163,7 +161,7 @@ public class HttpUtils {
 		}));
 
 		if(response.has("error_description") && response.get("error_description").getAsString().equals("ApplicationTokenKeyIdDoesNotExist")) {
-			throw new InvalidConditionException("The refresh token is invalid, you likely need to generate new tokens");
+			throw new RefreshTokenExpiredException();
 		}
 
 		if(!response.has("access_token")) {
@@ -174,6 +172,10 @@ public class HttpUtils {
 		String rt = response.get("refresh_token").getAsString();
 		bearerToken = at;
 		new DestinyAPI().setAccessToken(at).setRefreshToken(rt);
+
+		if(DestinyAPI.isDebugEnabled()) {
+			System.out.println("TOKENS REFRESHED");
+		}
 
 		return at;
 	}
@@ -224,7 +226,7 @@ public class HttpUtils {
 		JsonObject jsonObject;
 
 		try {
-			jsonObject = new JsonParser().parse(responseString).getAsJsonObject();
+			jsonObject = JsonParser.parseString(responseString).getAsJsonObject();
 		} catch (JsonSyntaxException e) {
 			throw new JsonParsingError(e);
 		}
@@ -253,7 +255,7 @@ public class HttpUtils {
 
 			if (DestinyAPI.isDebugEnabled()) {
 				System.out.println(httpRequest.method() + " " + httpRequest.uri().toString());
-				System.out.println(responseString);
+				System.out.println("Response: " + responseString);
 			}
 			return responseString;
 		} catch (InterruptedException | ExecutionException e) {
