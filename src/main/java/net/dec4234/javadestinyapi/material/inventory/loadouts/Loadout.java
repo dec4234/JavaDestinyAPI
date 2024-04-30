@@ -13,6 +13,9 @@ import net.dec4234.javadestinyapi.material.inventory.items.InventoryItem;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is currently incomplete. If you would like to contribute, please create a pull request on GitHub
+ */
 public class Loadout {
 
     private String colorHash;

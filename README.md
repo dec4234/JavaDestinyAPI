@@ -1,8 +1,7 @@
 <p align="center">
     <img src="https://user-images.githubusercontent.com/22875520/119843615-b6da3f80-bed5-11eb-8d3e-b2432a993454.png">
+    <a href="https://discord.gg/dvZmP92d4h"><img src="https://discordapp.com/api/guilds/847480795232993280/widget.png?style=banner2"></a>
 </p>
-
-[![Discord Banner 2](https://discordapp.com/api/guilds/847480795232993280/widget.png?style=banner2)](https://discord.gg/dvZmP92d4h)
 
 # JavaDestinyAPI 
 This library is used as an interface to the API for the game Destiny 2, created by Bungie.
@@ -37,7 +36,8 @@ You need to get an API key from [bungie.net/developer](https://bungie.net/develo
 ```java
 DestinyAPI api = new DestinyAPI().setApiKey("YOUR API KEY HERE");
 ```
-*Must be intialized before any parts of the API are used!*
+**IMPORTANT:** *DestinyAPI MUST be the first thing initialized before making any interactions with the API! This is because
+all interactions with the API rely on the API Key set in DestinyAPI.*
 
 **Getting the time played in hours, of the user named dec4234#9904**
 ```java
@@ -51,6 +51,15 @@ System.out.println(new Clan("Heavenly Mayhem").getFounder().getSupplementalDispl
 
 Check out the [wiki](https://github.com/dec4234/JavaDestinyAPI/wiki/Getting-Started) for more specific examples and information.
 
+### An aside about APIException
+As of 4/30/2024, all functions that interact with the API in any way (i.e. could make an HTTP request) throw APIException.
+This is to allow for you, the user, to handle API errors in the way you see fit. This means you must use a try/catch or
+add "throws" to your function signature.
+<br>
+This was done because the old way could create a lot of runtime exceptions which were hard to account for.
+The most important error you may want to look at is [APIOfflineException](https://github.com/dec4234/JavaDestinyAPI/blob/master/src/main/java/net/dec4234/javadestinyapi/exceptions/APIOfflineException.java)
+which indicates when Bungie has disabled the API for maintenence. This may be useful to tell your user's that the API is offline.
+
 ## How's it made?
 There is both official and unofficial documentation for the API available on [destinydevs.github.io](http://destinydevs.github.io/BungieNetPlatform/docs/Endpoints) and on the [offical bungie api documentation](https://bungie-net.github.io/).
 
@@ -58,6 +67,3 @@ There is both official and unofficial documentation for the API available on [de
 - Managing inventory / Item transferring
 - Collections / Triumphs
 - Revamping the wiki
-
-### Contributing
-All development since 3/10/2022 on new features occurs within the [dev](https://github.com/dec4234/JavaDestinyAPI/tree/dev) branch. Clone that and submit a pull request with your changes.

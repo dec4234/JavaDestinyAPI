@@ -17,6 +17,12 @@ import net.dec4234.javadestinyapi.utils.HttpUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An InventoryItem describes any item contained in a player's or one of their characters inventories.
+ * This could be a weapon, armor piece, ghost, etc.
+ * <p>
+ * This class is currently incomplete. If you would like to contribute, please create a pull request on GitHub
+ */
 public class InventoryItem extends DestinyItem {
 
 	private static HttpUtils httpUtils = DestinyAPI.getHttpUtils();
