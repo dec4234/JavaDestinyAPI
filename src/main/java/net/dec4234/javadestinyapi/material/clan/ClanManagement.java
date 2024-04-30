@@ -1,9 +1,8 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
- * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
- * ownership of this software without the explicit permission of the author.
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
  *
- * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
 package net.dec4234.javadestinyapi.material.clan;
@@ -11,6 +10,7 @@ package net.dec4234.javadestinyapi.material.clan;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.user.BungieUser;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
@@ -38,57 +38,57 @@ public class ClanManagement {
 	/**
 	 * Kicks this user from the clan
 	 */
-	public void kickPlayer(BungieUser bungieUser) {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Kick/", "");
+	public void kickPlayer(BungieUser bungieUser) throws APIException {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Kick/");
 	}
 
 	/**
 	 * Bans the user from the clan
 	 */
-	public void banUser(BungieUser bungieUser) {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Ban/", "");
+	public void banUser(BungieUser bungieUser) throws APIException {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Ban/");
 	}
 
 	/**
 	 * Unbans this user from the clan, as long as they are banned, of course
 	 */
-	public void unbanUser(BungieUser bungieUser) {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Unban/", "");
+	public void unbanUser(BungieUser bungieUser) throws APIException {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/Unban/");
 	}
 
 	/**
 	 * Invites the specified user to join the clan
 	 */
-	public void inviteUser(BungieUser bungieUser) {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/IndividualInvite/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/", "");
+	public void inviteUser(BungieUser bungieUser) throws APIException {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/IndividualInvite/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/");
 	}
 
 	/**
 	 * Cancels the invite for this user to join the clan
 	 */
-	public void cancelInvite(BungieUser bungieUser) {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/IndividualInviteCancel/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/", "");
+	public void cancelInvite(BungieUser bungieUser) throws APIException {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/IndividualInviteCancel/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/");
 	}
 
 	/**
 	 * Approves this user's request to join the clan if and only if they have requested to join
 	 */
-	public void approvePendingMember(BungieUser bungieUser) {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Approve/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/", "");
+	public void approvePendingMember(BungieUser bungieUser) throws APIException {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Approve/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/");
 	}
 
 	/**
 	 * Approves all requests to join the clan
 	 */
-	public void approveAllPendingMembers() {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/ApproveAll/", "");
+	public void approveAllPendingMembers() throws APIException {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/ApproveAll/");
 	}
 
 	/**
 	 * Denies all pending requests to join the clan :)
 	 */
-	public void denyAllPendingMembers() {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/DenyAll/?components=200", "");
+	public void denyAllPendingMembers() throws APIException {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/DenyAll/?components=200");
 	}
 
 	/**
@@ -96,8 +96,8 @@ public class ClanManagement {
 	 *
 	 * @param bungieUser The user who will be the new founder (leader) of the clan
 	 */
-	public void abdicateFoundership(BungieUser bungieUser) {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/AbdicateFoundership/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/", "");
+	public void abdicateFoundership(BungieUser bungieUser) throws APIException {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/AbdicateFoundership/" + bungieUser.getMembershipType() + "/" + bungieUser.getID() + "/");
 	}
 
 	/**
@@ -106,12 +106,12 @@ public class ClanManagement {
 	 * @param chatName The name of the chat
 	 * @param clanChatSecuritySetting The security setting of the chat
 	 */
-	public void addOptionalConversation(String chatName, ClanChatSecuritySetting clanChatSecuritySetting) {
+	public void addOptionalConversation(String chatName, ClanChatSecuritySetting clanChatSecuritySetting) throws APIException {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("chatName", chatName);
 		jsonObject.addProperty("chatSecurity", clanChatSecuritySetting.getSetting());
 
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/OptionalConversations/Add/", jsonObject.toString());
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/OptionalConversations/Add/", jsonObject);
 	}
 
 	/**
@@ -122,13 +122,13 @@ public class ClanManagement {
 	 * @param chatName The name of the chat
 	 * @param clanChatSecuritySetting The security setting of the chat
 	 */
-	public void editOptionalConversation(String conversationID, boolean chatEnabled, String chatName, ClanChatSecuritySetting clanChatSecuritySetting) {
+	public void editOptionalConversation(String conversationID, boolean chatEnabled, String chatName, ClanChatSecuritySetting clanChatSecuritySetting) throws APIException {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("chatName", chatName);
 		jsonObject.addProperty("chatSecurity", clanChatSecuritySetting.getSetting());
 		jsonObject.addProperty("chatEnabled", chatEnabled);
 
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/OptionalConversations/" + conversationID + "/Edit/", jsonObject.toString());
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Admin/OptionalConversations/" + conversationID + "/Edit/", jsonObject);
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class ClanManagement {
 	 *
 	 * @return The list of banned users
 	 */
-	public List<BungieUser> getBannedMembers() {
+	public List<BungieUser> getBannedMembers() throws APIException {
 		if (bannedMembers != null) { return bannedMembers; }
 
 		List<BungieUser> temp = new ArrayList<>();
@@ -151,7 +151,7 @@ public class ClanManagement {
 	/**
 	 * Returns a list of pending members to the clan, Never cached: always makes a new request
 	 */
-	public List<BungieUser> getPendingMembers() {
+	public List<BungieUser> getPendingMembers() throws APIException {
 		List<BungieUser> temp = new ArrayList<>();
 		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Pending/?components=200").get("Response").getAsJsonObject().get("results").getAsJsonArray();
 
@@ -169,10 +169,10 @@ public class ClanManagement {
 	 *
 	 * @return The list of invited users
 	 */
-	public List<BungieUser> getInvitedMembers() {
+	public List<BungieUser> getInvitedMembers() throws APIException {
 		List<BungieUser> temp = new ArrayList<>();
 
-		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Invited/?components=200").getAsJsonObject("Response").getAsJsonArray("results");
+		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/InvitedIndividuals/?components=200").getAsJsonObject("Response").getAsJsonArray("results");
 
 		for(JsonElement je : ja) {
 			temp.add(new BungieUser(je.getAsJsonObject().getAsJsonObject("destinyUserInfo").get("membershipId").getAsString()));
@@ -184,7 +184,7 @@ public class ClanManagement {
 	/**
 	 * Check if a BungieUser is a pending applicant without the performance overhead of creating multiple BungieUsers
 	 */
-	public boolean isPendingMember(BungieUser bungieUser) {
+	public boolean isPendingMember(BungieUser bungieUser) throws APIException {
 		JsonArray ja = hu.urlRequestGETOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Pending/?components=200").get("Response").getAsJsonObject().get("results").getAsJsonArray();
 
 		for(JsonElement jsonElement : ja) {

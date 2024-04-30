@@ -7,12 +7,9 @@
 
 package net.dec4234.javadestinyapi.exceptions;
 
-/**
- * Indicates that the request returned error code 5  (The API has been disabled by Bungie)
- */
-public class APIOfflineException extends APIException {
+public class ConnectionException extends APIException {
 
-	public APIOfflineException(String returnMessage) {
-		super("The Bungie API returned this message: " + returnMessage);
-	}
+    public ConnectionException(Exception exception) {
+        super(exception);
+    }
 }

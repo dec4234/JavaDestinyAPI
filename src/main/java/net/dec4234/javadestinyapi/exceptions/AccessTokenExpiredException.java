@@ -8,11 +8,7 @@
 package net.dec4234.javadestinyapi.exceptions;
 
 /**
- * Indicates that the request returned error code 5  (The API has been disabled by Bungie)
+ * Self explanatory. The access token needs to be regenerated using the refresh token.
  */
-public class APIOfflineException extends APIException {
-
-	public APIOfflineException(String returnMessage) {
-		super("The Bungie API returned this message: " + returnMessage);
-	}
+public class AccessTokenExpiredException extends APIException{
 }

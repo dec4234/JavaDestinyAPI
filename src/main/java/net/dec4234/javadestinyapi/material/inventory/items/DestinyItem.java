@@ -1,19 +1,20 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
- * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
- * ownership of this software without the explicit permission of the author.
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
  *
- * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
 package net.dec4234.javadestinyapi.material.inventory.items;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.manifest.DestinyManifest;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
+import net.dec4234.javadestinyapi.utils.StringUtils;
 import net.dec4234.javadestinyapi.utils.framework.ContentInterface;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class DestinyItem implements ContentInterface {
 		this.hasIcon = hasIcon;
 	}
 
-	public String getHashID() {
+	public String getHashID() throws APIException {
 		if(hashID == null) {
 			checkJO();
 			hashID = jo.get("hash").getAsString();
@@ -54,14 +55,14 @@ public class DestinyItem implements ContentInterface {
 		return hashID;
 	}
 
-	public int getHashIDasInt() {
+	public int getHashIDasInt() throws APIException {
 		return Integer.parseInt(getHashID());
 	}
 
 	/**
 	 * Gets the name of the item
 	 */
-	public String getName() {
+	public String getName() throws APIException {
 		if(name == null) {
 			checkDP();
 			name = dp.get("name").getAsString();
@@ -72,7 +73,7 @@ public class DestinyItem implements ContentInterface {
 	/**
 	 * Plug this after https://www.bungie.net/ in a browser
 	 */
-	public String getIcon() {
+	public String getIcon() throws APIException {
 		if(icon == null) {
 			checkDP();
 			icon = dp.get("icon").getAsString();
@@ -83,7 +84,7 @@ public class DestinyItem implements ContentInterface {
 	/**
 	 * Gets the lore descriptions associated with this item
 	 */
-	public String getDescription() {
+	public String getDescription() throws APIException {
 		if(description == null) {
 			checkDP();
 			description = dp.get("description").getAsString();
@@ -91,13 +92,13 @@ public class DestinyItem implements ContentInterface {
 		return description;
 	}
 
-	public boolean hasIcon() {
+	public boolean hasIcon() throws APIException {
 		checkDP();
 		hasIcon = dp.get("hasIcon").getAsBoolean();
 		return hasIcon;
 	}
 
-	public String getCollectibleHash() {
+	public String getCollectibleHash() throws APIException {
 		checkJO();
 		if(jo.has("collectibleHash")) {
 			collectibleHash = jo.get("collectibleHash").getAsString();
@@ -106,7 +107,7 @@ public class DestinyItem implements ContentInterface {
 		return collectibleHash;
 	}
 
-	public String getScreenshot() {
+	public String getScreenshot() throws APIException {
 		checkJO();
 		if(jo.has("screenshot") && screenshot == null) {
 			screenshot = jo.get("screenshot").getAsString();
@@ -115,14 +116,14 @@ public class DestinyItem implements ContentInterface {
 		return screenshot;
 	}
 
-	public ItemTier getItemTier() {
+	public ItemTier getItemTier() throws APIException {
 		if(itemTier == null) {
 			itemTier = assessItemTier();
 		}
 		return itemTier;
 	}
 
-	private ItemTier assessItemTier() {
+	private ItemTier assessItemTier() throws APIException {
 		checkJO();
 		switch(jo.getAsJsonObject("inventory").get("tierTypeName").getAsString()) {
 			case "Common":
@@ -140,14 +141,14 @@ public class DestinyItem implements ContentInterface {
 	}
 
 	@Override
-	public void checkJO() {
+	public void checkJO() throws APIException {
 		if(jo == null) {
 			jo = new DestinyManifest().manifestGET(ManifestEntityTypes.INVENTORYITEM, hashID);
 			// jo = hu.manifestGET(ManifestEntityTypes.INVENTORYITEM, hashID).getAsJsonObject("Response");
 		}
 	}
 
-	public void checkDP() {
+	public void checkDP() throws APIException {
 		if(dp == null) {
 			checkJO();
 			dp = jo.getAsJsonObject("displayProperties");
@@ -165,10 +166,10 @@ public class DestinyItem implements ContentInterface {
 	/**
 	 * Return a list of all items that contain or match the name provided
 	 */
-	public static List<DestinyItem> searchForItems(String itemName) {
+	public static List<DestinyItem> searchForItems(String itemName) throws APIException {
 		HttpUtils httpUtils = DestinyAPI.getHttpUtils();
 		List<DestinyItem> destinyItemList = new ArrayList<>();
-		itemName = itemName.replace(" ", "%20");
+		itemName = StringUtils.httpEncode(itemName);
 
 		for(JsonElement jsonElement : httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/Armory/Search/DestinyInventoryItemDefinition/" + itemName + "/").getAsJsonObject("Response").getAsJsonObject("results").getAsJsonArray("results")) {
 			JsonObject jsonObject = jsonElement.getAsJsonObject();

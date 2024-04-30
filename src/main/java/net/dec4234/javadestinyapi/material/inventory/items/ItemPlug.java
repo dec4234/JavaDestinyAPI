@@ -1,6 +1,14 @@
+/*
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
+ *
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
+ */
+
 package net.dec4234.javadestinyapi.material.inventory.items;
 
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.manifest.DestinyManifest;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 import org.jetbrains.annotations.NotNull;
@@ -31,11 +39,11 @@ public class ItemPlug {
 	private boolean onActionRecreateSelf, isDummyPlug, applyStatsToSocketOwnerItem;
 	private int plugStyle, plugAvailibility, alternatePlugStyle;
 
-	public ItemPlug(@NotNull String hash) {
+	public ItemPlug(@NotNull String hash) throws APIException {
 		this(new DestinyManifest().manifestGET(ManifestEntityTypes.INVENTORYITEM, hash));
 	}
 
-	public ItemPlug(@NotNull String hash, boolean isEnabled, boolean isVisible) {
+	public ItemPlug(@NotNull String hash, boolean isEnabled, boolean isVisible) throws APIException {
 		this(hash);
 
 		this.isEnabled = isEnabled;
