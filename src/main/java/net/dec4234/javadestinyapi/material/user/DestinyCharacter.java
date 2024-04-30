@@ -25,6 +25,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * A DestinyCharacter is a character on a user's account like a Warlock, Titan, or Hunter.
+ * <br>
+ * There is a lot of character-specific information that is captured within this class.
+ */
 public class DestinyCharacter extends ContentFramework {
 
 	private BungieUser bungieUser;
@@ -221,6 +226,12 @@ public class DestinyCharacter extends ContentFramework {
 	}
 	 */
 
+	/**
+	 * Get a list of inventory items present in this character's inventory.
+	 * <br>
+	 * This is an OAUTH action that required inventory reading permission.
+	 * @return A list of inventory items, equipped or unequipped
+	 */
 	public List<InventoryItem> getAllItemsInInventory() throws APIException {
 		JsonArray jsonArray = hu.urlRequestGETOauth("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getID() + "/Character/"
 															+ getCharacterID() + "/?components=201").getAsJsonObject("Response").getAsJsonObject("inventory").getAsJsonObject("data").getAsJsonArray("items");
@@ -249,6 +260,12 @@ public class DestinyCharacter extends ContentFramework {
 		return list;
 	}
 
+	/**
+	 * TODO: complete
+	 * <br>
+	 * This function is currently incomplete. If you would like to contribute, please create a pull request on GitHub
+	 * @return A list of loadouts on this character
+	 */
 	public List<Loadout> getLoadouts() throws APIException {
 		hu.urlRequestGETOauth(HttpUtils.URL_BASE + "/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getID() + "/Character/" + getCharacterID() + "/?components=206,201");
 
@@ -339,6 +356,9 @@ public class DestinyCharacter extends ContentFramework {
 		return null;
 	}
 
+	/**
+	 * Gender of this character. Male or Female
+	 */
 	public enum Gender {
 		MALE("Male"),
 		FEMALE("Female");
@@ -353,6 +373,9 @@ public class DestinyCharacter extends ContentFramework {
 
 	}
 
+	/**
+	 * The class of this character. Hunter, Titan or Warlock
+	 */
 	public enum DestinyClass {
 		HUNTER("Hunter"),
 		TITAN("Titan"),
@@ -367,6 +390,9 @@ public class DestinyCharacter extends ContentFramework {
 		public String getValue() { return value; }
 	}
 
+	/**
+	 * The race of this character. Awoken, Exo or Human
+	 */
 	public enum Race {
 		AWOKEN("Awoken"),
 		EXO("Exo"),
