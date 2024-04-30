@@ -1,9 +1,8 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
- * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
- * ownership of this software without the explicit permission of the author.
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
  *
- * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
 package net.dec4234.javadestinyapi.stats.activities;
@@ -11,6 +10,7 @@ package net.dec4234.javadestinyapi.stats.activities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.clan.Clan;
 import net.dec4234.javadestinyapi.material.clan.ClanMember;
@@ -26,7 +26,7 @@ public class ActivityHistoryReview {
 
 	private HttpUtils httpUtils = DestinyAPI.getHttpUtils();
 
-	public LinkedHashMap<String, Activity> getMostUnrecentAttempts(Clan clan, ActivityIdentifier activityIdentifier) {
+	public LinkedHashMap<String, Activity> getMostUnrecentAttempts(Clan clan, ActivityIdentifier activityIdentifier) throws APIException {
 		HashMap<String, Activity> map = new HashMap<>();
 		HashMap<String, Double> doubleMap = new HashMap<>();
 		LinkedHashMap<String, Activity> toReturn = new LinkedHashMap<>();
@@ -79,7 +79,7 @@ public class ActivityHistoryReview {
 	/**
 	 * Takes a very long time
 	 */
-	public double getAverageCompletions(Clan clan, ActivityIdentifier activityIdentifier) {
+	public double getAverageCompletions(Clan clan, ActivityIdentifier activityIdentifier) throws APIException {
 		List<ClanMember> members = clan.getMembers();
 		double count = 0;
 
@@ -90,7 +90,7 @@ public class ActivityHistoryReview {
 		return count / members.size();
 	}
 
-	public LinkedHashMap<BungieUser, Integer> getTopClearers(Clan clan, ActivityIdentifier activityIdentifier) {
+	public LinkedHashMap<BungieUser, Integer> getTopClearers(Clan clan, ActivityIdentifier activityIdentifier) throws APIException {
 		HashMap<BungieUser, Integer> map = new HashMap<>();
 		LinkedHashMap<BungieUser, Integer> toReturn = new LinkedHashMap<>();
 
@@ -114,7 +114,7 @@ public class ActivityHistoryReview {
 		return toReturn;
 	}
 
-	public int getCompletions(BungieUser bungieUser, ActivityIdentifier activityIdentifier) {
+	public int getCompletions(BungieUser bungieUser, ActivityIdentifier activityIdentifier) throws APIException {
 		int count = 0;
 
 		for (DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
@@ -124,7 +124,7 @@ public class ActivityHistoryReview {
 		return count;
 	}
 
-	public int getCompletions(ActivityIdentifier activityIdentifier, BungieUser bungieUser, DestinyCharacter destinyCharacter) {
+	public int getCompletions(ActivityIdentifier activityIdentifier, BungieUser bungieUser, DestinyCharacter destinyCharacter) throws APIException {
 		int count = 0;
 
 		for (JsonArray ja : getArrays(activityIdentifier, bungieUser, destinyCharacter)) {
@@ -143,7 +143,7 @@ public class ActivityHistoryReview {
 		return count;
 	}
 
-	public boolean hasPlayedInActivity(BungieUser bungieUser, String pgcrId) {
+	public boolean hasPlayedInActivity(BungieUser bungieUser, String pgcrId) throws APIException {
 		Activity activity = new Activity(pgcrId);
 		for (ActivityParticipant activityParticipant : activity.getParticipants()) {
 			if (activityParticipant.getMembershipId().equals(bungieUser.getID())) {
@@ -154,7 +154,7 @@ public class ActivityHistoryReview {
 		return false;
 	}
 
-	public void getUndiscoveredActivityHashes(BungieUser bungieUser, ActivityIdentifier activityIdentifier) {
+	public void getUndiscoveredActivityHashes(BungieUser bungieUser, ActivityIdentifier activityIdentifier) throws APIException {
 		for (DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
 			for (int i = 0; i < 25; i++) {
 				JsonObject jo = httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/Activities/?page=" + i + "&count=250&mode=" + activityIdentifier.getMode().getBungieValue());
@@ -181,7 +181,7 @@ public class ActivityHistoryReview {
 		}
 	}
 
-	private JsonArray[] getArrays(ActivityIdentifier activityIdentifier, BungieUser bungieUser, DestinyCharacter destinyCharacter) {
+	private JsonArray[] getArrays(ActivityIdentifier activityIdentifier, BungieUser bungieUser, DestinyCharacter destinyCharacter) throws APIException {
 		List<JsonArray> jsonArrays = new ArrayList<>();
 
 		for (int i = 0; i < Integer.MAX_VALUE; i++) {

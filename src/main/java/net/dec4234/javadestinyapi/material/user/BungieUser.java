@@ -1,9 +1,8 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
- * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
- * ownership of this software without the explicit permission of the author.
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
  *
- * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
 package net.dec4234.javadestinyapi.material.user;
@@ -11,6 +10,7 @@ package net.dec4234.javadestinyapi.material.user;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.clan.Clan;
 import net.dec4234.javadestinyapi.material.inventory.CollectionsManager;
@@ -43,6 +43,7 @@ public class BungieUser extends ContentFramework {
 	private List<DestinyCharacter> destinyCharacters = null;
 	private int playTime = -1, crossSaveOverride = -1, membershipType = -1;
 	private boolean isPublic, isCrossSavePrimary, isOverridden = false;
+	@Deprecated
 	private int intendedPlatform = -2;
 	private InventoryManager inventoryManager;
 	private CollectionsManager collectionsManager;
@@ -168,7 +169,7 @@ public class BungieUser extends ContentFramework {
 	 * @return A boolean representing whether or not the Bungie User is valid
 	 */
 	@Deprecated
-	public boolean isValidUser() {
+	public boolean isValidUser() throws APIException {
 		try {
 			return getJO().getAsJsonArray("profiles").size() != 0;
 		} catch(NullPointerException nullPointerException) {
@@ -187,7 +188,7 @@ public class BungieUser extends ContentFramework {
 	 * @see BungieUser#getGlobalDisplayName()
 	 */
 	@Deprecated
-	public String getDisplayName() {
+	public String getDisplayName() throws APIException {
 		getJE();
 		if(displayName == null) {
 			displayName = getJE().get("displayName").getAsString();
@@ -203,8 +204,8 @@ public class BungieUser extends ContentFramework {
 	 *
 	 * @return The global display name for this user, which is the same for all connected profiles
 	 */
-	public String getGlobalDisplayName() {
-		if(globalDisplayName == null) {
+	public String getGlobalDisplayName() throws APIException {
+		if (globalDisplayName == null) {
 
 			// LinkedProfiles is not populated with bungieGlobalDisplayName as of 8/29/2021: github issue #1511
 			// As far as I know, getSupplementalDisplayName is also the bungieGlobalDisplayName
@@ -222,8 +223,8 @@ public class BungieUser extends ContentFramework {
 	 * @see BungieUser#getGlobalDisplayName()
 	 * @see BungieUser#getDiscriminator()
 	 */
-	public String getSupplementalDisplayName() {
-		if(supplementalDisplayName == null) {
+	public String getSupplementalDisplayName() throws APIException {
+		if (supplementalDisplayName == null) {
 			supplementalDisplayName = getJO().getAsJsonObject("bnetMembership").get("supplementalDisplayName").getAsString();
 		}
 
@@ -236,8 +237,8 @@ public class BungieUser extends ContentFramework {
 	 *
 	 * @return The discriminator of the user: E.g. "9904" of dec4234#9904
 	 */
-	public String getDiscriminator() {
-		if(discriminator == null) {
+	public String getDiscriminator() throws APIException {
+		if (discriminator == null) {
 			discriminator = getSupplementalDisplayName().split("#")[1];
 		}
 
@@ -250,8 +251,8 @@ public class BungieUser extends ContentFramework {
 	 * @return The date the last user was seen online
 	 * @see BungieUser#getDaysSinceLastPlayed()
 	 */
-	public Date getLastPlayed() {
-		if(lastPlayed == null) {
+	public Date getLastPlayed() throws APIException {
+		if (lastPlayed == null) {
 			lastPlayed = StringUtils.valueOfZTime(getJE().get("dateLastPlayed").getAsString());
 		}
 
@@ -264,7 +265,7 @@ public class BungieUser extends ContentFramework {
 	 * @return A double, representing the number of days from the current day to when this user was last seen online
 	 * @see BungieUser#getLastPlayed()
 	 */
-	public double getDaysSinceLastPlayed() {
+	public double getDaysSinceLastPlayed() throws APIException {
 		DecimalFormat df = new DecimalFormat("0.##");
 		return Double.parseDouble(df.format((new Date().getTime() - getLastPlayed().getTime()) / 1000.0 / 60.0 / 60.0 / 24.0));
 	}
@@ -274,7 +275,7 @@ public class BungieUser extends ContentFramework {
 	 *
 	 * @return A boolean saying if the profile was overriden by cross save
 	 */
-	public boolean isOverridden() {
+	public boolean isOverridden() throws APIException {
 		return !isOverridden ? isOverridden = getJE().get("isOverridden").getAsBoolean() : isOverridden;
 	}
 
@@ -283,14 +284,14 @@ public class BungieUser extends ContentFramework {
 	 *
 	 * @return A boolean representing whether or not the current profile is a cross save primary
 	 */
-	public boolean isCrossSavePrimary() {
+	public boolean isCrossSavePrimary() throws APIException {
 		return !isCrossSavePrimary ? isCrossSavePrimary = getJE().get("isCrossSavePrimary").getAsBoolean() : isCrossSavePrimary;
 	}
 
 	/**
 	 * @return An integer representing the membership type of the profile that overrode this profile from cross save
 	 */
-	public int getCrossSaveOverride() {
+	public int getCrossSaveOverride() throws APIException {
 		return crossSaveOverride == -1 ? crossSaveOverride = getJE().get("crossSaveOverride").getAsInt() : crossSaveOverride;
 	}
 
@@ -299,9 +300,9 @@ public class BungieUser extends ContentFramework {
 	 *
 	 * @return A list of integers representing the membership types for applicable active profiles
 	 */
-	public ArrayList<Integer> getApplicableMembershipTypes() {
-		if(applicableMembershipTypes.isEmpty()) {
-			for(JsonElement jj : getJE().get("applicableMembershipTypes").getAsJsonArray()) {
+	public ArrayList<Integer> getApplicableMembershipTypes() throws APIException {
+		if (applicableMembershipTypes.isEmpty()) {
+			for (JsonElement jj : getJE().get("applicableMembershipTypes").getAsJsonArray()) {
 				applicableMembershipTypes.add(jj.getAsInt());
 			}
 		}
@@ -311,7 +312,7 @@ public class BungieUser extends ContentFramework {
 	/**
 	 * Get all membership types declared under this account's profiles
 	 */
-	public ArrayList<Integer> getMembershipTypes() {
+	public ArrayList<Integer> getMembershipTypes() throws APIException {
 		ArrayList<Integer> integers = new ArrayList<>();
 
 		for(JsonElement jsonElement : getJO().get("profiles").getAsJsonArray()) {
@@ -321,14 +322,14 @@ public class BungieUser extends ContentFramework {
 		return integers;
 	}
 
-	public boolean isPublic() {
+	public boolean isPublic() throws APIException {
 		return !isPublic ? isPublic = getJE().get("isPublic").getAsBoolean() : isPublic;
 	}
 
 	/**
 	 * Returns the membership type of the main profile
 	 */
-	public int getMembershipType() {
+	public int getMembershipType() throws APIException {
 		return membershipType == -1 ? membershipType = getJE().get("membershipType").getAsInt() : membershipType;
 	}
 
@@ -337,10 +338,8 @@ public class BungieUser extends ContentFramework {
 	 *
 	 * @return The list of characters associated with this account, or null if none are found
 	 */
-	public List<DestinyCharacter> getCharacters() {
-		if(destinyCharacters != null) {
-			return destinyCharacters;
-		}
+	public List<DestinyCharacter> getCharacters() throws APIException {
+		if (destinyCharacters != null) { return destinyCharacters; }
 		destinyCharacters = new ArrayList<>();
 		JsonObject jsonObject = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + getID() + "/?components=Profiles,Characters").getAsJsonObject("Response");
 		JsonArray ja = jsonObject.getAsJsonObject("profile").getAsJsonObject("data").getAsJsonArray("characterIds");
@@ -367,7 +366,7 @@ public class BungieUser extends ContentFramework {
 	 * @param destinyClass The Destiny class that you want to search for.
 	 * @return The character if there is one, and is not a duplicate
 	 */
-	public DestinyCharacter getCharacterOfType(DestinyCharacter.DestinyClass destinyClass) {
+	public DestinyCharacter getCharacterOfType(DestinyCharacter.DestinyClass destinyClass) throws APIException {
 		DestinyCharacter toReturn = null;
 
 		for(DestinyCharacter destinyCharacter : this.getCharacters()) {
@@ -388,11 +387,9 @@ public class BungieUser extends ContentFramework {
 	 *
 	 * @return The time played of this user, in minutes
 	 */
-	public int getTimePlayed() {
-		if(playTime != -1) {
-			return playTime;
-		}
-		for(DestinyCharacter c : getCharacters()) {
+	public int getTimePlayed() throws APIException {
+		if (playTime != -1) { return playTime; }
+		for (DestinyCharacter c : getCharacters()) {
 			playTime += Integer.parseInt(c.getMinutesPlayedTotal());
 		}
 		return playTime;
@@ -401,10 +398,8 @@ public class BungieUser extends ContentFramework {
 	/**
 	 * Gets the clan that this user is a member of.
 	 */
-	public Clan getClan() {
-		if(clan != null) {
-			return clan;
-		}
+	public Clan getClan() throws APIException {
+		if (clan != null) { return clan; }
 
 		JsonObject jo2 = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/User/" + getMembershipType() + "/" + getID() + "/0/1/?components=200").getAsJsonObject("Response");
 		clan = new Clan(jo2.get("results").getAsJsonArray().get(0).getAsJsonObject().getAsJsonObject("group").get("groupId").getAsLong());
@@ -417,7 +412,7 @@ public class BungieUser extends ContentFramework {
 	 *
 	 * @return Returns true if the user is a member of a clan
 	 */
-	public boolean isAMemberOfAClan() {
+	public boolean isAMemberOfAClan() throws APIException {
 		return getClan() != null;
 	}
 
@@ -435,7 +430,7 @@ public class BungieUser extends ContentFramework {
 	 *
 	 * @return Returns true if the user is online
 	 */
-	public boolean isOnline() {
+	public boolean isOnline() throws APIException {
 		for(DestinyCharacter destinyCharacter : getCharacters()) {
 			if(destinyCharacter.getLastPlayed().getTime() + ((long) destinyCharacter.getMinutesPlayedThisSession() * 60 * 1000) + (10 * 1000) > System.currentTimeMillis()) {
 				return true;
@@ -451,7 +446,7 @@ public class BungieUser extends ContentFramework {
 	 *
 	 * @return Null if no information about the current activity is found
 	 */
-	public ActivityInfo getCurrentActivityInfo() {
+	public ActivityInfo getCurrentActivityInfo() throws APIException {
 		JsonObject data = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + getID() + "/?components=204").getAsJsonObject("Response").getAsJsonObject("characterActivities").getAsJsonObject("data");
 
 		for(DestinyCharacter character : getCharacters()) {
@@ -469,8 +464,8 @@ public class BungieUser extends ContentFramework {
 	/**
 	 * Request to join the specified clan, requires OAuth enabled for current user
 	 */
-	public void requestToJoinClan(Clan clan) {
-		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Apply/" + getMembershipType() + "/", "");
+	public void requestToJoinClan(Clan clan) throws APIException {
+		hu.urlRequestPOSTOauth("https://www.bungie.net/Platform/GroupV2/" + clan.getClanID() + "/Members/Apply/" + getMembershipType() + "/");
 	}
 
 	/**
@@ -478,11 +473,11 @@ public class BungieUser extends ContentFramework {
 	 * Uses the preferred platform profile if it has been declared or
 	 * it will select the first profile in the profiles array.
 	 */
-	public JsonObject getJE() {
-		if(je == null) {
-			if(intendedPlatform != -2) {
-				for(JsonElement jsonElement : getJO().getAsJsonArray("profiles")) {
-					if(jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
+	public JsonObject getJE() throws APIException {
+		if (je == null) {
+			if (intendedPlatform != -2) {
+				for (JsonElement jsonElement : getJO().getAsJsonArray("profiles")) {
+					if (jsonElement.getAsJsonObject().get("membershipType").getAsInt() == intendedPlatform) {
 						je = jsonElement.getAsJsonObject();
 						return je;
 					}
@@ -544,8 +539,8 @@ public class BungieUser extends ContentFramework {
 		return inventoryManager;
 	}
 
-	public CollectionsManager getCollectionsManager() {
-		if(collectionsManager == null) {
+	public CollectionsManager getCollectionsManager() throws APIException {
+		if (collectionsManager == null) {
 			collectionsManager = new CollectionsManager(this);
 		}
 

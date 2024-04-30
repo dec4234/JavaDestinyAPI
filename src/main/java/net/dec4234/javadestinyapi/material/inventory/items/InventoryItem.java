@@ -1,17 +1,16 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
- * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
- * ownership of this software without the explicit permission of the author.
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
  *
- * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
 package net.dec4234.javadestinyapi.material.inventory.items;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
-import net.dec4234.javadestinyapi.material.inventory.items.DestinyItem;
 import net.dec4234.javadestinyapi.material.user.DestinyCharacter;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
 
@@ -31,7 +30,7 @@ public class InventoryItem extends DestinyItem {
 	private int quantity, bindStatus, location, transferStatus, state, dismantlePermission;
 	private boolean lockable = false, isWrapper;
 
-	public InventoryItem(String instanceId, DestinyCharacter characterOwner) {
+	public InventoryItem(String instanceId, DestinyCharacter characterOwner) throws APIException {
 		this(httpUtils.urlRequestGET(HttpUtils.URL_BASE + "/Destiny2/" + characterOwner.getMembershipType() + "/Profile/" + characterOwner.getMembershipID() + "/Item/" + instanceId + "/?components=305").getAsJsonObject("Response").getAsJsonObject("item").getAsJsonObject("data"));
 
 		this.characterOwner = characterOwner;
@@ -99,7 +98,7 @@ public class InventoryItem extends DestinyItem {
 	 *
 	 * @return Returns a list of ItemPlugs
 	 */
-	public List<ItemPlug> getItemPlugs() {
+	public List<ItemPlug> getItemPlugs() throws APIException {
 		JsonObject jsonObject = httpUtils.urlRequestGET(HttpUtils.URL_BASE + "/Destiny2/" + characterOwner.getMembershipType() + "/Profile/" + characterOwner.getMembershipID() + "/Item/" + instanceId + "/?components=305");
 		List<ItemPlug> itemPlugs = new ArrayList<>();
 		jsonObject = jsonObject.getAsJsonObject("Response").getAsJsonObject("sockets").getAsJsonObject("data");
@@ -117,7 +116,7 @@ public class InventoryItem extends DestinyItem {
 	 *
 	 * @return Returns true if the move was succesful
 	 */
-	public boolean moveTo(DestinyCharacter destinyCharacter) {
+	public boolean moveTo(DestinyCharacter destinyCharacter) throws APIException {
 		if(!isInVault()) {
 			moveToVault();
 		}
@@ -138,7 +137,7 @@ public class InventoryItem extends DestinyItem {
 	 *
 	 * @return True if the move was reported as succesful
 	 */
-	public boolean moveToVault() {
+	public boolean moveToVault() throws APIException {
 		JsonObject jsonObject = httpUtils.urlRequestPOSTOauth(HttpUtils.URL_BASE + "/Destiny2/Actions/Items/TransferItem/", prepareJsonObject(getCharacterOwner(), true, isItemEquippable()));
 
 		boolean wasSuccesful = wasTransferSuccesful(jsonObject);
@@ -159,7 +158,7 @@ public class InventoryItem extends DestinyItem {
 	 *
 	 * @return Returns whether or not the action was succesful
 	 */
-	public boolean equip() {
+	public boolean equip() throws APIException {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("itemId", getInstanceIDAsLong());
 		jsonObject.addProperty("characterId", getCharacterOwner().getCharacterIDAsLong());
@@ -195,7 +194,7 @@ public class InventoryItem extends DestinyItem {
 	 * Lock or unlock an item
 	 * @param state The state of the lock the item should be set to
 	 */
-	public void setLockState(boolean state) {
+	public void setLockState(boolean state) throws APIException {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("state", state);
 		jsonObject.addProperty("itemId", getInstanceId());
@@ -203,7 +202,7 @@ public class InventoryItem extends DestinyItem {
 		jsonObject.addProperty("membershipType", getCharacterOwner().getMembershipType());
 
 
-		httpUtils.urlRequestPOSTOauth(HttpUtils.URL_BASE + "/Destiny2/Actions/Items/SetLockState/", jsonObject.toString());
+		httpUtils.urlRequestPOSTOauth(HttpUtils.URL_BASE + "/Destiny2/Actions/Items/SetLockState/", jsonObject);
 	}
 
 	/**
@@ -285,7 +284,7 @@ public class InventoryItem extends DestinyItem {
 	/**
 	 * Prepares a POST body for item transferring
 	 */
-	private JsonObject prepareJsonObject(DestinyCharacter destinyCharacter, boolean moveToVault, boolean isEquippable) {
+	private JsonObject prepareJsonObject(DestinyCharacter destinyCharacter, boolean moveToVault, boolean isEquippable) throws APIException {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("itemReferenceHash", getHashIDasInt());
 		jsonObject.addProperty("stackSize", isEquippable ? 1 : getQuantity()); // If the item is equippable, set stack size as 1

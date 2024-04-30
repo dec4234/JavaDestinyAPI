@@ -1,17 +1,22 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
- * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
- * ownership of this software without the explicit permission of the author.
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
  *
- * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
 package net.dec4234.javadestinyapi.utils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.exceptions.APIOfflineException;
-import net.dec4234.javadestinyapi.exceptions.AccessTokenInvalidException;
+import net.dec4234.javadestinyapi.exceptions.AccessTokenExpiredException;
+import net.dec4234.javadestinyapi.exceptions.ConnectionException;
+import net.dec4234.javadestinyapi.exceptions.JsonParsingError;
+import net.dec4234.javadestinyapi.exceptions.OAuthUnauthorizedException;
+import net.dec4234.javadestinyapi.exceptions.RefreshTokenExpiredException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 
@@ -45,27 +50,36 @@ public class HttpUtils {
 	/**
 	 * Send a GET url request to the url provided, returns a JsonObject of the response
 	 */
-	public JsonObject urlRequestGET(String url) {
-		return getJsonObject(getStringResponse(getRequest(true, url, starter -> {
+	public JsonObject urlRequestGET(String url) throws APIException {
+		return getJsonObject(getRequest(true, url, starter -> {
 			starter.GET();
 			return starter;
-		})));
+		}));
 	}
 
-	public JsonObject urlRequestGETOauth(String url) {
-		setTokenViaRefresh();
-		return getJsonObject(getStringResponse(getRequest(true, url, starter -> {
-			starter.GET()
-				   .setHeader("Authorization", "Bearer " + HttpUtils.bearerToken);
-			return starter;
-		})));
+	public JsonObject urlRequestGETOauth(String url) throws APIException {
+		try {
+			return getJsonObject(getRequest(true, url, starter -> {
+				starter.GET()
+					   .setHeader("Authorization", "Bearer " + HttpUtils.bearerToken);
+				return starter;
+			}));
+		} catch (AccessTokenExpiredException e) {
+			setTokenViaRefresh();
+
+			return getJsonObject(getRequest(true, url, starter -> {
+				starter.GET()
+					   .setHeader("Authorization", "Bearer " + HttpUtils.bearerToken);
+				return starter;
+			}));
+		}
 	}
 
-	public JsonObject urlRequestPOST(String url, JsonObject body) {
+	public JsonObject urlRequestPOST(String url, JsonObject body) throws APIException {
 		return urlRequestPOST(url, body.toString());
 	}
 
-	public JsonObject urlRequestPOST(String url, String body) {
+	public JsonObject urlRequestPOST(String url, String body) throws APIException {
 		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
 		String finalBody = body;
 
@@ -73,34 +87,15 @@ public class HttpUtils {
 			System.out.println("Body: " + finalBody);
 		}
 
-		return getJsonObject(getStringResponse(getRequest(true, url, starter -> {
+		return getJsonObject(getRequest(true, url, starter -> {
 			starter.setHeader("Content-Type", "application/json")
-				   .POST(HttpRequest.BodyPublishers.ofString(finalBody));
-
-			return starter;
-		})));
-	}
-
-	public String urlRequestPOSTOauth(String url, String body) {
-		setTokenViaRefresh();
-		if (body.isEmpty()) { body = "{\"message\": \"\",}"; }
-
-		String finalBody = body;
-
-		if(DestinyAPI.isDebugEnabled()) {
-			System.out.println("Body: " + finalBody);
-		}
-
-		return getStringResponse(getRequest(true, url, starter -> {
-			starter.setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
-				   .setHeader("Content-Type", "application/json")
 				   .POST(HttpRequest.BodyPublishers.ofString(finalBody));
 
 			return starter;
 		}));
 	}
 
-	public JsonObject urlRequestPOSTOauth(String url, JsonObject body) {
+	public JsonObject urlRequestPOSTOauth(String url, JsonObject body) throws APIException {
 		setTokenViaRefresh();
 		if (body.toString().isEmpty()) {
 			body = new JsonObject();
@@ -113,13 +108,28 @@ public class HttpUtils {
 			System.out.println("Body: " + finalBody);
 		}
 
-		return getJsonObject(getStringResponse(getRequest(true, url, starter -> {
-			starter.setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
-				   .setHeader("Content-Type", "application/json")
-				   .POST(HttpRequest.BodyPublishers.ofString(finalBody));
+		try {
+			return getJsonObject(getRequest(true, url, starter -> {
+				starter.setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
+					   .setHeader("Content-Type", "application/json")
+					   .POST(HttpRequest.BodyPublishers.ofString(finalBody));
 
-			return starter;
-		})));
+				return starter;
+			}));
+		} catch (AccessTokenExpiredException e) {
+			setTokenViaRefresh();
+			return getJsonObject(getRequest(true, url, starter -> {
+				starter.setHeader("Authorization", "Bearer " + HttpUtils.bearerToken)
+					   .setHeader("Content-Type", "application/json")
+					   .POST(HttpRequest.BodyPublishers.ofString(finalBody));
+
+				return starter;
+			}));
+		}
+	}
+
+	public JsonObject urlRequestPOSTOauth(String url) throws APIException {
+		return urlRequestPOSTOauth(url, new JsonObject());
 	}
 
 	/**
@@ -128,7 +138,7 @@ public class HttpUtils {
 	 * Deprecated in favor of DestinyManifest#manifestGET()
 	 */
 	@Deprecated
-	public JsonObject manifestGET(ManifestEntityTypes entityType, String hashIdentifier) {
+	public JsonObject manifestGET(ManifestEntityTypes entityType, String hashIdentifier) throws APIException {
 		return urlRequestGET("https://www.bungie.net/Platform/Destiny2/Manifest/" + entityType.getBungieEntityValue() + "/" + hashIdentifier + "/");
 	}
 
@@ -137,18 +147,22 @@ public class HttpUtils {
 	 *
 	 * @return Returns the new access token
 	 */
-	public String setTokenViaRefresh() {
+	public String setTokenViaRefresh() throws APIException {
 		String url = "https://www.bungie.net/Platform/App/OAuth/Token/";
 
 		String requestBody = "grant_type=refresh_token&refresh_token=" + DestinyAPI.getRefreshToken();
 
-		JsonObject response = getJsonObject(getStringResponse(getRequest(false, url, starter -> {
+		JsonObject response = getJsonObject(getRequest(false, url, starter -> {
 			starter.setHeader("Content-Type", "application/x-www-form-urlencoded")
 				   .setHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString((DestinyAPI.getClientId() + ":" + DestinyAPI.getClientSecret()).getBytes()))
 				   .POST(HttpRequest.BodyPublishers.ofString(requestBody));
 
 			return starter;
-		})));
+		}));
+
+		if(response.has("error_description") && response.get("error_description").getAsString().equals("ApplicationTokenKeyIdDoesNotExist")) {
+			throw new RefreshTokenExpiredException();
+		}
 
 		if(!response.has("access_token")) {
 			return null;
@@ -159,28 +173,32 @@ public class HttpUtils {
 		bearerToken = at;
 		new DestinyAPI().setAccessToken(at).setRefreshToken(rt);
 
+		if(DestinyAPI.isDebugEnabled()) {
+			System.out.println("TOKENS REFRESHED");
+		}
+
 		return at;
 	}
 
 	/**
 	 * Requries an OAuthCode to be manually set inside of the DestinyAPI.setOAuthCode()
 	 */
-	public void setTokenViaAuth() {
+	public void setTokenViaAuth() throws APIException {
 		setTokenViaAuth(DestinyAPI.getOauthCode());
 	}
 
-	public void setTokenViaAuth(String oAuthCode) {
+	public void setTokenViaAuth(String oAuthCode) throws APIException {
 		String url = "https://www.bungie.net/Platform/App/OAuth/Token/";
 
 		String requestBody = "grant_type=authorization_code&code=" + oAuthCode;
 
-		JsonObject jsonObject = getJsonObject(getStringResponse(getRequest(false, url, starter -> {
+		JsonObject jsonObject = getJsonObject(getRequest(false, url, starter -> {
 			starter.setHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString((DestinyAPI.getClientId() + ":" + DestinyAPI.getClientSecret()).getBytes()))
 				   .setHeader("Content-Type", "application/x-www-form-urlencoded")
 				   .POST(HttpRequest.BodyPublishers.ofString(requestBody));
 
 			return starter;
-		})));
+		}));
 
 		String accessToken = jsonObject.get("access_token").getAsString();
 		String refreshToken = jsonObject.get("refresh_token").getAsString();
@@ -190,49 +208,59 @@ public class HttpUtils {
 		HttpUtils.bearerToken = accessToken;
 	}
 
-	public boolean checkFor401(String input) {
-		if (input.contains("401 - Unauthorized")) {
-			try {
-				setTokenViaRefresh();
-				throw new AccessTokenInvalidException("The access token used in this OAuth request was not accepted by the server \nI've already taken the liberty of getting a new access token for you :D");
-			} catch (AccessTokenInvalidException e) {
-				e.printStackTrace();
-				return true;
+	private JsonObject getJsonObject(HttpRequest httpRequest) throws APIException {
+		HttpClient httpClient = HttpClient.newHttpClient();
+		String responseString;
+
+		try { // TODO: are we even taking advantage of async? this seems pointless to just block right away
+			responseString = httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body).get();
+
+			if (DestinyAPI.isDebugEnabled()) {
+				System.out.println(httpRequest.method() + " " + httpRequest.uri().toString());
+				System.out.println(responseString);
+			}
+		} catch (InterruptedException | ExecutionException e) {
+			throw new ConnectionException(e);
+		}
+
+		JsonObject jsonObject;
+
+		try {
+			jsonObject = JsonParser.parseString(responseString).getAsJsonObject();
+		} catch (JsonSyntaxException e) {
+			throw new JsonParsingError(e);
+		}
+
+		// Check for API errors - https://bungie-net.github.io/multi/schema_Exceptions-PlatformErrorCodes.html#schema_Exceptions-PlatformErrorCodes
+		if(jsonObject.has("ErrorCode")) {
+			switch (jsonObject.get("ErrorCode").getAsInt()) { //TODO: lots of errors we could catch here
+				case 5: // APIOffline
+					throw new APIOfflineException(jsonObject.get("Message").getAsString());
+				case 99: // WebAuthRequired
+					throw new OAuthUnauthorizedException("OAuth - access denied. Try authenticating.");
+				case 2111 | 2115: // AccessTokenHasExpired, OAuthAccessTokenExpired
+					throw new AccessTokenExpiredException();
+				case 2118: // RefreshTokenExpired -- need to reauth using oauth
+					throw new RefreshTokenExpiredException();
 			}
 		}
 
-		return false;
-	}
-
-	private JsonObject getJsonObject(String stringResponse) {
-		JsonObject jsonObject = new JsonParser().parse(stringResponse).getAsJsonObject();
-
-		// API Offline Check
-		if(jsonObject.has("ErrorCode") && jsonObject.get("ErrorCode").getAsInt() == 5) {
-			try {
-				throw new APIOfflineException(jsonObject.get("Message").getAsString());
-			} catch (APIOfflineException exception) {
-				exception.printStackTrace();
-			}
-		}
 		return jsonObject;
 	}
 
-	private String getStringResponse(HttpRequest httpRequest) {
+	private String getStringResponse(HttpRequest httpRequest) throws ConnectionException {
 		HttpClient httpClient = HttpClient.newHttpClient();
 		try {
 			String responseString = httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body).get();
 
 			if (DestinyAPI.isDebugEnabled()) {
 				System.out.println(httpRequest.method() + " " + httpRequest.uri().toString());
-				System.out.println(responseString);
+				System.out.println("Response: " + responseString);
 			}
 			return responseString;
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			throw new ConnectionException(e);
 		}
-
-		return null;
 	}
 
 	private HttpRequest getRequest(boolean standardRequest, String url, HttpRequestModifier httpRequestModifier) {

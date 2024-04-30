@@ -1,9 +1,8 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
- * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
- * ownership of this software without the explicit permission of the author.
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
  *
- * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
 package net.dec4234.javadestinyapi.material.user;
@@ -11,6 +10,7 @@ package net.dec4234.javadestinyapi.material.user;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.DestinyAPI;
 import net.dec4234.javadestinyapi.material.inventory.items.DestinyItem;
 import net.dec4234.javadestinyapi.material.inventory.items.InventoryItem;
@@ -43,7 +43,7 @@ public class DestinyCharacter extends ContentFramework {
 
 	HttpUtils hu = DestinyAPI.getHttpUtils();
 
-	public DestinyCharacter(BungieUser bungieUser, String characterID) {
+	public DestinyCharacter(BungieUser bungieUser, String characterID) throws APIException {
 		super("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Profile/" + bungieUser.getID() + "/Character/" + characterID + "/?components=200",
 			  source -> source.getAsJsonObject("Response").getAsJsonObject("character").getAsJsonObject("data"));
 		this.characterID = characterID;
@@ -67,7 +67,7 @@ public class DestinyCharacter extends ContentFramework {
 	/**
 	 * Get the membershipType of the account that owns this character
 	 */
-	public int getMembershipType() {
+	public int getMembershipType() throws APIException {
 		return bungieUser.getMembershipType();
 	}
 
@@ -89,7 +89,7 @@ public class DestinyCharacter extends ContentFramework {
 	/**
 	 * Get the Date that this character was last played
 	 */
-	public Date getLastPlayed() {
+	public Date getLastPlayed() throws APIException {
 		if (lastPlayed == null) {
 			lastPlayed = StringUtils.valueOfZTime(getJO().get("dateLastPlayed").getAsString());
 		}
@@ -100,7 +100,7 @@ public class DestinyCharacter extends ContentFramework {
 	 * Get the total amount of time, in minutes, that this character has been played in this session
 	 * TO-DO: Define what a "session" is
 	 */
-	public int getMinutesPlayedThisSession() {
+	public int getMinutesPlayedThisSession() throws APIException {
 		if (minutesPlayedThisSession == -1) {
 			minutesPlayedThisSession = getJO().get("minutesPlayedThisSession").getAsInt();
 		}
@@ -110,7 +110,7 @@ public class DestinyCharacter extends ContentFramework {
 	/**
 	 * Get the total amount of time, in minutes, that has been played on this character
 	 */
-	public String getMinutesPlayedTotal() {
+	public String getMinutesPlayedTotal() throws APIException {
 		if (minutesPlayedTotal == null) {
 			minutesPlayedTotal = getJO().get("minutesPlayedTotal").getAsString();
 		}
@@ -122,7 +122,7 @@ public class DestinyCharacter extends ContentFramework {
 	 *
 	 * @return The light level of this character, as an integer
 	 */
-	public int getLightLevel() {
+	public int getLightLevel() throws APIException {
 		if (lightLevel == -1) {
 			lightLevel = getJO().get("light").getAsInt();
 		}
@@ -133,7 +133,7 @@ public class DestinyCharacter extends ContentFramework {
 	 * Get the race of this character
 	 * Either Human, Exo or Awoken
 	 */
-	public Race getRace() {
+	public Race getRace() throws APIException {
 		if (race == null) {
 			race = evaluateRace(getJO().get("raceHash").getAsString());
 		}
@@ -145,7 +145,7 @@ public class DestinyCharacter extends ContentFramework {
 	 *
 	 * @return Male or Female
 	 */
-	public Gender getGender() {
+	public Gender getGender() throws APIException {
 		if (gender == null) {
 			gender = evaluateGender(getJO().get("genderHash").getAsString());
 		}
@@ -156,7 +156,7 @@ public class DestinyCharacter extends ContentFramework {
 	 * Get the Class of this character
 	 * Either Warlock, Titan or Hunter
 	 */
-	public DestinyClass getD2class() {
+	public DestinyClass getD2class() throws APIException {
 		if (d2class == null) {
 			d2class = evaluateClass(getJO().get("classHash").getAsString());
 		}
@@ -169,7 +169,7 @@ public class DestinyCharacter extends ContentFramework {
 	 *
 	 * @return
 	 */
-	public String getEmblemPath() {
+	public String getEmblemPath() throws APIException {
 		if (emblemPath == null) {
 			emblemPath = getJO().get("emblemPath").getAsString();
 		}
@@ -180,7 +180,7 @@ public class DestinyCharacter extends ContentFramework {
 	 * Get the background of the currently equipped emblem
 	 * Add this path to the end of "https://bungie.net/"
 	 */
-	public String getEmblemBackgroundPath() {
+	public String getEmblemBackgroundPath() throws APIException {
 		if (emblemBackgroundPath == null) {
 			emblemBackgroundPath = getJO().get("emblemBackgroundPath").getAsString();
 		}
@@ -190,7 +190,7 @@ public class DestinyCharacter extends ContentFramework {
 	/**
 	 * Get the hash of the currently equipped emblem to be used in a manifest request
 	 */
-	public String getEmblemHash() {
+	public String getEmblemHash() throws APIException {
 		if (emblemHash == null) {
 			emblemHash = getJO().get("emblemHash").getAsString();
 		}
@@ -200,7 +200,7 @@ public class DestinyCharacter extends ContentFramework {
 	/**
 	 * Get a list of the currently equipped items of this character
 	 */
-	public List<DestinyItem> getEquippedItems() {
+	public List<DestinyItem> getEquippedItems() throws APIException {
 		JsonArray jsonArray = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getID() + "/Character/"
 													   + getCharacterID() + "/?components=205").getAsJsonObject("Response").getAsJsonObject("equipment").getAsJsonObject("data").getAsJsonArray("items");
 
@@ -221,7 +221,7 @@ public class DestinyCharacter extends ContentFramework {
 	}
 	 */
 
-	public List<InventoryItem> getAllItemsInInventory() {
+	public List<InventoryItem> getAllItemsInInventory() throws APIException {
 		JsonArray jsonArray = hu.urlRequestGETOauth("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getID() + "/Character/"
 															+ getCharacterID() + "/?components=201").getAsJsonObject("Response").getAsJsonObject("inventory").getAsJsonObject("data").getAsJsonArray("items");
 
@@ -249,7 +249,7 @@ public class DestinyCharacter extends ContentFramework {
 		return list;
 	}
 
-	public List<Loadout> getLoadouts() {
+	public List<Loadout> getLoadouts() throws APIException {
 		hu.urlRequestGETOauth(HttpUtils.URL_BASE + "/Destiny2/" + getMembershipType() + "/Profile/" + bungieUser.getID() + "/Character/" + getCharacterID() + "/?components=206,201");
 
 		List<Loadout> loadouts = new ArrayList<>();
@@ -264,7 +264,7 @@ public class DestinyCharacter extends ContentFramework {
 	 * Needs work because not all activities return the same JSON info
 	 * =
 	 */
-	public List<Activity> getAllActivities() {
+	public List<Activity> getAllActivities() throws APIException {
 		if (allActivities != null) { return allActivities; }
 		allActivities = new ArrayList<>();
 		JsonObject jj = hu.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + getMembershipType() + "/Account/" + getMembershipID() + "/Character/" + getCharacterID() + "/Stats/AggregateActivityStats/");
@@ -275,7 +275,7 @@ public class DestinyCharacter extends ContentFramework {
 	}
 
 
-	private boolean hasPlayedInActivity(String pgcrId, List<Activity> source) {
+	private boolean hasPlayedInActivity(String pgcrId, List<Activity> source) throws APIException {
 		for (Activity activity : source) {
 			if (pgcrId.equals(activity.getInstanceId())) {
 				return true;
@@ -292,7 +292,7 @@ public class DestinyCharacter extends ContentFramework {
 	 *
 	 * @return True or false depending on if the user played in it
 	 */
-	public boolean hasPlayedInActivity(String pgcrId) {
+	public boolean hasPlayedInActivity(String pgcrId) throws APIException {
 		List<String> participantIds = new ArrayList<>();
 
 		new Activity(pgcrId).getParticipants().forEach(activityParticipant -> {
@@ -302,7 +302,7 @@ public class DestinyCharacter extends ContentFramework {
 		return participantIds.contains(getCharacterID());
 	}
 
-	private Gender evaluateGender(String genderHash) {
+	private Gender evaluateGender(String genderHash) throws APIException {
 		JsonObject jj = hu.manifestGET(ManifestEntityTypes.GENDER, genderHash).getAsJsonObject("Response");
 		switch (jj.get("genderType").getAsString()) {
 			case "0":
@@ -313,7 +313,7 @@ public class DestinyCharacter extends ContentFramework {
 		return null;
 	}
 
-	private DestinyClass evaluateClass(String classHash) {
+	private DestinyClass evaluateClass(String classHash) throws APIException {
 		JsonObject jj = hu.manifestGET(ManifestEntityTypes.CLASS, classHash).getAsJsonObject("Response");
 		switch (jj.getAsJsonObject("displayProperties").get("name").getAsString()) {
 			case "Warlock":
@@ -326,7 +326,7 @@ public class DestinyCharacter extends ContentFramework {
 		return null;
 	}
 
-	private Race evaluateRace(String raceHash) {
+	private Race evaluateRace(String raceHash) throws APIException {
 		JsonObject jj = hu.manifestGET(ManifestEntityTypes.RACE, raceHash).getAsJsonObject("Response");
 		switch (jj.getAsJsonObject("displayProperties").get("name").getAsString()) {
 			case "Exo":

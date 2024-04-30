@@ -1,14 +1,14 @@
 /*
- * Copyright (c) dec4234 2021. Access is granted, without any express warranties or guarantees of
- * any kind,  to all wishing to use this software for their benefit. No one may specifically claim credit, or
- * ownership of this software without the explicit permission of the author.
+ * Copyright (c) 2024. dec4234
+ * A standard open MIT license applies. Modififcation and usage permitted with credit. No warranties or express guarentees are given in any way.
  *
- * GitHub -> https://github.com/dec4234/JavaDestinyAPI
+ * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
 package net.dec4234.javadestinyapi.stats.activities;
 
 import com.google.gson.JsonObject;
+import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.manifest.ManifestEntityTypes;
 import net.dec4234.javadestinyapi.utils.framework.ContentFramework;
 
@@ -19,7 +19,7 @@ public class ActivityInfo extends ContentFramework {
 	private ActivityMode activityMode;
 	private boolean hasIcon, isPlaylist, inheritFromFreeRoam, suppressOtherRewards, isMatchmade, requiresGuardianOath, isPvP;
 
-	public ActivityInfo(String hash) {
+	public ActivityInfo(String hash) throws APIException {
 		super(ManifestEntityTypes.ACTIVITY, hash, source -> {
 			return source.getAsJsonObject("Response");
 		});
@@ -72,11 +72,11 @@ public class ActivityInfo extends ContentFramework {
 		this.requiresGuardianOath = getMatchmaking().get("requiresGuardianOath").getAsBoolean();
 	}
 
-	public JsonObject getDisplayProperties() {
+	public JsonObject getDisplayProperties() throws APIException {
 		return getJO().getAsJsonObject("displayProperties");
 	}
 
-	public JsonObject getMatchmaking() {
+	public JsonObject getMatchmaking() throws APIException {
 		return getJO().getAsJsonObject("matchmaking");
 	}
 
