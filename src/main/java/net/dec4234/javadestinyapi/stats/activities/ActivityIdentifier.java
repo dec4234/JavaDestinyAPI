@@ -177,4 +177,13 @@ public enum ActivityIdentifier {
 
 		return null;
 	}
+
+	/**
+	 * Print a list of unknown hashes, and their corresponding activity name <br>
+	 * Note: This is a utility method that is typically only used in development.
+	 * @param mode The mode category to search under
+	 */
+	public static void printUnknownIdentifiers(ActivityMode mode) {
+
+	}
 }
