@@ -8,10 +8,11 @@
 package net.dec4234.javadestinyapi.stats.activities;
 
 /**
- * A collection of 2 to 4 letter identifiers for Activities
- * Also Hash Identifiers
- *
- * e.g. DSC for Deep Stone Crypt
+ * This a list of known activity hash identifiers mapped to their names, activity mode and short name. Some activities
+ * such as raids are also mapped to an image in case you want it. <br>
+ * Note that each hash represents something different, like the different rotations or challenges of Leviathan.
+ * I have not investigated this very deeply but that's what I suspect. You can probably use the manifest to find out
+ * more information.
  */
 public enum ActivityIdentifier {
 
@@ -111,16 +112,29 @@ public enum ActivityIdentifier {
 	GARDEN_OF_SALVATION("GOS", "https://www.bungie.net/img/destiny_content/pgcr/raid_garden_of_salvation.jpg", ActivityMode.RAID, "2659723068", "3458480158"),
 
 	DEEP_STONE_CRYPT("DSC", "https://www.bungie.net/img/destiny_content/pgcr/europa-raid-deep-stone-crypt.jpg", ActivityMode.RAID, "910380154"),
+
 	VAULT_OF_GLASS("VOG", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, "3881495763"),
-	VAULT_OF_GLASS_MASTER("VOGM", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, ""),
+	VAULT_OF_GLASS_MASTER("VOGM", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, "1681562271", "3022541210"),
+	VAULT_OF_GLASS_CHALLENGE_MODE("VOGCM", "https://www.bungie.net/pubassets/pkgs/150/150569/FrontpageBanner_1920x590.jpg?cv=3983621215&av=1926358162", ActivityMode.RAID, "1485585878"),
 
-	VOW_OF_THE_DISCIPLE("VOTD", "https://www.bungie.net/pubassets/pkgs/157/157111/FrontPageBanner_1920x590.jpg", ActivityMode.RAID, ""),
-	VOW_OF_THE_DISCIPLE_MASTER("VOTDM", "https://www.bungie.net/pubassets/pkgs/157/157111/FrontPageBanner_1920x590.jpg", ActivityMode.RAID, ""),
+	VOW_OF_THE_DISCIPLE("VOTD", "https://www.bungie.net/pubassets/pkgs/157/157111/FrontPageBanner_1920x590.jpg", ActivityMode.RAID, "1441982566"),
+	VOW_OF_THE_DISCIPLE_MASTER("VOTDM", "https://www.bungie.net/pubassets/pkgs/157/157111/FrontPageBanner_1920x590.jpg", ActivityMode.RAID, "4217492330"),
 
-	KF("KF", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, ""), // TODO: Hashes for VoG Master - Present
-	KF_MASTER("KFM", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, ""),
-	RON("RON", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt745cb94aef1d49fd/640a30abe16bc77f58332cc4/FrontPageBanner_PC_1920x590.jpg", ActivityMode.RAID, ""),
-	RON_MASTER("RONM", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt745cb94aef1d49fd/640a30abe16bc77f58332cc4/FrontPageBanner_PC_1920x590.jpg", ActivityMode.RAID, "");
+	KF("KF", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, "1374392663"),
+	KF_MASTER("KFM", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, "2964135793", "3257594522"),
+	KF_LEGEND("KFL", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, "1063970578"),
+
+	RON("RON", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt745cb94aef1d49fd/640a30abe16bc77f58332cc4/FrontPageBanner_PC_1920x590.jpg", ActivityMode.RAID, "2381413764"),
+	RON_MASTER("RONM", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt745cb94aef1d49fd/640a30abe16bc77f58332cc4/FrontPageBanner_PC_1920x590.jpg", ActivityMode.RAID, "2918919505"),
+
+	CROTAS_END("CE", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt8023dab456754205/64f0c82d8c8fe96dfe98bbf8/16x9Standard_1920x1080.jpg", ActivityMode.RAID, "4179289725"),
+	CROTAS_END_MASTER("CEM", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt8023dab456754205/64f0c82d8c8fe96dfe98bbf8/16x9Standard_1920x1080.jpg", ActivityMode.RAID, "1507509200"),
+	CROTAS_END_LEGEND("CEL", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt8023dab456754205/64f0c82d8c8fe96dfe98bbf8/16x9Standard_1920x1080.jpg", ActivityMode.RAID, "156253568"),
+
+	PANTHEON_ATRAKS("PANA", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt5394fcdccef3f5ac/66290d35a9b0ab6193b925f0/thisweekatbungie-7_28_22.png", ActivityMode.RAID, "4169648179"),
+	PANTHEON_ORYX("PANO", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt5394fcdccef3f5ac/66290d35a9b0ab6193b925f0/thisweekatbungie-7_28_22.png", ActivityMode.RAID, ""),
+	PANTHEON_RHULK("PANR", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt5394fcdccef3f5ac/66290d35a9b0ab6193b925f0/thisweekatbungie-7_28_22.png", ActivityMode.RAID, ""),
+	PANTHEON_NEZAREC("PANN", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt5394fcdccef3f5ac/66290d35a9b0ab6193b925f0/thisweekatbungie-7_28_22.png", ActivityMode.RAID, "");
 
 	private String identifier;
 	private String[] hashes;
@@ -176,14 +190,5 @@ public enum ActivityIdentifier {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Print a list of unknown hashes, and their corresponding activity name <br>
-	 * Note: This is a utility method that is typically only used in development.
-	 * @param mode The mode category to search under
-	 */
-	public static void printUnknownIdentifiers(ActivityMode mode) {
-
 	}
 }

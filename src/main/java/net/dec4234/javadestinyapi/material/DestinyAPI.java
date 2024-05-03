@@ -24,6 +24,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This is the base class for the entire API. It MUST be initialized with an API key before <u>any part</u>
+ * of the API is used.
+ */
 public class DestinyAPI {
 
     private static String apiKey = null;
@@ -397,14 +401,6 @@ public class DestinyAPI {
 
 
         return bungieUsers;
-    }
-
-    public static Clan getClan(long id) {
-        return new Clan(id);
-    }
-
-    public static Clan getClan(String name) {
-        return new Clan(name);
     }
 
     public static String getApiKey() {

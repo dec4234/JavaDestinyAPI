@@ -154,7 +154,15 @@ public class ActivityHistoryReview {
 		return false;
 	}
 
-	public void getUndiscoveredActivityHashes(BungieUser bungieUser, ActivityIdentifier activityIdentifier) throws APIException {
+	/**
+	 * This is a utility function to assist in development
+	 * <br>
+	 * This prints a list of hashes and the names to put inside {@link ActivityIdentifier}
+	 * @param activityIdentifier Finds all unknown hashes that share the same mode as this activity. Like Raid/Strike/etc.
+	 */
+	public void getUndiscoveredActivityHashes(ActivityIdentifier activityIdentifier) throws APIException {
+		BungieUser bungieUser = new BungieUser("4611686018467284386"); // just use a tryhard player that does every activity (Datto)
+
 		for (DestinyCharacter destinyCharacter : bungieUser.getCharacters()) {
 			for (int i = 0; i < 25; i++) {
 				JsonObject jo = httpUtils.urlRequestGET("https://www.bungie.net/Platform/Destiny2/" + bungieUser.getMembershipType() + "/Account/" + bungieUser.getID() + "/Character/" + destinyCharacter.getCharacterID() + "/Stats/Activities/?page=" + i + "&count=250&mode=" + activityIdentifier.getMode().getBungieValue());
