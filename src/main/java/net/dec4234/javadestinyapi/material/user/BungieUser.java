@@ -383,7 +383,7 @@ public class BungieUser extends ContentFramework {
 	}
 
 	/**
-	 * Adds up all of the time played across all characters in minutes
+	 * Adds up all the time played across all characters in minutes
 	 *
 	 * @return The time played of this user, in minutes
 	 */

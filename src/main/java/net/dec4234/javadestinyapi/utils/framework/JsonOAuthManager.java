@@ -5,7 +5,7 @@
  * Github -> https://github.com/dec4234/JavaDestinyAPI
  */
 
-package net.dec4234.javadestinyapi.jdaSrc;
+package net.dec4234.javadestinyapi.utils.framework;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,12 +15,19 @@ import net.dec4234.javadestinyapi.utils.framework.OAuthManager;
 import java.io.*;
 import java.nio.file.Paths;
 
-public class JavaDestinyAPIMain extends OAuthManager {
+/**
+ * This class is provided for convenience for local apps using OAuth. It is also provided as a template for what
+ * you should do to implement your own token manager.
+ * <br>
+ * The author assumes no responsibility for the use of this class. It is unsafe to use this in a production environment,
+ * proceed with your own risk.
+ */
+public class JsonOAuthManager extends OAuthManager {
 
 	private File file = new File(Paths.get("").toAbsolutePath() + "\\oauth.json");
 	private JsonObject jsonObject;
 
-	public JavaDestinyAPIMain() {
+	public JsonOAuthManager() {
 		try {
 			if (!file.exists()) {
 				file.createNewFile();

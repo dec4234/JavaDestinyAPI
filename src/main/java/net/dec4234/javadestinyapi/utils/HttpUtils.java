@@ -36,7 +36,7 @@ public class HttpUtils {
 
 	public static final String URL_BASE = "https://www.bungie.net/Platform";
 
-	private String apiKey = DestinyAPI.getApiKey();
+	private String apiKey;
 	private static String bearerToken;
 
 	public HttpUtils(String apiKey) {
@@ -171,7 +171,8 @@ public class HttpUtils {
 		String at = response.get("access_token").getAsString();
 		String rt = response.get("refresh_token").getAsString();
 		bearerToken = at;
-		new DestinyAPI().setAccessToken(at).setRefreshToken(rt);
+		DestinyAPI.setAccessToken(at);
+		DestinyAPI.setRefreshToken(rt);
 
 		if(DestinyAPI.isDebugEnabled()) {
 			System.out.println("TOKENS REFRESHED");
@@ -181,7 +182,7 @@ public class HttpUtils {
 	}
 
 	/**
-	 * Requries an OAuthCode to be manually set inside of the DestinyAPI.setOAuthCode()
+	 * Requries an OAuthCode to be manually set inside the DestinyAPI.setOAuthCode()
 	 */
 	public void setTokenViaAuth() throws APIException {
 		setTokenViaAuth(DestinyAPI.getOauthCode());
@@ -203,9 +204,24 @@ public class HttpUtils {
 		String accessToken = jsonObject.get("access_token").getAsString();
 		String refreshToken = jsonObject.get("refresh_token").getAsString();
 
-		new DestinyAPI().setAccessToken(accessToken).setRefreshToken(refreshToken);
+		DestinyAPI.setRefreshToken(refreshToken);
+		DestinyAPI.setAccessToken(accessToken);
 
 		HttpUtils.bearerToken = accessToken;
+	}
+
+	public boolean hasValidOAuthTokens() throws APIException {
+		boolean value = DestinyAPI.hasOauthManager() && DestinyAPI.getAccessToken() != null && DestinyAPI.getHttpUtils().setTokenViaRefresh() != null;
+
+		if(value) {
+			try {
+				DestinyAPI.getHttpUtils().setTokenViaRefresh();
+			} catch (AccessTokenExpiredException | RefreshTokenExpiredException | OAuthUnauthorizedException e) {
+				value = false;
+			}
+		}
+
+		return value;
 	}
 
 	private JsonObject getJsonObject(HttpRequest httpRequest) throws APIException {

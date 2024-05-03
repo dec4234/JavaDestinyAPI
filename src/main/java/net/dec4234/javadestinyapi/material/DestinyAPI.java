@@ -38,6 +38,13 @@ public class DestinyAPI {
 
     private static HttpUtils httpUtils;
 
+    // Force set API key
+    private DestinyAPI() {}
+
+    public DestinyAPI(String apiKey) {
+        setApiKey(apiKey);
+    }
+
     /**
      * Set the api key used by the DestinyAPI
      */
@@ -52,66 +59,82 @@ public class DestinyAPI {
         return this;
     }
 
+    /**
+     * Sets the internal client ID, needed for OAuth generation
+     * @param clientId The client ID
+     * @return This DestinyAPI instance
+     */
     public DestinyAPI setClientID(String clientId) {
         DestinyAPI.clientId = clientId;
         return this;
     }
 
+    /**
+     * Sets the internal client secret
+     * @param clientSecret The client secret
+     * @return This DestinyAPI instance
+     */
     public DestinyAPI setClientSecret(String clientSecret) {
         DestinyAPI.clientSecret = clientSecret;
         return this;
     }
 
+    /**
+     * Set the oauth code used to generate access and refresh tokens
+     * @param oauthCode The oauth code
+     * @return This DestinyAPI instance
+     */
     public DestinyAPI setOauthCode(String oauthCode) {
         DestinyAPI.oauthCode = oauthCode;
         return this;
     }
 
-    public DestinyAPI setAccessToken(String accessToken) {
+    /**
+     * Sets the OAuth Access token. This is typically an internal function only, but is provided for convenience.
+     * @param accessToken The OAuth access token
+     * @return This DestinyAPI instance
+     */
+    public static void setAccessToken(String accessToken) {
         DestinyAPI.accessToken = accessToken;
         if (hasOauthManager()) {
             oam.setAccessToken(accessToken);
         }
-        return this;
     }
 
-    public DestinyAPI setRefreshToken(String refreshToken) {
+    /**
+     * Sets the OAuth refresh token. This is typically an internal function only, but is provided for convenience.
+     * @param refreshToken The OAuth refresh token
+     * @return This DestinyAPI instance
+     */
+    public static void setRefreshToken(String refreshToken) {
         DestinyAPI.refreshToken = refreshToken;
         if (hasOauthManager()) {
             oam.setRefreshToken(refreshToken);
         }
-        return this;
     }
 
     /**
-     * Debug mode prints all requests and their responses to the console
-     * This is very useful for feature development
+     * Debug mode prints all requests and their responses to the console.
+     * <br>
+     * WARNING: This could expose sensitive information, this is for development ONLY
      */
-    public DestinyAPI enableDebugMode() {
+    public static void enableDebugMode() {
         DestinyAPI.debugEnabled = true;
-
-        return this;
     }
 
     /**
      * Disable debug mode
      */
-    public DestinyAPI disableDebugMode() {
+    public static void disableDebugMode() {
         DestinyAPI.debugEnabled = false;
-
-        return this;
     }
 
     /**
      * Set the OAuth management class
      * The class passed in this parameter must "extends OAuthManager"
      */
-    public DestinyAPI setOauthManager(OAuthManager oam) {
+    public static void setOauthManager(OAuthManager oam) {
         DestinyAPI.oam = oam;
-        // setApiKey(oam.getAPIToken());
-        // setAccessToken(oam.getAccessToken());
-
-        return this;
     }
 
     /**
@@ -225,8 +248,9 @@ public class DestinyAPI {
      * Search users across all platforms for anyone with that name.
      * <p>
      * Searching "dec4234" will return an array containing a single
-     * BungieUser. While searching "Gladd" or "Datto" should return
-     * multiple.
+     * BungieUser. While searching "Gladd" or "Datto" should return many users.
+     * <p>
+     * // TODO: Issue #16
      */
     public static List<BungieUser> searchUsers(String name) throws APIException {
         List<BungieUser> users = new ArrayList<>();

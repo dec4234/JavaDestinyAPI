@@ -8,9 +8,9 @@
 package net.dec4234.javadestinyapi.utils.framework;
 
 /**
- * Contains all of the functions needed for the API to adequately store OAuth tokens.
+ * Contains all the functions needed for the API to adequately store OAuth tokens.
  * <br>
- * Note: OAuth could allow potenially dangerous actions such as full control over your clan (if you are an admin) as
+ * Note: OAuth could allow potentially dangerous actions such as full control over your clan (if you are an admin) as
  * well as your inventory. Use at your own risk, and use good data management and protection practices.
  */
 public interface JDAOAuth {

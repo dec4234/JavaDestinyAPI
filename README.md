@@ -34,7 +34,7 @@ If you happen to need a JAR version, check out [releases](https://github.com/dec
 You need to get an API key from [bungie.net/developer](https://bungie.net/developer)
 
 ```java
-DestinyAPI api = new DestinyAPI().setApiKey("YOUR API KEY HERE");
+DestinyAPI api = new DestinyAPI("YOUR API KEY HERE");
 ```
 **IMPORTANT:** *DestinyAPI MUST be the first thing initialized before making any interactions with the API! This is because
 all interactions with the API rely on the API Key set in DestinyAPI.*
