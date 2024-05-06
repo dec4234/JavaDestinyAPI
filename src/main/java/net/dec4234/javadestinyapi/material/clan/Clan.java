@@ -26,9 +26,7 @@ import java.util.List;
 
 public class Clan extends ContentFramework {
 
-    private String apiKey = DestinyAPI.getApiKey();
     private HttpUtils hu = DestinyAPI.getHttpUtils();
-    private JsonObject jo, cjo; // The entire Clan response
 
     private long clanId = -1;
     private String clanName, clanDescription, motto;
@@ -37,10 +35,14 @@ public class Clan extends ContentFramework {
     private Date creationDate;
     private int memberCount = -1;
 
-    private List<BungieUser> admins, members;
+    private ClanMember founder;
+    private List<ClanMember> admins, members;
     private ClanManagement clanManagement;
-    private JsonObject jj;
+    private JsonObject jj, detail, founderJO;
 
+    /**
+     * @param clanId The ID of the clan
+     */
     public Clan(long clanId) {
         super("https://www.bungie.net/platform/GroupV2/" + clanId + "/?components=200", source -> {
             return source.getAsJsonObject("Response");
@@ -48,8 +50,13 @@ public class Clan extends ContentFramework {
         this.clanId = clanId;
     }
 
+    /**
+     * This is no longer the preferred method for searching by name. Use {@link DestinyAPI#searchClan(String)}
+     * @param clanName The name of the clan that you would like to look at
+     */
+    @Deprecated
     public Clan(String clanName) {
-        super(("https://www.bungie.net/Platform/GroupV2/Name/" + clanName.replace(" ", "%20") + "/1/?components=200"), source -> {
+        super(("https://www.bungie.net/Platform/GroupV2/Name/" + StringUtils.httpEncode(clanName) + "/1/?components=200"), source -> {
             return source.getAsJsonObject("Response");
         });
         this.clanName = clanName;
@@ -61,6 +68,15 @@ public class Clan extends ContentFramework {
         });
         this.clanId = clanId;
         this.clanName = clanName;
+    }
+
+    public Clan(long clanId, JsonObject detail, JsonObject founder) {
+        super(("https://www.bungie.net/platform/GroupV2/" + clanId + "/?components=200"), source -> {
+            return source.getAsJsonObject("Response");
+        });
+        this.clanId = clanId;
+        this.detail = detail;
+        this.founderJO = founder;
     }
 
     public String getClanID() throws APIException {
@@ -119,25 +135,29 @@ public class Clan extends ContentFramework {
     /**
      * Get the founder of the clan
      */
-    public BungieUser getFounder() throws APIException {
-        return new BungieUser(getJO().getAsJsonObject("founder").getAsJsonObject("destinyUserInfo").get("membershipId").getAsString());
+    public ClanMember getFounder() throws APIException {
+        if(founder != null) {
+            return new ClanMember(founderJO);
+        }
+
+        return new ClanMember(getJO().getAsJsonObject("founder"));
     }
 
     /**
-     * Returns a list of the founder and the admins of the clan
+     * Returns a list of the founder and the admins of the clan.
      * The founder is always the first in this list?
      * Followed by the admins in the order they were promoted
      */
-    public List<BungieUser> getAdmins() throws APIException {
+    public List<ClanMember> getAdmins() throws APIException {
         if (admins != null) {
             return admins;
         }
 
-        List<BungieUser> temp = new ArrayList<>();
+        List<ClanMember> temp = new ArrayList<>();
         JsonArray ja = hu.urlRequestGET("https://www.bungie.net/Platform/GroupV2/" + getClanID() + "/AdminsAndFounder/?components=200").getAsJsonObject("Response").getAsJsonArray("results");
 
         for (JsonElement je : ja) {
-            temp.add(new BungieUser(je.getAsJsonObject().get("destinyUserInfo").getAsJsonObject().get("membershipId").getAsString()));
+            temp.add(new ClanMember(je.getAsJsonObject()));
         }
 
         admins = temp; // Cache this information
@@ -145,9 +165,7 @@ public class Clan extends ContentFramework {
     }
 
     /**
-     * Returns the average number of days since all members last played.
-     *
-     * Thanks to the ClanMember system, requires very little calls and should be pretty fast.
+     * @return A double representing the average amount of days since clan members have last logged in.
      */
     public double getAverageInactivityAmongMembers() throws APIException {
         ArrayList<Double> averages = new ArrayList<>();
@@ -163,6 +181,10 @@ public class Clan extends ContentFramework {
 
     /**
      * Get the most inactive members of a clan, using the getMembers() endpoint and the ClanMember class
+     * @param numberOfResults The number of inactive members you want
+     * @param exclude An exclusion list of bungie IDs. If an inactive user has their id in this list then they will NOT
+     *                be included in the returned list.
+     * @return A list of the most inactive members, sorted from most to least inactive
      */
     public List<ClanMember> getMostInactiveMembers(int numberOfResults, String... exclude) throws APIException {
         List<ClanMember> list = getMembers();
@@ -348,6 +370,10 @@ public class Clan extends ContentFramework {
     }
 
     private JsonObject getDetail() throws APIException {
+        if(detail != null) {
+            return detail;
+        }
+
         return getJO().getAsJsonObject("detail");
     }
 }

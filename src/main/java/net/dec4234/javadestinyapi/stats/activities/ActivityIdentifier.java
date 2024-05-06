@@ -130,12 +130,12 @@ public enum ActivityIdentifier {
 	VOW_OF_THE_DISCIPLE("VOTD", "https://www.bungie.net/pubassets/pkgs/157/157111/FrontPageBanner_1920x590.jpg", ActivityMode.RAID, "1441982566"),
 	VOW_OF_THE_DISCIPLE_MASTER("VOTDM", "https://www.bungie.net/pubassets/pkgs/157/157111/FrontPageBanner_1920x590.jpg", ActivityMode.RAID, "4217492330"),
 
-	KF("KF", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, "1374392663"),
-	KF_MASTER("KFM", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, "2964135793", "3257594522"),
-	KF_LEGEND("KFL", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, "1063970578"),
+	KINGS_FALL("KF", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, "1374392663"),
+	KINGS_FALL_MASTER("KFM", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, "2964135793", "3257594522"),
+	KINGS_FALL_LEGEND("KFL", "https://www.bungie.net/pubassets/pkgs/170/170501/ArticleBanner_997x500.jpg", ActivityMode.RAID, "1063970578"),
 
-	RON("RON", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt745cb94aef1d49fd/640a30abe16bc77f58332cc4/FrontPageBanner_PC_1920x590.jpg", ActivityMode.RAID, "2381413764"),
-	RON_MASTER("RONM", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt745cb94aef1d49fd/640a30abe16bc77f58332cc4/FrontPageBanner_PC_1920x590.jpg", ActivityMode.RAID, "2918919505"),
+	ROOT_OF_NIGHTMARES("RON", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt745cb94aef1d49fd/640a30abe16bc77f58332cc4/FrontPageBanner_PC_1920x590.jpg", ActivityMode.RAID, "2381413764"),
+	ROOT_OF_NIGHTMARES_MASTER("RONM", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt745cb94aef1d49fd/640a30abe16bc77f58332cc4/FrontPageBanner_PC_1920x590.jpg", ActivityMode.RAID, "2918919505"),
 
 	CROTAS_END("CE", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt8023dab456754205/64f0c82d8c8fe96dfe98bbf8/16x9Standard_1920x1080.jpg", ActivityMode.RAID, "4179289725"),
 	CROTAS_END_MASTER("CEM", "https://images.contentstack.io/v3/assets/blte410e3b15535c144/blt8023dab456754205/64f0c82d8c8fe96dfe98bbf8/16x9Standard_1920x1080.jpg", ActivityMode.RAID, "1507509200"),

@@ -12,21 +12,27 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.material.clan.Clan;
+import net.dec4234.javadestinyapi.material.clan.ClanMember;
+import net.dec4234.javadestinyapi.material.clan.GroupType;
 import net.dec4234.javadestinyapi.material.user.BungieUser;
 import net.dec4234.javadestinyapi.material.user.UserCredential;
 import net.dec4234.javadestinyapi.material.user.UserCredentialType;
 import net.dec4234.javadestinyapi.responses.user.SanitizedUsernamesResponse;
 import net.dec4234.javadestinyapi.utils.HttpUtils;
 import net.dec4234.javadestinyapi.utils.StringUtils;
+import net.dec4234.javadestinyapi.utils.fast.Pagination;
 import net.dec4234.javadestinyapi.utils.framework.OAuthManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * This is the base class for the entire API. It MUST be initialized with an API key before <u>any part</u>
  * of the API is used.
+ * // TODO: its time to rethink this class and instancing the API
  */
 public class DestinyAPI {
 
@@ -163,8 +169,9 @@ public class DestinyAPI {
     }
 
     /**
-     * Get a BungieUser from a Steam ID
-     * NOT the same IDs used by Bungie to identify individual users
+     * Get a BungieUser from a Steam ID, which is NOT the same IDs used by Bungie to identify individual users.
+     * @param steamID The steamID corresponding with the user you are looking for.
+     * @return The bungie user corresponding with that steam ID
      */
     public static BungieUser getMemberFromSteamID(String steamID) throws APIException {
         return getMemberFromPlatformID("SteamId", steamID);
@@ -251,44 +258,85 @@ public class DestinyAPI {
     /**
      * Search users across all platforms for anyone with that name.
      * <p>
-     * Searching "dec4234" will return an array containing a single
-     * BungieUser. While searching "Gladd" or "Datto" should return many users.
-     * <p>
-     * // TODO: Issue #16
+     * Returns a "Pagination" object. This allows you to request the next page of guardians with that name one at a time,
+     * rather than returning a huge array after a long time. This was proposed in issue #16.
+     * <br>
+     * <pre>
+     * {@code
+     *      Pagination<List<BungieUser>> pagination = DestinyAPI.searchUsers("Etho");
+     *      for(List<BungieUser> bungieUsers : pagination) { // iterate through all pages one by one
+     *          bungieUsers.forEach(bungieUser -> { // Print details for users on the current page
+     *           	System.out.println(bungieUser);
+     *          });
+     *      }
+     * }
+     * </pre>
+     * @param name The name of the user you want to search for
+     * @return A Pagination object that returns a List of matching bungie users per page.
      */
-    public static List<BungieUser> searchUsers(String name) throws APIException {
-        List<BungieUser> users = new ArrayList<>();
-
+    public static Pagination<List<BungieUser>> searchUsers(String name) throws APIException {
         JsonObject body = new JsonObject();
         body.addProperty("displayNamePrefix", name);
 
-        List<JsonObject> jsonObjects = new ArrayList<>();
+		return new Pagination<>() {
+            private int i = 0;
+            private boolean isDone = false;
 
-        for (int i = 0; i < 100; i++) { // Start at page 0 and increment each time until there are no more valid pages
-            JsonObject jsonObject = httpUtils.urlRequestPOST(HttpUtils.URL_BASE + "/User/Search/GlobalName/" + i + "/", body);
-
-            // Only continue looping if the result has a list of search results
-            if (jsonObject.has("Response") && jsonObject.getAsJsonObject("Response").getAsJsonArray("searchResults").size() != 0) {
-                JsonArray jsonArray = jsonObject.getAsJsonObject("Response").getAsJsonArray("searchResults");
-
-                for (JsonElement jsonElement : jsonArray) { // Add all user info objects into one list
-                    jsonObjects.add(jsonElement.getAsJsonObject());
+			@Override
+			public boolean hasNext() throws APIException {
+                if(isDone) {
+                    return false;
                 }
-            } else {
-                break;
+
+                JsonObject response = httpUtils.urlRequestPOST(HttpUtils.URL_BASE + "/User/Search/GlobalName/" + i + "/", body);
+                i++;
+
+                List<JsonObject> jsonObjects = new ArrayList<>();
+                List<BungieUser> users = new ArrayList<>();
+
+                // Only continue looping if the result has a list of search results
+                if (response.has("Response") && !response.getAsJsonObject("Response").getAsJsonArray("searchResults").isEmpty()) {
+                    JsonArray jsonArray = response.getAsJsonObject("Response").getAsJsonArray("searchResults");
+
+                    for (JsonElement jsonElement : jsonArray) { // Add all user info objects into one list
+                        jsonObjects.add(jsonElement.getAsJsonObject());
+                    }
+                } else {
+                    currentResponse = null;
+                    this.hasGrabbed = false;
+                    this.isDone = true;
+                    return false;
+                }
+
+                // Process the one big list to convert bungie.net profile info into destiny profile info
+                for (JsonObject jsonObject : jsonObjects) {
+                    BungieUser bungieUser = processListOfProfiles(jsonObject.getAsJsonArray("destinyMemberships"));
+
+                    if (bungieUser != null) {
+                        users.add(bungieUser);
+                    }
+                }
+
+                this.currentResponse = users;
+                this.hasGrabbed = false;
+				return true;
+			}
+
+			@Override
+			public List<BungieUser> next() throws APIException {
+                if(isDone) {
+                    return null;
+                }
+
+                if(!hasGrabbed) {
+                    hasGrabbed = true;
+                    return this.currentResponse;
+                } else {
+                    this.hasNext();
+					return this.currentResponse;
+                }
             }
-        }
-
-        // Process the one big list to convert bungie.net profile info into destiny profile info
-        for (JsonObject jsonObject : jsonObjects) {
-            BungieUser bungieUser = processListOfProfiles(jsonObject.getAsJsonArray("destinyMemberships"));
-
-            if (bungieUser != null) {
-                users.add(bungieUser);
-            }
-        }
-
-        return users;
+		};
     }
 
     /**
@@ -401,6 +449,33 @@ public class DestinyAPI {
 
 
         return bungieUsers;
+    }
+
+    /**
+     * Search for the clan with the given name. This is given as the preferred method for searching for clans by name.
+     * @param search The search query
+     * @return A single clan that matches the search query, null if none are found
+     * @throws APIException If anything goes wrong when interacting with the API
+     */
+    public static Clan searchClan(String search) throws APIException {
+        JsonObject body = new JsonObject();
+        body.addProperty("groupName", search);
+        body.addProperty("groupType", GroupType.CLAN.getType());
+
+        JsonObject jsonObject = httpUtils.urlRequestPOST(HttpUtils.URL_BASE + "/GroupV2/NameV2/", body);
+
+        if(!jsonObject.has("Response")) {
+            return null; // no clan found -- error 686
+        }
+
+        jsonObject = jsonObject.getAsJsonObject("Response");
+
+        if(jsonObject.has("founder") && jsonObject.has("detail")) {
+            long id = jsonObject.getAsJsonObject("detail").get("groupId").getAsLong();
+            return new Clan(id, jsonObject.getAsJsonObject("detail"), jsonObject.getAsJsonObject("founder"));
+        } else {
+            return null;
+        }
     }
 
     public static String getApiKey() {

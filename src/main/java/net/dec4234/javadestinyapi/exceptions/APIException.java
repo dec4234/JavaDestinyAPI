@@ -8,10 +8,11 @@
 package net.dec4234.javadestinyapi.exceptions;
 
 /**
- * Base class for all exceptions generated when an issue occurs in the request pipeline to Bungie.
- * This most common reason for this error would be when the API is offline, and all objects are misparsed.
+ * Base class for all exceptions generated when an issue occurs in the request pipeline to Bungie. <br>
+ * This is defined as a RuntimeException to give more flexibility internally (namely in {@link net.dec4234.javadestinyapi.material.DestinyAPI#searchUsers(String)}).
+ * You should still try/catch this rather than deferring it to being a solely runtime exception
  */
-public abstract class APIException extends Exception {
+public abstract class APIException extends RuntimeException {
 
     public APIException() {
 

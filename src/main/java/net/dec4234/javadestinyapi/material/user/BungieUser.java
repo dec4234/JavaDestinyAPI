@@ -546,4 +546,9 @@ public class BungieUser extends ContentFramework {
 
 		return collectionsManager;
 	}
+
+	@Override
+	public String toString() {
+		return "BungieUser: {id = " + bungieMembershipID + "}";
+	}
 }

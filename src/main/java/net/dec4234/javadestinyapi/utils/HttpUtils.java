@@ -135,7 +135,7 @@ public class HttpUtils {
 	/**
 	 * Make a request to the Bungie manifest to reveal information about a hash-identified item.
 	 *
-	 * Deprecated in favor of DestinyManifest#manifestGET()
+	 * Deprecated in favor of {@link net.dec4234.javadestinyapi.material.manifest.DestinyManifest#manifestGET(ManifestEntityTypes, String)}
 	 */
 	@Deprecated
 	public JsonObject manifestGET(ManifestEntityTypes entityType, String hashIdentifier) throws APIException {

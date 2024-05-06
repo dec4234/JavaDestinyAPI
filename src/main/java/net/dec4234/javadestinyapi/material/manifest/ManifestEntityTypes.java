@@ -8,8 +8,8 @@
 package net.dec4234.javadestinyapi.material.manifest;
 
 /**
- * Stores definitions as seen on https://www.bungie-net.github.io/
- * Used for accessing things in the Destiny Manifest
+ * Stores definitions as seen on <a href="https://www.bungie-net.github.io/">https://www.bungie-net.github.io</a><br>
+ * Used for accessing things in the Destiny Manifest <br>
  * Sorted by category, then by alphabetical order
  */
 public enum ManifestEntityTypes {
