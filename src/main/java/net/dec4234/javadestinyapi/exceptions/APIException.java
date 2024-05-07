@@ -12,7 +12,7 @@ package net.dec4234.javadestinyapi.exceptions;
  * This is defined as a RuntimeException to give more flexibility internally (namely in {@link net.dec4234.javadestinyapi.material.DestinyAPI#searchUsers(String)}).
  * You should still try/catch this rather than deferring it to being a solely runtime exception
  */
-public abstract class APIException extends RuntimeException {
+public abstract class APIException extends Exception {
 
     public APIException() {
 

@@ -11,8 +11,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.dec4234.javadestinyapi.exceptions.APIException;
+import net.dec4234.javadestinyapi.exceptions.APIOfflineException;
 import net.dec4234.javadestinyapi.material.clan.Clan;
-import net.dec4234.javadestinyapi.material.clan.ClanMember;
 import net.dec4234.javadestinyapi.material.clan.GroupType;
 import net.dec4234.javadestinyapi.material.user.BungieUser;
 import net.dec4234.javadestinyapi.material.user.UserCredential;
@@ -22,10 +22,8 @@ import net.dec4234.javadestinyapi.utils.HttpUtils;
 import net.dec4234.javadestinyapi.utils.StringUtils;
 import net.dec4234.javadestinyapi.utils.fast.Pagination;
 import net.dec4234.javadestinyapi.utils.framework.OAuthManager;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -282,14 +280,18 @@ public class DestinyAPI {
             private int i = 0;
             private boolean isDone = false;
 
-			@Override
-			public boolean hasNext() throws APIException {
+			public boolean hasNext() {
                 if(isDone) {
                     return false;
                 }
 
-                JsonObject response = httpUtils.urlRequestPOST(HttpUtils.URL_BASE + "/User/Search/GlobalName/" + i + "/", body);
-                i++;
+				JsonObject response = null;
+				try {
+					response = httpUtils.urlRequestPOST(HttpUtils.URL_BASE + "/User/Search/GlobalName/" + i + "/", body);
+				} catch (APIException e) {
+					return false; // So I don't know how to handle this error... just return false / stop iteration
+				}
+				i++;
 
                 List<JsonObject> jsonObjects = new ArrayList<>();
                 List<BungieUser> users = new ArrayList<>();
@@ -310,9 +312,16 @@ public class DestinyAPI {
 
                 // Process the one big list to convert bungie.net profile info into destiny profile info
                 for (JsonObject jsonObject : jsonObjects) {
-                    BungieUser bungieUser = processListOfProfiles(jsonObject.getAsJsonArray("destinyMemberships"));
+					BungieUser bungieUser = null;
+					try {
+						bungieUser = processListOfProfiles(jsonObject.getAsJsonArray("destinyMemberships"));
+					} catch (APIException apiException) {
+                        if(apiException instanceof APIOfflineException) {
+                            break;
+                        }
+					}
 
-                    if (bungieUser != null) {
+					if (bungieUser != null) {
                         users.add(bungieUser);
                     }
                 }
@@ -323,7 +332,7 @@ public class DestinyAPI {
 			}
 
 			@Override
-			public List<BungieUser> next() throws APIException {
+			public List<BungieUser> next() {
                 if(isDone) {
                     return null;
                 }
@@ -332,7 +341,7 @@ public class DestinyAPI {
                     hasGrabbed = true;
                     return this.currentResponse;
                 } else {
-                    this.hasNext();
+					this.hasNext();
 					return this.currentResponse;
                 }
             }

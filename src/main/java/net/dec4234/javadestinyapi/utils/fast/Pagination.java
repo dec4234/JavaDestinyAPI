@@ -44,14 +44,14 @@ public abstract class Pagination<T> implements Iterator<T>, Iterable<T> {
 	 * @return True if there is another valid page of objects ready
 	 * @throws APIException If something goes wrong in the request to the API
 	 */
-	public abstract boolean hasNext() throws APIException;
+	public abstract boolean hasNext();
 
 	/**
 	 * Returns the next page of objects. Grabs a new set of objects (page) if the current one has already been used.
 	 * @return The next page of objects, or null if you reach the end
 	 * @throws APIException If something goes wrong in the request to the API
 	 */
-	public abstract T next() throws APIException;
+	public abstract T next();
 
 	@NotNull
 	@Override
