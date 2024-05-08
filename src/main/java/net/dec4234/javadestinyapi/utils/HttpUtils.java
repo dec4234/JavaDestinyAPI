@@ -61,7 +61,7 @@ public class HttpUtils {
 		if(bearerToken == null) {
 			bearerToken = DestinyAPI.getAccessToken();
 		}
-		if(bearerToken == null) {
+		if(bearerToken == null || DestinyAPI.getLastRefreshTime() == 0 || DestinyAPI.getLastRefreshTime() + (45 * 60 * 1000) < System.currentTimeMillis()) {
 			setTokenViaRefresh();
 		}
 
@@ -106,7 +106,7 @@ public class HttpUtils {
 		if(bearerToken == null) {
 			bearerToken = DestinyAPI.getAccessToken();
 		}
-		if(bearerToken == null) {
+		if(bearerToken == null || DestinyAPI.getLastRefreshTime() == 0 || DestinyAPI.getLastRefreshTime() + (45 * 60 * 1000) < System.currentTimeMillis()) {
 			setTokenViaRefresh();
 		}
 
@@ -190,6 +190,7 @@ public class HttpUtils {
 		bearerToken = at;
 		DestinyAPI.setAccessToken(at);
 		DestinyAPI.setRefreshToken(rt);
+		DestinyAPI.setLastRefreshTime();
 
 		if(DestinyAPI.isDebugEnabled()) {
 			System.out.println("TOKENS REFRESHED");
@@ -227,6 +228,7 @@ public class HttpUtils {
 
 		DestinyAPI.setRefreshToken(refreshToken);
 		DestinyAPI.setAccessToken(accessToken);
+		DestinyAPI.setLastRefreshTime();
 
 		HttpUtils.bearerToken = accessToken;
 	}

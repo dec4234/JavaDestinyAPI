@@ -41,6 +41,7 @@ public class DestinyAPI {
     private static String oauthCode = null;
     private static String accessToken = null;
     private static String refreshToken = null;
+    private static long lastRefreshTime = 0;
 
     private static OAuthManager oam = null;
     private static boolean debugEnabled = false;
@@ -102,7 +103,6 @@ public class DestinyAPI {
     /**
      * Sets the OAuth Access token. This is typically an internal function only, but is provided for convenience.
      * @param accessToken The OAuth access token
-     * @return This DestinyAPI instance
      */
     public static void setAccessToken(String accessToken) {
         DestinyAPI.accessToken = accessToken;
@@ -121,6 +121,20 @@ public class DestinyAPI {
         if (hasOauthManager()) {
             oam.setRefreshToken(refreshToken);
         }
+    }
+
+    /**
+     * Sets the time in millis where the access token was last refreshed to the current time
+     */
+    public static void setLastRefreshTime() {
+        DestinyAPI.lastRefreshTime = System.currentTimeMillis();
+    }
+
+    /**
+     * @return The time in millis where the access token was last refreshed
+     */
+    public static long getLastRefreshTime() {
+        return lastRefreshTime;
     }
 
     /**
@@ -169,7 +183,6 @@ public class DestinyAPI {
     public static boolean hasOauthManager() {
         return oam != null;
     }
-
 
     /**
      * Returns a user based on the provided bungie ID
