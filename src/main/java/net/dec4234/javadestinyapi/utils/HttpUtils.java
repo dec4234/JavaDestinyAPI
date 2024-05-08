@@ -58,6 +58,13 @@ public class HttpUtils {
 	}
 
 	public JsonObject urlRequestGETOauth(String url) throws APIException {
+		if(bearerToken == null) {
+			bearerToken = DestinyAPI.getAccessToken();
+		}
+		if(bearerToken == null) {
+			setTokenViaRefresh();
+		}
+
 		try {
 			return getJsonObject(getRequest(true, url, starter -> {
 				starter.GET()
@@ -96,7 +103,13 @@ public class HttpUtils {
 	}
 
 	public JsonObject urlRequestPOSTOauth(String url, JsonObject body) throws APIException {
-		setTokenViaRefresh();
+		if(bearerToken == null) {
+			bearerToken = DestinyAPI.getAccessToken();
+		}
+		if(bearerToken == null) {
+			setTokenViaRefresh();
+		}
+
 		if (body.toString().isEmpty()) {
 			body = new JsonObject();
 			body.addProperty("message", "");
@@ -148,6 +161,10 @@ public class HttpUtils {
 	 * @return Returns the new access token
 	 */
 	public String setTokenViaRefresh() throws APIException {
+		if(DestinyAPI.getRefreshToken() == null) {
+			throw new OAuthUnauthorizedException("Refresh token is null. You must set new access and refresh tokens OR your OAuthManager is misconfigured and they can't be accessed.");
+		}
+
 		String url = "https://www.bungie.net/Platform/App/OAuth/Token/";
 
 		String requestBody = "grant_type=refresh_token&refresh_token=" + DestinyAPI.getRefreshToken();
@@ -182,13 +199,17 @@ public class HttpUtils {
 	}
 
 	/**
-	 * Requries an OAuthCode to be manually set inside the DestinyAPI.setOAuthCode()
+	 * Requires an OAuthCode to be manually set inside the DestinyAPI.setOAuthCode()
 	 */
 	public void setTokenViaAuth() throws APIException {
 		setTokenViaAuth(DestinyAPI.getOauthCode());
 	}
 
 	public void setTokenViaAuth(String oAuthCode) throws APIException {
+		if(oAuthCode == null) {
+			throw new OAuthUnauthorizedException("OAuth code is null. You must generate an OAuth code using the OAuth process.");
+		}
+
 		String url = "https://www.bungie.net/Platform/App/OAuth/Token/";
 
 		String requestBody = "grant_type=authorization_code&code=" + oAuthCode;
@@ -211,11 +232,13 @@ public class HttpUtils {
 	}
 
 	public boolean hasValidOAuthTokens() throws APIException {
-		boolean value = DestinyAPI.hasOauthManager() && DestinyAPI.getAccessToken() != null && DestinyAPI.getHttpUtils().setTokenViaRefresh() != null;
+		boolean value = DestinyAPI.hasOauthManager() && DestinyAPI.getAccessToken() != null;
 
 		if(value) {
 			try {
-				DestinyAPI.getHttpUtils().setTokenViaRefresh();
+				if(DestinyAPI.getHttpUtils().setTokenViaRefresh() == null) {
+					value = false;
+				}
 			} catch (AccessTokenExpiredException | RefreshTokenExpiredException | OAuthUnauthorizedException e) {
 				value = false;
 			}
@@ -232,7 +255,18 @@ public class HttpUtils {
 			responseString = httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString()).thenApplyAsync(HttpResponse::body).get();
 
 			if (DestinyAPI.isDebugEnabled()) {
-				System.out.println(httpRequest.method() + " " + httpRequest.uri().toString());
+				String type = httpRequest.method() + " " + httpRequest.uri().toString();
+				if(httpRequest.headers().firstValue("Authorization").isPresent()) {
+					type = httpRequest.method() + " OAUTH " + httpRequest.uri().toString();
+				}
+				System.out.println(type);
+				if(DestinyAPI.doPrintHeaders()) {
+					httpRequest.headers().map().forEach((s, strings) -> {
+						if(!s.equals("Content-Type")) {
+							System.out.println(s + " " + strings.toString());
+						}
+					});
+				}
 				System.out.println(responseString);
 			}
 		} catch (InterruptedException | ExecutionException e) {

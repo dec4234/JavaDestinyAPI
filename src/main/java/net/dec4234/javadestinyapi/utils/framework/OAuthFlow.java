@@ -68,7 +68,7 @@ public class OAuthFlow {
 	}
 
 	/**
-	 * Initiate the OAuth Flow only if an exisiting key cannot be found or if it has expired
+	 * Initiate the OAuth Flow only if an existing key cannot be found or if it has expired
 	 * @param port The port to start the server on
 	 */
 	public void initOAuthFlowIfNeeded(int port) throws APIException {

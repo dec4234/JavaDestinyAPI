@@ -44,6 +44,7 @@ public class DestinyAPI {
 
     private static OAuthManager oam = null;
     private static boolean debugEnabled = false;
+    private static boolean printHeaders = false;
 
     private static HttpUtils httpUtils;
 
@@ -136,6 +137,22 @@ public class DestinyAPI {
      */
     public static void disableDebugMode() {
         DestinyAPI.debugEnabled = false;
+    }
+
+    /**
+     * Print the headers of all requests alongside the other debug info. NOTE: This could reveal potentially sensitive
+     * info like OAuth tokens. Only use in a strictly debugging scenario
+     * @param printHeaders True = print headers, false (default) = don't print
+     */
+    public static void printHeaders(boolean printHeaders) {
+        DestinyAPI.printHeaders = printHeaders;
+    }
+
+    /**
+     * @return True if printing headers has been enabled
+     */
+    public static boolean doPrintHeaders() {
+        return DestinyAPI.printHeaders;
     }
 
     /**
