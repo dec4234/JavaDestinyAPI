@@ -49,7 +49,9 @@ System.out.println(DestinyAPI.getUserWithName("dec4234#9904").getTimePlayed() / 
 System.out.println(new Clan("Heavenly Mayhem").getFounder().getSupplementalDisplayName());
 ```
 
-Check out the [wiki](https://github.com/dec4234/JavaDestinyAPI/wiki/Getting-Started) for more specific examples and information.
+### Examples
+- Check out the [wiki](https://github.com/dec4234/JavaDestinyAPI/wiki/Getting-Started) for more specific examples and information.
+- Check out the [discord bot](https://github.com/dec4234/Benedict) that I made for my clan using this library
 
 ### An aside about APIException
 As of 4/30/2024, all functions that interact with the API in any way (i.e. could make an HTTP request) throw APIException.

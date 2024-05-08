@@ -64,7 +64,7 @@ public class OAuthFlow {
 	 * @param port The port to start the server on
 	 */
 	public void initOAuthFlow(int port) throws APIException {
-		setTokens(port);
+		setTokens(port); //TODO: bug: waits 30s for no reason? not part of this class?
 	}
 
 	/**
@@ -72,6 +72,10 @@ public class OAuthFlow {
 	 * @param port The port to start the server on
 	 */
 	public void initOAuthFlowIfNeeded(int port) throws APIException {
+		if(DestinyAPI.getHttpUtils().hasValidOAuthTokens()) {
+			return;
+		}
+
 		try {
 			if(!DestinyAPI.hasOauthManager() || DestinyAPI.getAccessToken() == null || DestinyAPI.getHttpUtils().setTokenViaRefresh() == null) {
 				initOAuthFlow(port);
@@ -82,10 +86,6 @@ public class OAuthFlow {
 	}
 
 	private void setTokens(int serverPort) throws APIException {
-		if(DestinyAPI.getHttpUtils().hasValidOAuthTokens()) {
-			return;
-		}
-
 		openOAuthPage();
 
 		startSecureServer(serverPort);
