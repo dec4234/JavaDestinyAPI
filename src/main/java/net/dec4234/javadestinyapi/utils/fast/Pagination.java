@@ -53,6 +53,14 @@ public abstract class Pagination<T> implements Iterator<T>, Iterable<T> {
 	 */
 	public abstract T next();
 
+	/**
+	 * Aggregate all results into a single list. This has to be implemented by the specific type in order to work.
+	 * @return An aggregated list of all results, presuming that type T is a list, otherwise it is null
+	 */
+	public T aggregate() {
+		return null;
+	}
+
 	@NotNull
 	@Override
 	public Iterator<T> iterator() {

@@ -345,6 +345,21 @@ public class DestinyAPI {
 					return this.currentResponse;
                 }
             }
+
+            @Override
+            public List<BungieUser> aggregate() {
+                List<BungieUser> list = new ArrayList<>();
+
+                while(hasNext()) {
+                    List<BungieUser> temp = next();
+
+                    if(temp != null) {
+                        list.addAll(temp);
+                    }
+                }
+
+                return list;
+            }
 		};
     }
 
