@@ -7,6 +7,10 @@
 
 package net.dec4234.javadestinyapi.exceptions;
 
+/**
+ * A connection could not be established to the Bungie servers. This is likely a problem with your internet or network
+ * configuration.
+ */
 public class ConnectionException extends APIException {
 
     public ConnectionException(Exception exception) {

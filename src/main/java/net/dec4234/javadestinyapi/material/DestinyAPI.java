@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.dec4234.javadestinyapi.exceptions.APIException;
 import net.dec4234.javadestinyapi.exceptions.APIOfflineException;
+import net.dec4234.javadestinyapi.exceptions.ConnectionException;
 import net.dec4234.javadestinyapi.material.clan.Clan;
 import net.dec4234.javadestinyapi.material.clan.GroupType;
 import net.dec4234.javadestinyapi.material.user.BungieUser;
@@ -542,4 +543,16 @@ public class DestinyAPI {
         return httpUtils;
     }
 
+    /**
+     * @return True if the API is currently online and connectable, false otherwise. Throws all other exceptions received
+     */
+    public static boolean isAPIOnline() throws APIException {
+        try {
+            new BungieUser("4611686018468620320").isOnline();
+        } catch (APIOfflineException | ConnectionException e) {
+            return false;
+        }
+
+        return true;
+	}
 }
